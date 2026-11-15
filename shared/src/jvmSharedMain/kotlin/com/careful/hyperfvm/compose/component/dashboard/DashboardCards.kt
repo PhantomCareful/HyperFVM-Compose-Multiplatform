@@ -76,6 +76,8 @@ private const val SummaryAlpha = 0.7f
 @Composable
 internal fun DashboardGiftPairRow(
     giftStatus: String,
+    giftFailed: Boolean,
+    onGiftClick: () -> Unit,
     noticeStatus: String,
     onNoticeClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -84,6 +86,8 @@ internal fun DashboardGiftPairRow(
         DashboardGiftCard(
             title = DashboardCardId.SweetGift.title,
             status = giftStatus,
+            failed = giftFailed,
+            onClick = onGiftClick,
             modifier = Modifier.weight(1f),
         )
         Spacer(modifier = Modifier.width(PairCardGap))
@@ -190,12 +194,16 @@ internal fun DashboardStatusCard(
  * 左下那句状态取它的 70% 透明度（同「当前版本」）。
  *
  * [PressFeedbackType.Tilt] 也是 KernelSU 原样的按压倾斜反馈：`pressable` 自己解析按压手势，
- * 不依赖 `onClick`，所以不给点击回调也能动，也不会抢外层长按拖动排序的手势。
+ * 不依赖 `onClick`，点击与长按拖动的分工互不干扰。
+ *
+ * [failed] 为 true 时（这一轮领取出错）右下角换成错误态图标，与状态文案保持一致。
  */
 @Composable
 internal fun DashboardGiftCard(
     title: String,
     status: String,
+    failed: Boolean = false,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val contentColor = CardDefaults.defaultColors(color = statusCardBackgroundColor()).contentColor
@@ -205,8 +213,8 @@ internal fun DashboardGiftCard(
         colors = CardDefaults.defaultColors(color = statusCardBackgroundColor()),
         pressFeedbackType = PressFeedbackType.Tilt,
         showIndication = true,
-        // 同状态卡：详情页没做，空回调只为了把水波纹挂上。
-        onClick = {},
+        // 点击进温馨礼包链接管理页（进页前已做过保护锁验证）。
+        onClick = onClick,
     ) {
         Box(
             modifier = Modifier
@@ -218,13 +226,15 @@ internal fun DashboardGiftCard(
                 .clip(RoundedCornerShape(CardCornerRadius)),
         ) {
             Icon(
-                painter = painterResource(Res.drawable.ic_check_circle_outline),
+                painter = painterResource(
+                    if (failed) Res.drawable.ic_error_circle_outline else Res.drawable.ic_check_circle_outline,
+                ),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .offset(x = GiftIconOffsetX, y = GiftIconOffsetY)
                     .size(GiftIconSize),
-                tint = statusCardAccentColor(),
+                tint = if (failed) MiuixTheme.colorScheme.error else statusCardAccentColor(),
             )
             Text(
                 text = title,

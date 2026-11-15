@@ -43,11 +43,13 @@ import com.careful.hyperfvm.compose.data.dashboard.DashboardStatus
 import com.careful.hyperfvm.compose.data.dashboard.isMonthEnd
 import com.careful.hyperfvm.compose.data.dashboard.isVisible
 import com.careful.hyperfvm.compose.data.dashboard.token
+import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.platform.isDesktopPlatform
+import com.careful.hyperfvm.compose.platform.rememberBiometricGate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -93,9 +95,6 @@ private val CardSidePadding = 12.dp
 private val SheetCardGap = 10.dp
 private val SheetCardCornerRadius = 20.dp
 
-/** 温馨礼包还没接入账号，先给一句占位。 */
-private const val SweetGiftPlaceholder = "暂无账号"
-
 /** 更新公告卡右下的提示：点开才去拉正文，卡片本身不请求网络。 */
 private const val NoticeCardStatus = "点击查看"
 
@@ -135,6 +134,8 @@ fun DashboardScreen(outerPadding: PaddingValues) {
     val scrollBehavior = MiuixScrollBehavior()
     val preferences = remember(env) { DashboardPreferences(env) }
     val orderState = remember(preferences) { CardOrderState { preferences.order } }
+    val settings = LocalAppSettings.current
+    val biometricGate = rememberBiometricGate()
 
     // 首屏先用上次的结果渲染；一次都没成功过时卡片显示「请等待…」。
     var entries by remember { mutableStateOf(DashboardRepository.cached().orEmpty()) }
@@ -167,7 +168,7 @@ fun DashboardScreen(outerPadding: PaddingValues) {
         if (!manual && LaunchRefresh.done) return@LaunchedEffect
         val startedAt = System.currentTimeMillis()
         val result = try {
-            DashboardRepository.refresh()
+            DashboardRepository.refresh(env)
         } catch (e: CancellationException) {
             throw e
         } catch (_: Exception) {
@@ -211,6 +212,21 @@ fun DashboardScreen(outerPadding: PaddingValues) {
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         if (orderState.move(from.key, to.key)) {
             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+    }
+
+    // 温馨礼包的账号页里能直接删账号，开门前先验一次（即设置里的「保护锁」）：
+    // 开关关掉、或设备没有任何验证手段时直接进。
+    val openMeishi: () -> Unit = {
+        if (settings.contentBiometricAuth && biometricGate.available) {
+            biometricGate.request(
+                title = "确保那是你",
+                subtitle = "验证指纹或锁屏密码以继续操作",
+            ) { ok ->
+                if (ok) navigator.push(Route.MeishiWechat)
+            }
+        } else {
+            navigator.push(Route.MeishiWechat)
         }
     }
 
@@ -290,6 +306,7 @@ fun DashboardScreen(outerPadding: PaddingValues) {
                             progressReveal = progressReveal,
                             // 公告卡直接进合集：倒序列表的第一项就是最新一期，历史上翻也在同一页里。
                             onNoticeClick = { navigator.push(Route.AnnouncementArchive) },
+                            onGiftClick = openMeishi,
                             onOpenSheet = { sheet ->
                                 detailSheet = sheet
                                 showDetailSheet = true
@@ -355,16 +372,22 @@ private fun DashboardSlotRow(
     loaded: Boolean,
     progressReveal: Animatable<Float, AnimationVector1D>,
     onNoticeClick: () -> Unit,
+    onGiftClick: () -> Unit,
     onOpenSheet: (DashboardSheet) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (slot) {
-        DashboardSlot.GiftPair -> DashboardGiftPairRow(
-            giftStatus = entryOf(DashboardCardId.SweetGift, entries, loaded).status,
-            noticeStatus = NoticeCardStatus,
-            onNoticeClick = onNoticeClick,
-            modifier = modifier,
-        )
+        DashboardSlot.GiftPair -> {
+            val gift = entryOf(DashboardCardId.SweetGift, entries, loaded)
+            DashboardGiftPairRow(
+                giftStatus = gift.status,
+                giftFailed = gift.error,
+                onGiftClick = onGiftClick,
+                noticeStatus = NoticeCardStatus,
+                onNoticeClick = onNoticeClick,
+                modifier = modifier,
+            )
+        }
 
         is DashboardSlot.Single -> {
             val id = slot.id
@@ -406,17 +429,14 @@ private fun DashboardSlotRow(
     }
 }
 
-/** 数据驱动不了的两张卡在这里就地兜底：温馨礼包是本地占位，其余缺项按加载状态区分。 */
+/** 数据源没返回的卡片按加载状态兜底：没加载完就说「请等待」，加载完了就是「获取失败」。 */
 private fun entryOf(
     id: DashboardCardId,
     entries: Map<DashboardCardId, DashboardEntry>,
     loaded: Boolean,
-): DashboardEntry {
-    if (id == DashboardCardId.SweetGift) return DashboardEntry(SweetGiftPlaceholder)
-    return entries[id] ?: DashboardEntry(
-        if (loaded) DashboardStatus.Failed else DashboardStatus.Pending,
-    )
-}
+): DashboardEntry = entries[id] ?: DashboardEntry(
+    if (loaded) DashboardStatus.Failed else DashboardStatus.Pending,
+)
 
 /**
  * 弹层里的显隐开关：一行一项，顺序与仪表盘保持一致。

@@ -207,6 +207,7 @@ data class DashboardSheet(
  *
  * [sheet] 是点击后弹出的详情；[hidden] 用于「没有则不展示」的卡片
  * （抢红包 / 走马观花 / 甜蜜岛 / 双爆）：数据源判定整张卡不该出现时置 true。
+ * [error] 表示这一轮取数失败：温馨礼包的领取出错时卡片把右下角图标换成失败态。
  */
 @Immutable
 data class DashboardEntry(
@@ -216,6 +217,7 @@ data class DashboardEntry(
     val style: DashboardStyle = DashboardStyle.Neutral,
     val sheet: DashboardSheet? = null,
     val hidden: Boolean = false,
+    val error: Boolean = false,
 ) {
     /** 0..1 的进度；非「X/Y」状态返回 null，卡片不画进度背景。 */
     val progress: Float?
