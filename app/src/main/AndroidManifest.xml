@@ -19,6 +19,9 @@
          通知设置里关掉。36.1 以前的系统没有这个权限定义，声明了也会被忽略。 -->
     <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
 
+    <!-- 温馨礼包管理界面在进入前做一次指纹 / 锁屏密码验证（设置里可关）。 -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
     <!-- 数据图：拉取云端清单、下载图片（前台服务）。 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -31,6 +34,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HyperFVMCompose">
@@ -53,6 +57,33 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 温馨礼包链接中转页（透明壳）：点开受支持的链接时启动的是本页而不是主界面，
+             确认 / 取消后立即 finish 回到来源应用，全程不跳转任何业务界面。
+             域名不归本App所有，安装后的自动验证必然失败；声明 autoVerify 的唯一目的是
+             让系统设置里的「默认打开」页面列出该域名，供用户手动勾选。
+             taskAffinity="" + excludeFromRecents：不并入主任务，也不留在最近任务列表；
+             configChanges：旋转 / 深浅色切换不重建，否则进行中的弹层会直接丢掉。 -->
+        <activity
+            android:name=".MeishiLinkReceiverActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden|uiMode|density"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/Theme.HyperFVMCompose.LinkReceiver">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:host="meishi.wechat.123u.com" />
+                <data android:scheme="https" />
+                <data android:host="meishi.wechat.123u.com" />
             </intent-filter>
         </activity>
 

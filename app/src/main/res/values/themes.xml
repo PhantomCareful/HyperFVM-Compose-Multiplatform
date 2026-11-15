@@ -3,4 +3,13 @@
 
     <style name="Theme.HyperFVMCompose" parent="android:Theme.Material.Light.NoActionBar" />
 
+    <!-- 温馨礼包链接中转页：全透明且不画背景，确认弹层直接浮在来源应用（如微信）画面上，
+         确认 / 取消后由 Activity 自己 finish 回到来源应用。 -->
+    <style name="Theme.HyperFVMCompose.LinkReceiver" parent="Theme.HyperFVMCompose">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>
