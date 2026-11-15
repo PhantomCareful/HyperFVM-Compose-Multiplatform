@@ -399,12 +399,12 @@ private fun AboutContent(
                         Card(modifier = cardModifier, colors = cardColors) {
                             ArrowPreference(
                                 title = "项目地址",
-                                summary = "本项目基于GPL3.0协议开源",
+                                summary = "本项目基于Apache-2.0协议开源",
                                 onClick = {
                                     pendingUrl = UrlTarget(
                                         title = "Github",
                                         subtitle = "HyperFVM-Java",
-                                        url = "https://github.com/PhantomCareful/HyperFVM-Java",
+                                        url = "https://github.com/PhantomCareful/HyperFVM-Compose-Multiplatform",
                                         iconRes = Res.drawable.ic_github,
                                     )
                                 },
