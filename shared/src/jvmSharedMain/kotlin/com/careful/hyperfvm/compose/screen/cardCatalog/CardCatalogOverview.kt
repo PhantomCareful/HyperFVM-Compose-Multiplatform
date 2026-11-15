@@ -1,6 +1,6 @@
 package com.careful.hyperfvm.compose.screen.cardCatalog
 
-import com.careful.hyperfvm.compose.*
+import com.careful.hyperfvm.compose.shared.*
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

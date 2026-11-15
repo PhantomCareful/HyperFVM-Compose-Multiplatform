@@ -1,6 +1,6 @@
 package com.careful.hyperfvm.compose.component.dashboard
 
-import com.careful.hyperfvm.compose.*
+import com.careful.hyperfvm.compose.shared.*
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D

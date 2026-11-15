@@ -1,6 +1,6 @@
 package com.careful.hyperfvm.compose.data.oddsDisclosure
 
-import com.careful.hyperfvm.compose.*
+import com.careful.hyperfvm.compose.shared.*
 
 
 /**

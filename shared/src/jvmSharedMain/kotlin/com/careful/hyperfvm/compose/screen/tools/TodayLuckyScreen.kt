@@ -39,7 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.careful.hyperfvm.compose.Res
+import com.careful.hyperfvm.compose.shared.Res
 import com.careful.hyperfvm.compose.platform.createDataImageDecoder
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.ui.isTabletLayout

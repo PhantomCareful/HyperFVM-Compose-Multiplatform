@@ -2,7 +2,7 @@ package com.careful.hyperfvm.compose.screen.about
 
 import androidx.compose.foundation.lazy.LazyColumn
 import org.jetbrains.compose.resources.DrawableResource
-import com.careful.hyperfvm.compose.*
+import com.careful.hyperfvm.compose.shared.*
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.layout.PaddingValues

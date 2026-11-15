@@ -1,7 +1,7 @@
 package com.careful.hyperfvm.compose.data.cardOdds
 
 import org.jetbrains.compose.resources.DrawableResource
-import com.careful.hyperfvm.compose.*
+import com.careful.hyperfvm.compose.shared.*
 
 import kotlin.collections.get
 

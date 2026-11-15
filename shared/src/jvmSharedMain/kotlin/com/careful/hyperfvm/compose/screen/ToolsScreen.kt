@@ -1,7 +1,7 @@
 package com.careful.hyperfvm.compose.screen
 
 import androidx.compose.foundation.lazy.LazyColumn
-import com.careful.hyperfvm.compose.*
+import com.careful.hyperfvm.compose.shared.*
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues

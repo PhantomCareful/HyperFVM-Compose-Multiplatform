@@ -109,11 +109,14 @@ abstract class CopyComposeResourcesToAssetsTask : DefaultTask() {
 
     @TaskAction
     fun action() {
+        // 拷贝前先清掉上一次的产物：资源包名改动后（比如多加一层 .shared），
+        // 旧目录不会被增量清理，APK 里就会新老两份资源并存、把包撑大一倍。
+        fileSystem.delete { delete(outputDirectory.dir("composeResources")) }
         fileSystem.copy {
             includeEmptyDirs = false
             from(resourcesDir)
             // 前缀就是 shared 里 packageOfResClass 的值，运行时按它拼路径。
-            into(outputDirectory.dir("composeResources/com.careful.hyperfvm.compose"))
+            into(outputDirectory.dir("composeResources/com.careful.hyperfvm.compose.shared"))
         }
     }
 }

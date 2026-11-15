@@ -103,7 +103,7 @@ kotlin {
  */
 compose.resources {
     publicResClass = true
-    packageOfResClass = "com.careful.hyperfvm.compose"
+    packageOfResClass = "com.careful.hyperfvm.compose.shared"
     generateResClass =
         org.jetbrains.compose.resources.ResourcesExtension.ResourceClassGeneration.Always
 }
