@@ -1,0 +1,49 @@
+HyperFVM Compose Multiplatform
+Copyright 2026 Phantom Careful
+
+本项目的源代码以 Apache License, Version 2.0 授权，全文见同目录的 LICENSE 文件。
+项目名称与图标的使用另见第 4 条。
+
+以下内容不属于 Apache-2.0 的授权范围，需要单独取得权利人许可：
+
+1. 游戏素材与第三方图像
+
+   shared/src/commonMain/composeResources/drawable/ 下的 x*.webp、card_data_*、
+   gem_index_*、item_*、lucky_box_*、transfer_box_*、vip_*、weapon_index_* 与
+   star_image_* 等图片，来源于《美食大战老鼠》游戏客户端素材；同目录与 files/
+   下的部分图片、帧序列，来源于贴吧、攻略站等公开网络资源。
+
+   游戏素材的著作权归欢乐互娱及相应权利人所有；来自网络资源的素材，著作权归
+   各自原作者所有。这些内容均不随本项目的 Apache-2.0 许可一并授权，在衍生项目
+   中使用前请自行确认并取得权利人的合法授权。
+
+   app_icon、ic_*.xml 等矢量图标与 HyperFVM.ico 由本项目自行设计绘制，
+   未在上文列明来源的图片如涉及第三方权利，按第 4 条联系处理。
+
+2. Miuix 技能文档
+
+   skill/miuix-skill/ 与 .qoder/skills/miuix/ 整理自 Miuix 项目及其示例，
+   随 Miuix 自身的 Apache-2.0 许可使用。
+
+3. 第三方组件
+
+   以下内容随发行包一同分发，由各自的许可证授权：
+
+   - Kotlin、kotlinx.coroutines、Compose Multiplatform、androidx.*：Apache-2.0
+   - Miuix (top.yukonga.miuix.kmp)：Apache-2.0
+   - Telephoto (me.saket.telephoto)：Apache-2.0
+   - reorderable (sh.calvin.reorderable)：Apache-2.0
+   - JNA (net.java.dev.jna)：LGPL-2.1 / Apache-2.0 双许可
+   - ICU4J (com.ibm.icu)：Unicode License v3
+   - Skiko / Skia (org.jetbrains.skiko，桌面端随包)：Apache-2.0 / BSD-3-Clause
+   - org.json：Public Domain
+   - desktop/installer/ChineseSimplified.isl：Inno Setup License（官方简体中文翻译）
+
+4. 权利主张与联系
+
+   本仓库仅出于非商业目的进行数据展示与社区交流，不销售任何游戏素材，
+   也不代表游戏官方或任何权利人。HyperFVM 的名称与图标不随本许可证授予商标使用权。
+
+   若权利人认为本仓库的某项内容侵犯其权益，请在项目 Issue 区提出：
+   https://github.com/PhantomCareful/HyperFVM-Compose-Multiplatform/issues
+   核实后会尽快移除相关内容。

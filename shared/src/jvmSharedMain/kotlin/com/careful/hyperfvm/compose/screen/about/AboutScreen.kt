@@ -48,6 +48,7 @@ import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
+import com.careful.hyperfvm.compose.component.dialog.OpenSourceLicensesDialog
 import com.careful.hyperfvm.compose.component.dialog.UrlConfirmDialog
 import com.careful.hyperfvm.compose.component.dialog.UrlTarget
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
@@ -286,6 +287,8 @@ private fun AboutContent(
     val navigator = LocalNavigator.current
     // 外链确认框的状态提到列表外面，避免列表项被回收时弹窗一起销毁。
     var pendingUrl by remember { mutableStateOf<UrlTarget?>(null) }
+    // 开源许可弹层同理：内容是从资源读的全文，跟着页面存活就不再重复读盘。
+    var showLicenses by remember { mutableStateOf(false) }
 
     BgEffectBackground(
         // Effect Variant 固定 OS3，Dynamic Background 与 Full Screen Background 固定开启。
@@ -410,6 +413,11 @@ private fun AboutContent(
                                 },
                             )
                             ArrowPreference(
+                                title = "开源许可",
+                                summary = "Apache-2.0 许可证与第三方声明",
+                                onClick = { showLicenses = true },
+                            )
+                            ArrowPreference(
                                 title = "哔哩哔哩",
                                 summary = "获取App最新开发动态",
                                 onClick = {
@@ -455,6 +463,10 @@ private fun AboutContent(
         UrlConfirmDialog(
             target = pendingUrl,
             onDismiss = { pendingUrl = null },
+        )
+        OpenSourceLicensesDialog(
+            show = showLicenses,
+            onDismiss = { showLicenses = false },
         )
     }
 }
