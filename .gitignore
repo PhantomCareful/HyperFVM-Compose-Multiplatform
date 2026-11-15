@@ -1,0 +1,38 @@
+# 构建产物与缓存
+build/
+.gradle/
+.kotlin/
+/captures
+.cxx
+.externalNativeBuild
+*.iml
+
+# 本机配置：包含查黑接口 KEY 与 Inno Setup 安装路径，不入库
+local.properties
+
+# IDE 状态
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+.DS_Store
+
+# 本地参考资料（208 MB：第三方 zip/apk 与解压出来的反编译源码），不入库
+/tool/
+
+# app/src/main/res/drawable 是指向 shared/src/commonMain/composeResources/drawable
+# 的目录联接（junction），只为让 Android 视图与 Resource Manager 能浏览图片。
+# Git 会把链接内容当普通文件收录，导致 1500 多张图重复入库，所以整目录排除；
+# 重新 clone 后需要重建链接：
+#   New-Item -ItemType Junction -Path "app\src\main\res\drawable" `
+#     -Target "<repo>\shared\src\commonMain\composeResources\drawable"
+/app/src/main/res/drawable/
+
+# 签名产物：Build > Generate Signed APK 的输出目录
+/app/release/
+
+# 技能压缩包：文档（skill/miuix-skill/）入库，压缩包不入库
+/skill/miuix-skill.zip

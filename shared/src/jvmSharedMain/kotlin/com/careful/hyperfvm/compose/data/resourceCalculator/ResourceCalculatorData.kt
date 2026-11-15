@@ -1,0 +1,458 @@
+package com.careful.hyperfvm.compose.data.resourceCalculator
+
+import com.careful.hyperfvm.compose.*
+import org.jetbrains.compose.resources.DrawableResource
+
+
+/**
+ * 一个道具输入行的展示信息：label 直接作为输入框标题（TextField 的 With title 样式），
+ * [coinValue] 为该道具折算的储备币数，对应 Java 版 `denominations` 里的同下标项。
+ * Java 版每行左右各有一个 60dp 图标，两图可以不同（月卡 / 豪华礼包行两侧就是不同图案）。
+ */
+data class ResourceField(
+    val label: String,
+    val coinValue: Long,
+    /** 行左侧 60dp 道具图标。 */
+    val leadingIconRes: DrawableResource,
+    /** 行右侧 60dp 道具图标。 */
+    val trailingIconRes: DrawableResource,
+)
+
+/** 一个子页：TabRow 上的标题与该页的输入行表。 */
+data class ResourceSection(
+    val title: String,
+    val fields: List<ResourceField>,
+)
+
+/**
+ * 资源储备计算器的全部静态数据，按 TabRow 顺序分成威望 / 金币 / 礼券 / 魅力币四页。
+ *
+ * 每页的输入行表格式完全相同（见 [ResourceField]），只有标题与各行币值不同：
+ * 金币、礼券、魅力币三页的 [ResourceSection.fields] 暂留空，补齐数据即可，
+ * 界面与计算逻辑不用改（空表时该页只剩说明卡、顶栏副标题算出 0）。
+ */
+internal object ResourceCalculatorData {
+
+    /** 威望页的输入行表，顺序与 Java 版 `activity_prestige_calculator.xml` 一致。 */
+    private val PrestigeFields = listOf(
+        ResourceField(
+            "余额",
+            1,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "1威望币的数量",
+            1,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "5威望币的数量",
+            5,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "10威望币的数量",
+            10,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "50威望币的数量",
+            50,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "100威望币的数量",
+            100,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "200威望币的数量",
+            200,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "500威望币的数量",
+            500,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "1000威望币的数量",
+            1000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "2000威望币的数量",
+            2000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "3000威望币的数量",
+            3000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "4000威望币的数量",
+            4000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "5000威望币的数量",
+            5000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "8000威望币的数量",
+            8000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "10000威望币的数量",
+            10000,
+            Res.drawable.tools_image_prestige_calculator,
+            Res.drawable.tools_image_prestige_calculator,
+        ),
+        ResourceField(
+            "月卡礼包的数量",
+            600,
+            Res.drawable.month_card,
+            Res.drawable.month_card_gift,
+        ),
+        ResourceField(
+            "豪华福利礼包的数量",
+            500,
+            Res.drawable.world_stars,
+            Res.drawable.luxury_welfare_gift,
+        ),
+        ResourceField(
+            "营养套餐A的数量",
+            100,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "营养套餐B的数量",
+            200,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "营养套餐C的数量",
+            200,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "营养套餐D的数量",
+            400,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "营养套餐E的数量",
+            400,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "营养套餐F的数量",
+            500,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "营养套餐G的数量",
+            500,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+    )
+
+    private val GoldCoinFields = listOf(
+        ResourceField(
+            "余额",
+            1,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "100金币的数量",
+            100,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "200金币的数量",
+            200,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "500金币的数量",
+            500,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "1000金币的数量",
+            1000,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "2000金币的数量",
+            2000,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "5000金币的数量",
+            5000,
+            Res.drawable.gold_coin,
+            Res.drawable.gold_coin,
+        ),
+        ResourceField(
+            "月卡礼包的数量",
+            30000,
+            Res.drawable.month_card,
+            Res.drawable.month_card_gift,
+        ),
+        ResourceField(
+            "小金币袋的数量",
+            10000,
+            Res.drawable.small_gold_coin_bag,
+            Res.drawable.small_gold_coin_bag,
+        ),
+        ResourceField(
+            "大金币袋的数量",
+            100000,
+            Res.drawable.big_gold_coin_bag,
+            Res.drawable.big_gold_coin_bag,
+        ),
+    )
+
+    private val VoucherFields = listOf(
+        ResourceField(
+            "余额",
+            1,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "1礼券的数量",
+            1,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "10礼券的数量",
+            10,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "20礼券的数量",
+            20,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "30礼券的数量",
+            30,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "50礼券的数量",
+            50,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "80礼券的数量",
+            80,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "100礼券的数量",
+            100,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "120礼券的数量",
+            120,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "160礼券的数量",
+            160,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "200礼券的数量",
+            200,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "250礼券的数量",
+            250,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "300礼券的数量",
+            300,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "350礼券的数量",
+            350,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "400礼券的数量",
+            400,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "450礼券的数量",
+            450,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "500礼券的数量",
+            500,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "遗迹古券(10礼券)的数量",
+            10,
+            Res.drawable.relic_voucher,
+            Res.drawable.relic_voucher,
+        ),
+        ResourceField(
+            "遗迹古券(20礼券)的数量",
+            20,
+            Res.drawable.relic_voucher,
+            Res.drawable.relic_voucher,
+        ),
+        ResourceField(
+            "遗迹古券(30礼券)的数量",
+            30,
+            Res.drawable.relic_voucher,
+            Res.drawable.relic_voucher,
+        ),
+        ResourceField(
+            "月卡礼包的数量",
+            50,
+            Res.drawable.month_card,
+            Res.drawable.month_card_gift,
+        ),
+        ResourceField(
+            "每日工资VIP13的数量",
+            550,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "每日工资VIP14的数量",
+            600,
+            Res.drawable.bag,
+            Res.drawable.bag,
+        ),
+        ResourceField(
+            "每日工资VIP15的数量",
+            1000,
+            Res.drawable.salary_vip15p,
+            Res.drawable.salary_vip15p,
+        ),
+        ResourceField(
+            "每日工资VIP16的数量",
+            800,
+            Res.drawable.salary_vip15p,
+            Res.drawable.salary_vip15p,
+        ),
+        ResourceField(
+            "100礼券许愿彩礼的数量",
+            100,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "1000礼券许愿彩礼的数量",
+            1000,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+        ResourceField(
+            "5000礼券许愿彩礼的数量",
+            5000,
+            Res.drawable.voucher,
+            Res.drawable.voucher,
+        ),
+    )
+
+    private val CharmFields = listOf(
+        ResourceField(
+            "余额",
+            1,
+            Res.drawable.charm_coin,
+            Res.drawable.charm_coin,
+        ),
+        ResourceField(
+            "10魅力币的数量",
+            10,
+            Res.drawable.charm_coin,
+            Res.drawable.charm_coin,
+        ),
+        ResourceField(
+            "52魅力币的数量",
+            52,
+            Res.drawable.charm_coin,
+            Res.drawable.charm_coin,
+        ),
+        ResourceField(
+            "100魅力币的数量",
+            100,
+            Res.drawable.charm_coin,
+            Res.drawable.charm_coin,
+        ),
+        ResourceField(
+            "豪华福利礼包的数量",
+            10,
+            Res.drawable.world_stars,
+            Res.drawable.luxury_welfare_gift,
+        ),
+    )
+
+    /** TabRow 的四个子页，顺序即 Tab 顺序。 */
+    val sections: List<ResourceSection> = listOf(
+        ResourceSection("威望", PrestigeFields),
+        ResourceSection("金币", GoldCoinFields),
+        ResourceSection("礼券", VoucherFields),
+        ResourceSection("魅力币", CharmFields),
+    )
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FileProvider 的可分享路径：数据图落在 filesDir/data_images 下，
+    公告配图（下载到缓存）落在 cacheDir/announcement 下。
+    查看器的「分享」按钮通过它把本地文件交给外部应用，避免暴露 file:// 路径。
+-->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path
+        name="data_images"
+        path="data_images/" />
+    <cache-path
+        name="announcement"
+        path="announcement/" />
+</paths>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 启动图标底色：直接用框架的 Monet 调色板（墙纸取色），tone 50 保证与白色前景对比度约 4.5:1。
+         系统开启主题图标时改用 monochrome 层，该底色不再生效。 -->
+    <color name="ic_launcher_background">#FF3482FF</color>
+</resources>

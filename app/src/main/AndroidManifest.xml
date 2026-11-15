@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- miuix-blur 声明 minSdk 33；库内所有入口都由 isRuntimeShaderSupported() 兜底，
+         31/32 设备不会走到模糊分支，此处仅用于通过 manifest merger。
+         与 Java 项目处理 fan.miuix 系列 aar 的方式保持一致。 -->
+    <uses-sdk tools:overrideLibrary="top.yukonga.miuix.kmp.blur" />
+
+    <!-- 授权检查页要查询这两项：通知权限的授予状态，以及能否请求安装软件包。 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="android.permission.REQUEST_INSTALL_PACKAGES"
+        tools:ignore="RequestInstallPackagesPolicy" />
+
+    <!-- 实时通知（Live Update / promoted ongoing）的准入：Android 16.1 新增，没有它
+         系统会直接忽略 promoted 请求，通知设置里连「实时通知」开关都不会出现。
+         级别是 normal|appops：声明即自动授予、不需要运行时申请，用户可以自己在
+         通知设置里关掉。36.1 以前的系统没有这个权限定义，声明了也会被忽略。 -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+
+    <!-- 数据图：拉取云端清单、下载图片（前台服务）。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <application
+        android:name=".HyperFVMApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HyperFVMCompose">
+        <!-- uiMode 自己处理：应用内所有颜色都来自 Compose（MiuixTheme），不依赖 values-night
+             资源重载，没必要为了深浅色切换重建 Activity——重建会把返回栈和页面状态一起丢掉。
+             singleTop：下载通知用 CLEAR_TOP | SINGLE_TOP 回到这里时复用已有实例，
+             由 onNewIntent 接住「打开数据图合集」的请求。
+             adjustResize：edge-to-edge 下必须显式声明。默认的 adjustUnspecified 可能
+             被系统选成 adjustPan——键盘弹出时窗口先整体上移一次，miuix 弹窗自己的
+             imePadding 再抬一次，带输入框的弹窗会被顶到异常高的位置（重新输入触发
+             重排后才落回）。miuix example 的 manifest 同样声明了 adjustResize。 -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="uiMode"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.HyperFVMCompose"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 数据图下载：界面上只发起任务，界面退出后由前台服务继续跑完。 -->
+        <service
+            android:name=".data.image.DataImageDownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- 查看器的「分享」用：把 filesDir/data_images 下的图片授权给外部应用。 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.dataimages"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/data_image_file_paths" />
+        </provider>
+    </application>
+
+</manifest>
