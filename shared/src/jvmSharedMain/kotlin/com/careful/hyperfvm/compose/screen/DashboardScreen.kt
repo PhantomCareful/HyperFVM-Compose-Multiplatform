@@ -311,6 +311,9 @@ fun DashboardScreen(outerPadding: PaddingValues) {
         onDismissRequest = {
             // 弹层关掉才算敲定：这时才把关掉的卡片正式排到末尾（见 DashboardPreferences）。
             preferences.settleOrder()
+            // 可见状态得自己复位：miuix 只把点击弹层外、返回手势算作 dismiss，
+            // 不会替调用方改 show，漏掉这行弹层就永远关不上。
+            showCardSheet = false
         },
     ) {
         CardManagementSheet(
@@ -323,7 +326,9 @@ fun DashboardScreen(outerPadding: PaddingValues) {
     DashboardDetailSheet(
         sheet = detailSheet,
         show = showDetailSheet,
-        onDismissRequest = { },
+        // 收起只把 show 置 false：detailSheet 留着给退出动画渲染，
+        // 提前清空会让弹层在半空变成空白再滑走。
+        onDismissRequest = { showDetailSheet = false },
         // 查看器挂在应用根层、盖在弹层之上，所以点图直接打开即可。
         // 弹层保持不动，关掉查看器后正好接着看这页的其它内容。
         onOpenImage = DataImageViewerHost::show,
