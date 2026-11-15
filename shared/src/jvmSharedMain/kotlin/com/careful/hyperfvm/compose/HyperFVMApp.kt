@@ -69,6 +69,7 @@ import com.careful.hyperfvm.compose.screen.dataCenter.fraud.FraudListScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.fraud.IcuFraudScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureIndexScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureInfoScreen
+import com.careful.hyperfvm.compose.screen.meishi.MeishiWechatScreen
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.rememberAppBlurBackdrop
 import com.careful.hyperfvm.compose.ui.shouldExpandNavigationRail
@@ -198,6 +199,8 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
         navigator.push(route)
         pendingRoute.value = null
     }
+    // 从受支持的链接进来：由独立的透明中转页（MeishiLinkReceiverActivity）接手，
+    // 弹层直接浮在来源应用上，不经过本界面。
     val navCornerRadius = rememberNavSystemCornerRadius()
     val backdropColor = MiuixTheme.colorScheme.surface
     val isDark = isInDarkTheme()
@@ -240,6 +243,9 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
                 effects = effects,
             ) {
                 entry<Route.Main>(swipeDismiss = swipeBackDirection) { MainShell() }
+                entry<Route.MeishiWechat>(swipeDismiss = swipeBackDirection) {
+                    MeishiWechatScreen(onBack = { navigator.pop() })
+                }
                 entry<Route.About>(swipeDismiss = swipeBackDirection) { AboutScreen(onBack = { navigator.pop() }) }
                 entry<Route.Announcement>(swipeDismiss = swipeBackDirection) {
                     AnnouncementScreen(onBack = { navigator.pop() })

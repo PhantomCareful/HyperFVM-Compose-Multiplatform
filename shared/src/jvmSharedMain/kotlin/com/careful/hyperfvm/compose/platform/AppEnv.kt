@@ -116,6 +116,13 @@ interface AppEnv {
      */
     fun dismissBackgroundNotification() {}
 
+    /**
+     * 跳系统「默认打开」设置页，让用户可以允许 App 打开受支持的链接。
+     *
+     * 只有 Android 有这个页面；默认返回 false，表示本平台没有这个设置项。
+     */
+    fun openSupportedLinksSettings(): Boolean = false
+
     /** 跟随系统的深色模式；固定浅/深色时由调用方优先处理，不会走到这里。 */
     fun isSystemDark(): Boolean
 }

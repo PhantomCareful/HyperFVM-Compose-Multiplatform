@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.CalendarContract
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -195,6 +196,24 @@ class AndroidAppEnv(context: Context) : AppEnv {
         appContext.getSystemService(NotificationManager::class.java)
             ?.cancel(DataImageDownloadService.NotificationId)
     }
+
+    override fun openSupportedLinksSettings(): Boolean = runCatching {
+        // 不限定 host：域名验证状态读不到，直接把用户丢到这一页自己确认。
+        val intent = Intent(
+            Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
+            "package:${appContext.packageName}".toUri(),
+        )
+        val target = if (intent.resolveActivity(appContext.packageManager) != null) {
+            intent
+        } else {
+            // 部分精简 ROM 没有这个页面，退到应用详情页让用户自己找。
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                "package:${appContext.packageName}".toUri(),
+            )
+        }
+        appContext.startActivity(target.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }.isSuccess
 
     override fun isSystemDark(): Boolean =
         (appContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==

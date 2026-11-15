@@ -14,6 +14,14 @@ sealed interface Route : NavKey {
     /** 主框架：仪表盘 / 防御卡 / 数据中心 / 实用工具 / 设置。 */
     data object Main : Route
 
+    /**
+     * 温馨礼包链接管理页：账号列表、添加链接、礼包清单与使用说明。
+     *
+     * 账号数据存在 [com.careful.hyperfvm.compose.data.meishi.MeishiAccounts] 里，
+     * 路由不带参数；仪表盘卡片的领取结果也直接读同一份状态。
+     */
+    data object MeishiWechat : Route
+
     /** 关于页，同时也是「转场样式」设置的观察入口。 */
     data object About : Route
 
@@ -106,6 +114,7 @@ sealed interface Route : NavKey {
     val id: String
         get() = when (this) {
             Main -> "main"
+            MeishiWechat -> "meishiWechat"
             About -> "about"
             Announcement -> "announcement"
             AnnouncementArchive -> "announcementArchive"
@@ -164,6 +173,7 @@ sealed interface Route : NavKey {
             }
             return when (id) {
                 "main" -> Main
+                "meishiWechat" -> MeishiWechat
                 "about" -> About
                 "announcement" -> Announcement
                 "announcementArchive" -> AnnouncementArchive

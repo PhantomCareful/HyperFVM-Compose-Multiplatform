@@ -95,6 +95,9 @@ private const val ProgressiveBaseAlpha = 1.0f
  * [overlay] 是内容区上方的悬浮层，但**不参与越界回弹位移**：overScrollVertical
  * 会用 placeWithLayer 平移内容，需要绝对固定位置的控件（如目录页的字母索引条）
  * 必须放在这里，否则回弹时会被一起拖动。
+ *
+ * [snackbarHost] 挂在 Scaffold 底部的提示宿主：带 Action 的 Snackbar 走这里，
+ * miuix 会把它抬到底栏 / 导航栏安全区之上。
  */
 @Composable
 fun ScreenScaffold(
@@ -110,6 +113,7 @@ fun ScreenScaffold(
     refreshing: Boolean = false,
     bottomContent: (@Composable () -> Unit)? = null,
     overlay: @Composable BoxScope.(PaddingValues) -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val settings = LocalAppSettings.current
@@ -133,6 +137,7 @@ fun ScreenScaffold(
                     bottomContent = bottomContent,
                 )
             },
+            snackbarHost = snackbarHost,
         ) { innerPadding ->
             val padding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),

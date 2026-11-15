@@ -35,6 +35,13 @@ fun errataCardColors(): CardColors {
     )
 }
 
+/**
+ * 勘误卡的文字色，单独给需要「提醒」语义的地方复用（如弹层里的「删除账号」按钮）。
+ *
+ * 与 [errataCardColors] 的 contentColor 是同一个值，取色处只有这一份。
+ */
+fun errataContentColor(): Color = ErrataContent
+
 /** [ErrataCard] 的默认外边距：左右 12dp、底部 12dp，即页面里卡片之间的标准间距。 */
 val ErrataCardOuterPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp)
 
