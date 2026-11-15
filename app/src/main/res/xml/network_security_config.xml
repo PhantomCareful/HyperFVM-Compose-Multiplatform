@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  温馨礼包的接口（微信公众号-美食中心的角色页与领取接口）只提供 http，域名不在本App手里，
+  升级不了 https。Android 9 起默认禁止明文流量，不带这份配置时请求会直接抛 IOException，
+  界面表现为「网络错误，无法连接服务器」。
+
+  只对这一个域名放开明文，其余流量仍是系统默认的「仅 https」。
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">meishi.wechat.123u.com</domain>
+    </domain-config>
+</network-security-config>
