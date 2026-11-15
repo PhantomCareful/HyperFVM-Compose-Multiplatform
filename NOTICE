@@ -1,0 +1,34 @@
+HyperFVM Compose Multiplatform
+Copyright 2026 Phantom Careful
+
+本项目整体以 Apache License, Version 2.0 授权，全文见同目录的 LICENSE 文件。
+
+以下内容不属于 Apache-2.0 的授权范围，需要单独取得权利人许可：
+
+1. 游戏素材与第三方图像
+
+   shared/src/commonMain/composeResources/drawable/ 下的部分图片、
+   shared/src/commonMain/composeResources/files/ 与 app/src/main/assets/
+   下的帧序列，来源于《梦幻西游》手游客户端素材、游戏内截图或互联网第三方资源。
+   其著作权归网易公司（NetEase）及相应权利人所有。
+
+   本仓库仅出于非商业性的数据展示与社区交流目的引用这些素材，
+   不随本项目的 Apache-2.0 许可一并授权。在衍生项目中使用前，
+   请自行确认并取得权利人的合法授权。
+
+2. Miuix 技能文档
+
+   skill/miuix-skill/ 与 .qoder/skills/miuix/ 整理自 Miuix 项目及其示例，
+   随 Miuix 自身的 Apache-2.0 许可使用。
+
+3. 第三方组件
+
+   以下依赖由各自的许可证授权，发行时需要遵守其 LICENSE：
+
+   - Kotlin、kotlinx.coroutines、Compose Multiplatform、androidx.*   Apache-2.0
+   - Miuix (top.yukonga.miuix.kmp)                                    Apache-2.0
+   - Telephoto (me.saket.telephoto)                                    Apache-2.0
+   - reorderable (sh.calvin.reorderable)                               Apache-2.0
+   - JNA (net.java.dev.jna)                                            LGPL-2.1 / Apache-2.0 双许可
+   - ICU4J (com.ibm.icu)                                               Unicode License v3
+   - org.json                                                          Public Domain
