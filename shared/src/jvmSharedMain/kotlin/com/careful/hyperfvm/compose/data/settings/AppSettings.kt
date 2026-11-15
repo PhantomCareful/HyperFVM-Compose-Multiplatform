@@ -42,6 +42,9 @@ data class AppSettings(
     val useFloatingNavigationBar: Boolean = false,
     /** 选项见 [FloatingBarStyle]：0 默认、2 液态玻璃、4 液态玻璃（Q弹）；外观和名字都由全局「模糊」开关决定。 */
     val floatingNavigationBarStyle: Int = 0,
+    // 安全
+    /** 保护锁：进入温馨礼包链接管理前是否验证指纹 / 锁屏密码；默认关闭，设备没有可用验证手段时这一项不生效。 */
+    val contentBiometricAuth: Boolean = false,
 )
 
 /**
@@ -128,6 +131,7 @@ class SettingsStore(env: AppEnv) {
             navigationBarMode = prefs.getInt(KEY_NAV_MODE, d.navigationBarMode),
             useFloatingNavigationBar = prefs.getBoolean(KEY_NAV_FLOATING, d.useFloatingNavigationBar),
             floatingNavigationBarStyle = prefs.getInt(KEY_NAV_FLOATING_STYLE, d.floatingNavigationBarStyle),
+            contentBiometricAuth = prefs.getBoolean(KEY_BIOMETRIC, d.contentBiometricAuth),
         )
     }
 
@@ -147,6 +151,7 @@ class SettingsStore(env: AppEnv) {
         prefs.putInt(KEY_NAV_MODE, s.navigationBarMode)
         prefs.putBoolean(KEY_NAV_FLOATING, s.useFloatingNavigationBar)
         prefs.putInt(KEY_NAV_FLOATING_STYLE, s.floatingNavigationBarStyle)
+        prefs.putBoolean(KEY_BIOMETRIC, s.contentBiometricAuth)
         prefs.commit()
     }
 
@@ -168,6 +173,14 @@ class SettingsStore(env: AppEnv) {
         private const val KEY_NAV_MODE = "navigationBarMode"
         private const val KEY_NAV_FLOATING = "useFloatingNavigationBar"
         private const val KEY_NAV_FLOATING_STYLE = "floatingNavigationBarStyle"
+
+        /**
+         * 保护锁的存储键。
+         *
+         * 初版用 `contentBiometricAuth` 且默认开启，换键名的同时把默认值改成关闭：
+         * 升级上来的设备（旧键里可能已经写了 true）也会落到新默认，无需额外的迁移分支。
+         */
+        private const val KEY_BIOMETRIC = "protectLock"
 
         /**
          * 只读一次配色模式并换算成「是否深色」，供非 Compose 环境（如查看器的系统栏）使用。

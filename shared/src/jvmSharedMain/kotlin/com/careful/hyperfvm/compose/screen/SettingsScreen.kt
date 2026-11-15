@@ -26,6 +26,7 @@ import com.careful.hyperfvm.compose.data.settings.isLiquidGlassBar
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.isDesktopPlatform
+import com.careful.hyperfvm.compose.platform.rememberBiometricGate
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.theme.KeyColorNames
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
@@ -78,6 +79,8 @@ fun SettingsScreen(outerPadding: PaddingValues) {
     val isWide = isWideLayout()
     val shaderSupported = isRuntimeShaderSupported()
     val monet = settings.colorMode in 3..5
+    // 身份验证能力（指纹 / 锁屏密码）只有 Android 有，桌面端整个「安全」分组不出现。
+    val biometricGate = rememberBiometricGate()
     // 悬浮样式的名字跟着实际外观走：设备不支持着色器时模糊开关不显示、底栏也走非玻璃分支，
     // 名字一并落到「默认 / 滑块」，不会出现「写着液态玻璃、实际是滑块」的错位。
     val blurBottomBar = settings.enableBlur && shaderSupported
@@ -269,6 +272,40 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                         title = "关于HyperFVM",
                         onClick = { navigator.push(Route.About) },
                     )
+                }
+            }
+
+            // 安全分组放在最底部：它只管温馨礼包这一处，不是全局行为。
+            if (!isDesktopPlatform) {
+                item(key = "security") {
+                    SmallTitle("安全")
+                    Card(modifier = Modifier.padding(horizontal = 12.dp)) {
+                        SwitchPreference(
+                            title = "保护锁",
+                            // 文案参考 Java 版，但补上锁屏密码这一条：没有录指纹也能验证。
+                            summary = if (biometricGate.available) {
+                                "管理温馨礼包链接时将通过指纹或锁屏密码验证您的身份"
+                            } else {
+                                "当前设备不支持，请检查设备是否已设置锁屏密码或录入指纹"
+                            },
+                            checked = settings.contentBiometricAuth,
+                            enabled = biometricGate.available,
+                            // 开与关都要先验身份：关掉保护锁本身就是一次降低安全性的操作。
+                            // 取消或验证失败时不动设置，开关也就停在原位。
+                            onCheckedChange = { enabled ->
+                                biometricGate.request(
+                                    title = "保护锁",
+                                    subtitle = if (enabled) {
+                                        "验证您的身份以开启保护锁"
+                                    } else {
+                                        "验证您的身份以关闭保护锁"
+                                    },
+                                ) { passed ->
+                                    if (passed) update { it.copy(contentBiometricAuth = enabled) }
+                                }
+                            },
+                        )
+                    }
                 }
             }
 
