@@ -127,7 +127,8 @@ private suspend fun loadLuckyFrameSequence(): LuckyFrameSequence? =
         val frames = ArrayList<ByteArray>()
         var index = 0
         while (true) {
-            val name = index.toString().padStart(2, '0') + ".webp"
+            // 素材文件名是 f00.webp ~ f27.webp：f 前缀 + 两位帧号。
+            val name = "f" + index.toString().padStart(2, '0') + ".webp"
             val bytes = runCatching {
                 Res.readBytes("$LuckyFrameResourcePrefix/$name")
             }.getOrNull() ?: break

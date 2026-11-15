@@ -3,11 +3,11 @@ package com.careful.hyperfvm.compose.platform
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import java.awt.Rectangle
-import java.io.ByteArrayInputStream
 import java.io.File
 import javax.imageio.ImageIO
 import javax.imageio.ImageReader
 import javax.imageio.stream.ImageInputStream
+import org.jetbrains.skia.Image as SkiaImage
 
 actual fun createDataImageDecoder(): DataImageDecoder = ImageIoDataImageDecoder()
 
@@ -40,14 +40,13 @@ private class ImageIoDataImageDecoder : DataImageDecoder {
         reader.read(0, param)?.toComposeImageBitmap()
     }
 
-    override fun decodeBytes(bytes: ByteArray, sampleSize: Int): ImageBitmap? = withInput(
-        ImageIO.createImageInputStream(ByteArrayInputStream(bytes)),
-    ) { reader ->
-        val param = reader.defaultReadParam
-        val step = sampleSize.coerceAtLeast(1)
-        param.setSourceSubsampling(step, step, 0, 0)
-        reader.read(0, param)?.toComposeImageBitmap()
-    }
+    override fun decodeBytes(bytes: ByteArray, sampleSize: Int): ImageBitmap? = runCatching {
+        // 内存字节不能走 ImageIO：JDK 只带 PNG/JPEG/GIF/BMP 的读器，没有 WebP，
+        // getImageReaders 会直接返回空——今日运势的动图帧就是 WebP，必须交给 Skia，
+        // 和 CMP 解码 drawable 用的是同一套原生解码器。
+        // sampleSize 目前只有动图帧调用（300×350，固定传 1），暂不做降采样。
+        SkiaImage.makeFromEncoded(bytes).toComposeImageBitmap()
+    }.getOrNull()
 
     /**
      * 打开读器并保证释放：`ImageReader` 与 `ImageInputStream` 都持有文件句柄，
