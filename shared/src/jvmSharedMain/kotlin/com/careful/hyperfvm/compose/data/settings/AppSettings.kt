@@ -18,6 +18,9 @@ import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_MONET_LIGHT
  * 否则重启后会静默回到默认值。
  */
 data class AppSettings(
+    // 窗口（仅桌面端生效）
+    /** 点窗口关闭按钮时的行为，取值见 [CloseAction]；Android 端不使用。 */
+    val closeAction: Int = CloseAction.MinimizeToTray,
     // 外观
     val colorMode: Int = 0,
     val keyColorIndex: Int = 0,
@@ -40,6 +43,17 @@ data class AppSettings(
     /** 选项见 [FloatingBarStyle]：0 默认、2 液态玻璃、4 液态玻璃（Q弹）；外观和名字都由全局「模糊」开关决定。 */
     val floatingNavigationBarStyle: Int = 0,
 )
+
+/**
+ * 桌面端点窗口关闭按钮时的行为。
+ *
+ * 默认收回托盘：桌面端没有系统管家托住进程，误点关闭不该把后台任务一起丢掉；
+ * 想要「点叉即退出」的用户可以在设置里切成 [Exit]。
+ */
+object CloseAction {
+    const val MinimizeToTray = 0
+    const val Exit = 1
+}
 
 /**
  * 悬浮底栏样式的持久化编号。
@@ -99,6 +113,7 @@ class SettingsStore(env: AppEnv) {
     private fun read(): AppSettings {
         val d = AppSettings()
         return AppSettings(
+            closeAction = prefs.getInt(KEY_CLOSE_ACTION, d.closeAction),
             colorMode = prefs.getInt(KEY_COLOR_MODE, d.colorMode),
             keyColorIndex = prefs.getInt(KEY_KEY_COLOR, d.keyColorIndex),
             paletteStyle = prefs.getInt(KEY_PALETTE_STYLE, d.paletteStyle),
@@ -117,6 +132,7 @@ class SettingsStore(env: AppEnv) {
     }
 
     private fun write(s: AppSettings) {
+        prefs.putInt(KEY_CLOSE_ACTION, s.closeAction)
         prefs.putInt(KEY_COLOR_MODE, s.colorMode)
         prefs.putInt(KEY_KEY_COLOR, s.keyColorIndex)
         prefs.putInt(KEY_PALETTE_STYLE, s.paletteStyle)
@@ -137,6 +153,7 @@ class SettingsStore(env: AppEnv) {
     companion object {
         private const val PREFS_NAME = "hyperfvm_settings"
 
+        private const val KEY_CLOSE_ACTION = "closeAction"
         private const val KEY_COLOR_MODE = "colorMode"
         private const val KEY_KEY_COLOR = "keyColorIndex"
         private const val KEY_PALETTE_STYLE = "paletteStyle"

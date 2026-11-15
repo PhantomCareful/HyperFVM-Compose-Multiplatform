@@ -25,6 +25,7 @@ import com.careful.hyperfvm.compose.data.settings.LocalUpdateSettings
 import com.careful.hyperfvm.compose.data.settings.isLiquidGlassBar
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
+import com.careful.hyperfvm.compose.platform.isDesktopPlatform
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.theme.KeyColorNames
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
@@ -63,6 +64,8 @@ private val FloatingBarStyleNamesBlurred = listOf("高光描边", "液态玻璃�
 private val FloatingBarStyleValuesBlurred =
     listOf(FloatingBarStyle.Default, FloatingBarStyle.LiquidGlass, FloatingBarStyle.BouncyGlass)
 private val PagerGestureOptions = listOf("默认", "跨轴拦截", "iOS 风格")
+/** 下标与 [com.careful.hyperfvm.compose.data.settings.CloseAction] 对应。 */
+private val CloseActionOptions = listOf("最小化至托盘", "直接退出")
 
 /** 转场样式名称，下标与 [com.careful.hyperfvm.compose.data.settings.AppSettings.navTransitionStyle] 对应。 */
 internal val NavTransitionStyleNames = listOf("默认", "安卓原生")
@@ -95,13 +98,31 @@ fun SettingsScreen(outerPadding: PaddingValues) {
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
         ) {
-            item(key = "permission") {
-                Card(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
-                    ArrowPreference(
-                        title = "授权检查",
-                        summary = "授予必要的权限以使用App的完整功能",
-                        onClick = { navigator.push(Route.Permission) },
-                    )
+            // 窗口行为是桌面端专属：Android 没有「点关闭按钮」这个动作。
+            if (isDesktopPlatform) {
+                item(key = "closeAction") {
+                    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
+                        OverlayDropdownPreference(
+                            title = "关闭软件时",
+                            summary = "点窗口右上角关闭按钮时的行为",
+                            items = CloseActionOptions,
+                            selectedIndex = settings.closeAction,
+                            onSelectedIndexChange = { index -> update { it.copy(closeAction = index) } },
+                        )
+                    }
+                }
+            }
+
+            // 授权检查（通知/安装/受支持链接/剪贴板）是 Android 专属，桌面端没有这些系统入口。
+            if (!isDesktopPlatform) {
+                item(key = "permission") {
+                    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
+                        ArrowPreference(
+                            title = "授权检查",
+                            summary = "授予必要的权限以使用App的完整功能",
+                            onClick = { navigator.push(Route.Permission) },
+                        )
+                    }
                 }
             }
 

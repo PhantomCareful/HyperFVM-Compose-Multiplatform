@@ -14,6 +14,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.careful.hyperfvm.compose.HyperFVMApp
+import com.careful.hyperfvm.compose.data.settings.CloseAction
 import com.careful.hyperfvm.compose.data.settings.SettingsStore
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.DesktopAppEnv
@@ -80,7 +81,15 @@ fun main() {
         )
 
         Window(
-            onCloseRequest = { windowVisible = false },
+            // 关闭按钮的行为由设置决定：默认收回托盘继续跑（桌面端没有系统管家托住进程），
+            // 选「直接退出」才结束进程。托盘菜单里的「退出」始终直接退出，不受这个设置影响。
+            onCloseRequest = {
+                if (store.settings.closeAction == CloseAction.Exit) {
+                    exitApplication()
+                } else {
+                    windowVisible = false
+                }
+            },
             state = windowState,
             visible = windowVisible,
             title = "HyperFVM",
