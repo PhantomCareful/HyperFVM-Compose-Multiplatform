@@ -87,7 +87,9 @@ class MainActivity : ComponentActivity() {
 
     /** 把外部入口的 Intent 翻译成一次导航请求。 */
     private fun applyRouteRequest(intent: Intent?) {
-        if (intent?.getBooleanExtra(AppLaunchTarget.ExtraOpenDataImages, false) != true) return
+        if (intent == null) return
+
+        if (intent.getBooleanExtra(AppLaunchTarget.ExtraOpenDataImages, false) != true) return
         // 点通知即视为已读：撤下完成态通知。
         // 任务还在跑时不动手——那条是前台服务的进度通知，撤了服务就没法继续更新。
         if (!DataImageDownloadController.state.value.isActive) {
