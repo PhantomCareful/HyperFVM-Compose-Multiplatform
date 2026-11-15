@@ -10,6 +10,10 @@ gradlew.bat text eol=crlf
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
 
+# 许可证文本保持 LF（与官方发布版一致，便于逐字节比对）
+/LICENSE text eol=lf
+/NOTICE text eol=lf
+
 # 二进制：不做换行转换与 diff
 *.ico binary
 *.webp binary
