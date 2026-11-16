@@ -110,7 +110,7 @@ private const val OpenIdWarning = "请妥善保管好您的openid，不要泄露
 /**
  * 温馨礼包链接管理页：账号列表、添加链接、礼包清单与使用说明。
  *
- * 指纹 / 锁屏密码在进入本页之前就已经验证过（见仪表盘的入口）；页内只有「删除账号」
+ * 身份验证在进入本页之前就已经做过（见仪表盘的入口）；页内只有「删除账号」
  * 会再验一次：删掉一个账号就少一份自动领取，算不可逆操作。备份与还原暂未迁移。
  */
 @Composable
@@ -170,7 +170,7 @@ fun MeishiWechatScreen(onBack: () -> Unit) {
         if (settings.contentBiometricAuth && biometricGate.available) {
             biometricGate.request(
                 title = "确保那是你",
-                subtitle = "验证指纹或锁屏密码以删除账号",
+                subtitle = "验证您的身份以删除账号",
             ) { ok -> if (ok) perform() }
         } else {
             perform()

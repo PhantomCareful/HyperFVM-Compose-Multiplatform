@@ -221,7 +221,7 @@ fun DashboardScreen(outerPadding: PaddingValues) {
         if (settings.contentBiometricAuth && biometricGate.available) {
             biometricGate.request(
                 title = "确保那是你",
-                subtitle = "验证指纹或锁屏密码以继续操作",
+                subtitle = "验证您的身份以继续操作",
             ) { ok ->
                 if (ok) navigator.push(Route.MeishiWechat)
             }

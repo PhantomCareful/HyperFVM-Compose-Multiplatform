@@ -43,7 +43,7 @@ data class AppSettings(
     /** 选项见 [FloatingBarStyle]：0 默认、2 液态玻璃、4 液态玻璃（Q弹）；外观和名字都由全局「模糊」开关决定。 */
     val floatingNavigationBarStyle: Int = 0,
     // 安全
-    /** 保护锁：进入温馨礼包链接管理前是否验证指纹 / 锁屏密码；默认关闭，设备没有可用验证手段时这一项不生效。 */
+    /** 保护锁：进入温馨礼包链接管理前是否先验证身份；默认关闭，设备没有可用验证手段时这一项不生效。 */
     val contentBiometricAuth: Boolean = false,
 )
 

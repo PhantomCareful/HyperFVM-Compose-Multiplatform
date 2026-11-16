@@ -92,6 +92,9 @@ kotlin {
                 // withContext(Dispatchers.Main.immediate) 回主线程发布状态，缺了会直接抛
                 // 「Module with the Main dispatcher had failed to initialize」。
                 implementation(libs.kotlinx.coroutines.swing)
+                // Windows Hello 的 WinRT 互操作：RoGetActivationFactory + 手工 vtable 调用，
+                // 只在这个源集里用（Android 侧走系统 BiometricPrompt）。
+                implementation(libs.jna)
             }
         }
     }

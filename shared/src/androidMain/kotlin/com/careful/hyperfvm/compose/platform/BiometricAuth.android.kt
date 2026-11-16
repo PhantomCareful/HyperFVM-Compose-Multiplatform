@@ -29,6 +29,9 @@ private class AndroidBiometricGate(context: Context) : BiometricGate {
     /** 平台 BiometricPrompt 要求能启动系统界面的 Context，applicationContext 会直接抛异常。 */
     private val activity: Activity? = context.findActivity()
 
+    /** 系统面板里可选的两条路，文案也照这个说。 */
+    override val credentialName: String = "指纹或锁屏密码"
+
     /**
      * 有锁屏密码就当作可用。
      *

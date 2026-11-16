@@ -79,7 +79,8 @@ fun SettingsScreen(outerPadding: PaddingValues) {
     val isWide = isWideLayout()
     val shaderSupported = isRuntimeShaderSupported()
     val monet = settings.colorMode in 3..5
-    // 身份验证能力（指纹 / 锁屏密码）只有 Android 有，桌面端整个「安全」分组不出现。
+    // 验证能力两端都有（Android 是指纹 / 锁屏密码，Windows 是 Hello）；
+    // 桌面端探测是异步的，拿到能力之前安全分组先不画。
     val biometricGate = rememberBiometricGate()
     // 悬浮样式的名字跟着实际外观走：设备不支持着色器时模糊开关不显示、底栏也走非玻璃分支，
     // 名字一并落到「默认 / 滑块」，不会出现「写着液态玻璃、实际是滑块」的错位。
@@ -266,27 +267,20 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                 }
             }
 
-            item(key = "navigation") {
-                Card(modifier = Modifier.padding(horizontal = 12.dp)) {
-                    ArrowPreference(
-                        title = "关于HyperFVM",
-                        onClick = { navigator.push(Route.About) },
-                    )
-                }
-            }
-
             // 安全分组放在最底部：它只管温馨礼包这一处，不是全局行为。
-            if (!isDesktopPlatform) {
+            // Android 恒显示（不可用时就地说明原因）；桌面端只有 Hello 真的可用时才出现。
+            if (!isDesktopPlatform || biometricGate.available) {
                 item(key = "security") {
                     SmallTitle("安全")
-                    Card(modifier = Modifier.padding(horizontal = 12.dp)) {
+                    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
                         SwitchPreference(
                             title = "保护锁",
-                            // 文案参考 Java 版，但补上锁屏密码这一条：没有录指纹也能验证。
+                            // 文案参考 Java 版；两端的验证手段叫法不同（Android 是指纹或锁屏密码，
+                            // Windows 是 Hello），让实现自己报名字，界面不按平台分支。
                             summary = if (biometricGate.available) {
-                                "管理温馨礼包链接时将通过指纹或锁屏密码验证您的身份"
+                                "管理温馨礼包链接时将通过${biometricGate.credentialName}验证您的身份"
                             } else {
-                                "当前设备不支持，请检查设备是否已设置锁屏密码或录入指纹"
+                                "当前设备不支持，请先在系统设置里配置${biometricGate.credentialName}"
                             },
                             checked = settings.contentBiometricAuth,
                             enabled = biometricGate.available,
@@ -306,6 +300,15 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                             },
                         )
                     }
+                }
+            }
+
+            item(key = "about") {
+                Card(modifier = Modifier.padding(horizontal = 12.dp)) {
+                    ArrowPreference(
+                        title = "关于HyperFVM",
+                        onClick = { navigator.push(Route.About) },
+                    )
                 }
             }
 
