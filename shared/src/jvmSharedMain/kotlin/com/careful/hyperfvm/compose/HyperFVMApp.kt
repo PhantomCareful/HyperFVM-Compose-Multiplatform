@@ -70,6 +70,7 @@ import com.careful.hyperfvm.compose.screen.dataCenter.fraud.IcuFraudScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureIndexScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureInfoScreen
 import com.careful.hyperfvm.compose.screen.meishi.MeishiWechatScreen
+import com.careful.hyperfvm.compose.screen.notification.NotificationInboxScreen
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.rememberAppBlurBackdrop
 import com.careful.hyperfvm.compose.ui.shouldExpandNavigationRail
@@ -245,6 +246,9 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
                 entry<Route.Main>(swipeDismiss = swipeBackDirection) { MainShell() }
                 entry<Route.MeishiWechat>(swipeDismiss = swipeBackDirection) {
                     MeishiWechatScreen(onBack = { navigator.pop() })
+                }
+                entry<Route.NotificationInbox>(swipeDismiss = swipeBackDirection) {
+                    NotificationInboxScreen(onBack = { navigator.pop() })
                 }
                 entry<Route.About>(swipeDismiss = swipeBackDirection) { AboutScreen(onBack = { navigator.pop() }) }
                 entry<Route.Announcement>(swipeDismiss = swipeBackDirection) {

@@ -22,6 +22,14 @@ sealed interface Route : NavKey {
      */
     data object MeishiWechat : Route
 
+    /**
+     * 收件箱：云端通知的本地存档，入口在仪表盘顶栏左上角。
+     *
+     * 列表全部来自 [com.careful.hyperfvm.compose.data.notification.NotificationRepository]，
+     * 路由不带参数；收件发生在启动与仪表盘刷新时，不在本页。
+     */
+    data object NotificationInbox : Route
+
     /** 关于页，同时也是「转场样式」设置的观察入口。 */
     data object About : Route
 
@@ -115,6 +123,7 @@ sealed interface Route : NavKey {
         get() = when (this) {
             Main -> "main"
             MeishiWechat -> "meishiWechat"
+            NotificationInbox -> "notificationInbox"
             About -> "about"
             Announcement -> "announcement"
             AnnouncementArchive -> "announcementArchive"
@@ -174,6 +183,7 @@ sealed interface Route : NavKey {
             return when (id) {
                 "main" -> Main
                 "meishiWechat" -> MeishiWechat
+                "notificationInbox" -> NotificationInbox
                 "about" -> About
                 "announcement" -> Announcement
                 "announcementArchive" -> AnnouncementArchive

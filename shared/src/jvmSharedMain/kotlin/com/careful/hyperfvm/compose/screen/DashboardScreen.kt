@@ -43,6 +43,7 @@ import com.careful.hyperfvm.compose.data.dashboard.DashboardStatus
 import com.careful.hyperfvm.compose.data.dashboard.isMonthEnd
 import com.careful.hyperfvm.compose.data.dashboard.isVisible
 import com.careful.hyperfvm.compose.data.dashboard.token
+import com.careful.hyperfvm.compose.data.notification.NotificationRepository
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
@@ -55,6 +56,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import top.yukonga.miuix.kmp.basic.Badge
+import top.yukonga.miuix.kmp.basic.BadgedBox
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
@@ -62,9 +65,11 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.PullToRefresh
 import top.yukonga.miuix.kmp.basic.RichTooltipBox
+import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.rememberPullToRefreshState
 import top.yukonga.miuix.kmp.basic.rememberTooltipState
 import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Email
 import top.yukonga.miuix.kmp.icon.extended.Info
 import top.yukonga.miuix.kmp.icon.extended.Tune
 import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
@@ -164,8 +169,12 @@ fun DashboardScreen(outerPadding: PaddingValues) {
     LaunchedEffect(reloadToken) {
         // 进页面时的自动刷新也走这条协程，靠这个标记区分是不是手动下拉。
         val manual = refreshing
+        // 收件箱的存档先读出来：顶栏角标靠它算条数，切回本页时也照样是现成的。
+        NotificationRepository.ensureLoaded(env)
         // 只有两种刷新：本次进程的头一回，和用户手动下拉。切页重建不该再请求一次。
         if (!manual && LaunchRefresh.done) return@LaunchedEffect
+        // 收件与仪表盘数据并行：收件自己兜底，慢或失败都不影响卡片。
+        launch { NotificationRepository.refresh(env) }
         val startedAt = System.currentTimeMillis()
         val result = try {
             DashboardRepository.refresh(env)
@@ -234,6 +243,24 @@ fun DashboardScreen(outerPadding: PaddingValues) {
         title = "仪表盘",
         outerPadding = outerPadding,
         scrollBehavior = scrollBehavior,
+        // 左上角是收件箱入口：有新通知时套一层角标，数字是「上次看过之后又到了几条」。
+        navigationIcon = {
+            val newNotifications = NotificationRepository.newCount
+            BadgedBox(
+                badge = {
+                    if (newNotifications > 0) {
+                        Badge {
+                            // Badge 已经把文字样式换成 footnote2 并供给内容色，这里不再覆盖。
+                            Text(text = if (newNotifications > 99) "99+" else "$newNotifications")
+                        }
+                    }
+                },
+            ) {
+                IconButton(onClick = { navigator.push(Route.NotificationInbox) }) {
+                    Icon(imageVector = MiuixIcons.Email, contentDescription = "收件箱")
+                }
+            }
+        },
         // 顶栏的滚动连接交给 PullToRefresh 统一编排，两边都挂会让折叠速度翻倍。
         attachScrollBehavior = false,
         // 桌面端没有下拉手势，刷新入口挂在顶栏右侧的按钮上。

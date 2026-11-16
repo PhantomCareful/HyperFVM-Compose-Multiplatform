@@ -74,6 +74,9 @@ private const val ProgressiveBaseAlpha = 1.0f
  *
  * [onBack] 非 null 时顶栏左侧渲染返回按钮（二级页面用）。
  *
+ * [navigationIcon] 是返回按钮之外的自定义左上角槽位（如仪表盘的收件箱入口）；
+ * 两者都给时返回按钮优先——它承载的是「退出当前页」，不该被别的东西顶掉。
+ *
  * [compactTitle] 为 true 时顶栏固定用小标题样式：内容不滚动的页面用，
  * 大标题永远不会折叠成小标题，直接用收起后的形态。
  *
@@ -106,6 +109,7 @@ fun ScreenScaffold(
     subtitle: String = "",
     compactTitle: Boolean = false,
     onBack: (() -> Unit)? = null,
+    navigationIcon: (@Composable () -> Unit)? = null,
     scrollBehavior: ScrollBehavior = MiuixScrollBehavior(),
     attachScrollBehavior: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
@@ -131,6 +135,7 @@ fun ScreenScaffold(
                     compactTitle = compactTitle,
                     scrollBehavior = scrollBehavior,
                     onBack = onBack,
+                    leadingIcon = navigationIcon,
                     actions = actions,
                     onRefresh = onRefresh,
                     refreshing = refreshing,
@@ -187,6 +192,7 @@ private fun BlurredTopAppBar(
     compactTitle: Boolean,
     scrollBehavior: ScrollBehavior,
     onBack: (() -> Unit)?,
+    leadingIcon: (@Composable () -> Unit)?,
     actions: @Composable RowScope.() -> Unit,
     onRefresh: (() -> Unit)?,
     refreshing: Boolean,
@@ -209,6 +215,8 @@ private fun BlurredTopAppBar(
                     contentDescription = "返回",
                 )
             }
+        } else if (leadingIcon != null) {
+            leadingIcon()
         }
     }
 
