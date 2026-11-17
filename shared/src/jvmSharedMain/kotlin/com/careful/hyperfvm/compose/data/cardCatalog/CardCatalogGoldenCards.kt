@@ -87,6 +87,12 @@ internal val GoldenCards: List<DefenseCard> = listOf(
         CardForm("至尊海洋女神", Res.drawable.x1139065d),
     ),
     DefenseCard(
+        CardForm("阿斯特神使", Res.drawable.x1139068a),
+        CardForm("阿斯特圣神", Res.drawable.x1139068b),
+        CardForm("星轨神·阿斯特", Res.drawable.x1139068c),
+        CardForm("至尊星轨神", Res.drawable.x1139068d),
+    ),
+    DefenseCard(
         CardForm("阿波罗神使", Res.drawable.x1111005a),
         CardForm("阿波罗圣神", Res.drawable.x1111005b),
         CardForm("太阳神·阿波罗", Res.drawable.x1111005c),
