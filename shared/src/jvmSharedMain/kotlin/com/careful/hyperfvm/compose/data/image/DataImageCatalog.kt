@@ -53,6 +53,7 @@ private val TiramisuImages = listOf(
     DataImageEntry("tiramisu_image_1_6", "婚礼服装图", tiramisuTip("/婚礼"), "氪金活动类"),
     DataImageEntry("tiramisu_image_1_7", "假期兑换图", tiramisuTip("/假期"), "氪金活动类"),
     DataImageEntry("tiramisu_image_2_1", "三岛兑换图", tiramisuTip("/三岛"), "游戏资料类"),
+    DataImageEntry("tiramisu_image_2_6", "施肥兑换图", tiramisuTip("/施肥"), "游戏资料类"),
     DataImageEntry("tiramisu_image_2_2", "悬赏声望图", tiramisuTip("/声望"), "游戏资料类"),
     DataImageEntry("tiramisu_image_2_3", "大赛奖励图", tiramisuTip("/大赛"), "游戏资料类"),
     // 云端大赛任务图还有 2–4 号，那三张只给 Java 版的旧入口用；Compose 版只挂 1 号，

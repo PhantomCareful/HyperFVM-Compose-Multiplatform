@@ -162,6 +162,8 @@ internal object DashboardGameSources {
                 id = DashboardCardId.Fertilization,
                 status = status,
                 times = timesOf(start, end),
+                // 弹层底部的施肥兑换图，图上是对应各档位能换到的东西。
+                images = listOf("tiramisu_image_2_6"),
             )
             mapOf(DashboardCardId.Fertilization to entry)
         } catch (_: Exception) {
