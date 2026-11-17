@@ -1,9 +1,14 @@
 package com.careful.hyperfvm.compose.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.careful.hyperfvm.compose.component.dashboard.DashboardDataImageUpdateCard
 import com.careful.hyperfvm.compose.component.dashboard.DashboardDetailSheet
 import com.careful.hyperfvm.compose.component.dashboard.DashboardGiftPairRow
+import com.careful.hyperfvm.compose.component.dashboard.DashboardMonthEndCard
 import com.careful.hyperfvm.compose.component.dashboard.DashboardStatusCard
 import com.careful.hyperfvm.compose.component.dialog.openUrl
 import com.careful.hyperfvm.compose.component.imageviewer.DataImageViewerHost
@@ -43,6 +50,7 @@ import com.careful.hyperfvm.compose.data.dashboard.DashboardStatus
 import com.careful.hyperfvm.compose.data.dashboard.isMonthEnd
 import com.careful.hyperfvm.compose.data.dashboard.isVisible
 import com.careful.hyperfvm.compose.data.dashboard.token
+import com.careful.hyperfvm.compose.data.image.DataImageUpdateChecker
 import com.careful.hyperfvm.compose.data.notification.NotificationRepository
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
@@ -50,6 +58,7 @@ import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.platform.isDesktopPlatform
+import com.careful.hyperfvm.compose.platform.rememberAppResumeTick
 import com.careful.hyperfvm.compose.platform.rememberBiometricGate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
@@ -112,6 +121,13 @@ private const val MinRefreshVisibleMillis = 700L
 /** 进度条的「喷出」：定长一喷到底，用减速曲线收尾，不走弹簧所以不会回弹过冲。 */
 private val ProgressRevealSpec = tween<Float>(durationMillis = 450, easing = LinearOutSlowInEasing)
 
+/** 数据图更新提示卡的展开 / 收起时长，与弹层里那些展开动画同量级。 */
+private const val DataImageUpdateRevealMillis = 220
+private const val DataImageUpdateHideMillis = 160
+
+/** 数据图更新提示卡在 LazyColumn 里的 key。 */
+private const val DataImageUpdateCardKey = "dashboardDataImageUpdate"
+
 /**
  * 本次进程里首屏那次「自动刷新 + 进度条喷出」是否已经做过。
  * 底栏是 HorizontalPager，切到别的页面再切回来，DashboardScreen 会整页重建，
@@ -128,6 +144,9 @@ private object LaunchRefresh {
  *
  * 卡片右侧是状态文案（暂无 / 即将开启 / 12/21 等）；点开卡片弹通用详情
  * （时间行、返场卡片名单、场次与底部按钮），抢红包在今日开启时改为弹提示。
+ *
+ * 列表顶部另有两张不参与排序的卡：数据图有新版本时的更新提示（回到本页时
+ * 才检查，不跟下拉刷新走），以及每月最后一天的月末提醒。
  */
 @Composable
 fun DashboardScreen(outerPadding: PaddingValues) {
@@ -205,6 +224,26 @@ fun DashboardScreen(outerPadding: PaddingValues) {
             // 数据已经落位，接着从 0 喷到目标宽度。
             progressReveal.animateTo(targetValue = 1f, animationSpec = ProgressRevealSpec)
         }
+    }
+
+    // 数据图有没有新版本：只在「重新回到仪表盘」时查一次，不跟下拉刷新走。
+    // 三个时机覆盖了同一种语义：进页面、App 回到前台（resumeTick）、
+    // 从二级页返回（栈顶回到 Main，数据图下载完回来正好靠它把卡收掉）。
+    var dataImageUpdate by remember { mutableStateOf(false) }
+    val resumeTick = rememberAppResumeTick()
+    val atDashboard = navigator.current() == Route.Main
+    LaunchedEffect(atDashboard, resumeTick) {
+        // 压栈去二级页时不动：那会儿人已经不在仪表盘，等返回再查。
+        if (!atDashboard) return@LaunchedEffect
+        // 失败保留上一次的结果：不为一次网络抖动把已经亮着的卡收掉。
+        val hasNew = try {
+            DataImageUpdateChecker.hasNewVersion(env)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            null
+        }
+        if (hasNew != null) dataImageUpdate = hasNew
     }
 
     val monthEnd = isMonthEnd()
@@ -307,6 +346,25 @@ fun DashboardScreen(outerPadding: PaddingValues) {
                     bottom = padding.calculateBottomPadding() + 12.dp,
                 ),
             ) {
+                // 数据图有新版本时的提示卡：固定在月末提醒之上，不参与拖动排序，
+                // 也不进「卡片管理」——它是条件出现的提醒，不是常驻卡片。
+                item(key = DataImageUpdateCardKey) {
+                    AnimatedVisibility(
+                        visible = dataImageUpdate,
+                        enter = expandVertically(animationSpec = tween(DataImageUpdateRevealMillis)) +
+                            fadeIn(animationSpec = tween(DataImageUpdateRevealMillis)),
+                        exit = shrinkVertically(animationSpec = tween(DataImageUpdateHideMillis)) +
+                            fadeOut(animationSpec = tween(DataImageUpdateHideMillis)),
+                    ) {
+                        DashboardDataImageUpdateCard(
+                            // 和数据中心里那个入口去的是同一页，返回后还停在这里。
+                            onClick = { navigator.push(Route.DataImages) },
+                            modifier = Modifier
+                                .padding(horizontal = CardSidePadding)
+                                .padding(bottom = CardGap),
+                        )
+                    }
+                }
                 // 成对的行永远显示，所以列表不会空，不用再准备「全部隐藏」的占位。
                 items(items = visibleSlots, key = { it.token }) { slot ->
                     ReorderableItem(state = reorderableState, key = slot.token) { _ ->
@@ -418,6 +476,12 @@ private fun DashboardSlotRow(
 
         is DashboardSlot.Single -> {
             val id = slot.id
+            // 月末提醒是整卡一段固定文案（同 Java 版），没有详情弹层，
+            // 也不该因为数据源没返回它而落到「获取失败」。
+            if (id == DashboardCardId.MonthEnd) {
+                DashboardMonthEndCard(modifier = modifier)
+                return
+            }
             val entry = entryOf(id, entries, loaded)
             val sheet = entry.sheet
             val todayTip = sheet?.todayTip

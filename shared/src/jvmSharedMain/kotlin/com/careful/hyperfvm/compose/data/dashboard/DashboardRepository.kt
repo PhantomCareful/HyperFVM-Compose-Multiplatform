@@ -12,15 +12,13 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 /**
- * 仪表盘数据仓库：五个网络源并行拉取，加上两张纯本地卡片，合并成 id → 状态 的表。
+ * 仪表盘数据仓库：五个网络源并行拉取，加上每日签到这张纯本地卡片，合并成 id → 状态 的表。
  *
  * 每个源自己兜底（失败只是它对应的几张卡缺项），所以这里不需要 try：
- * 缺项由界面按 [DashboardStatus.Failed] 显示。
+ * 缺项由界面按 [DashboardStatus.Failed] 显示。月末提醒不在这里：它是一句固定文案，
+ * 由卡片自己带着（同 Java 版）。
  */
 object DashboardRepository {
-
-    /** 月末提醒卡的文案，同 Java 版 `text_dashboard_last_day_of_month`（去掉「月末了，」前缀）。 */
-    private const val MonthEndText = "请注意清空积分和金券"
 
     /** 每日签到满 25 天后的状态，带状态卡绿底。 */
     private const val CheckInClaimable = "可以领奖"
@@ -57,7 +55,6 @@ object DashboardRepository {
             val result = LinkedHashMap<DashboardCardId, DashboardEntry>()
             sources.forEach(result::putAll)
             result[DashboardCardId.DailyCheckIn] = dailyCheckIn()
-            if (isMonthEnd()) result[DashboardCardId.MonthEnd] = DashboardEntry(MonthEndText)
             result
         }
         cache = merged

@@ -69,7 +69,12 @@ internal object DashboardGitSource {
             "日氪" -> DashboardCardId.DailyRecharge to dailyRecharge(item)
             "助人为乐" -> DashboardCardId.CrossServerTeamUp to generic(DashboardCardId.CrossServerTeamUp, item)
             "营地任务" -> DashboardCardId.CampTask to campTask(item)
-            "豪华婚礼" -> DashboardCardId.WeddingDiscount to generic(DashboardCardId.WeddingDiscount, item)
+            "豪华婚礼" -> DashboardCardId.WeddingDiscount to generic(
+                id = DashboardCardId.WeddingDiscount,
+                item = item,
+                // Java 版弹窗里的「查看米鼠的图」对应的就是这张婚礼服装图。
+                images = listOf("tiramisu_image_1_6"),
+            )
             "结晶打折" -> DashboardCardId.CryStoneDiscount to generic(DashboardCardId.CryStoneDiscount, item)
             "世界BOSS" -> DashboardCardId.WorldBoss to worldBoss(item)
             // App 通知及其它本轮不迁移的条目。
@@ -81,8 +86,14 @@ internal object DashboardGitSource {
      *
      * 结束当天过了 10 点就当活动结束 —— Java 版这条规则对日氪和世界BOSS 也不适用，
      * 所以这两张卡各自单独实现。
+     *
+     * [images] 是弹层里「米鼠的图」的文件名，目前只有豪华婚礼带一张婚礼服装图。
      */
-    private fun generic(id: DashboardCardId, item: JSONObject): DashboardEntry {
+    private fun generic(
+        id: DashboardCardId,
+        item: JSONObject,
+        images: List<String> = emptyList(),
+    ): DashboardEntry {
         val (today, start, end) = range(item)
         val status = when {
             today.isBefore(start) -> "即将开始"
@@ -90,7 +101,12 @@ internal object DashboardGitSource {
             today == end && DashboardDates.hour() >= 10 -> DashboardStatus.None
             else -> "${DashboardDates.daysBetween(start, today)}/${DashboardDates.daysBetween(start, end)}"
         }
-        return dashboardEntryWithSheet(id = id, status = status, times = timesOf(start, end))
+        return dashboardEntryWithSheet(
+            id = id,
+            status = status,
+            times = timesOf(start, end),
+            images = images,
+        )
     }
 
     /** 营地任务：通用活动加上两个底部入口（顺序表跳浏览器、解谜图直接铺在弹层里）。 */
@@ -130,6 +146,8 @@ internal object DashboardGitSource {
             id = DashboardCardId.DailyRecharge,
             status = status,
             times = timesOf(start, end),
+            // 同上：Java 版日氪弹窗里的那张米鼠图。
+            images = listOf("tiramisu_image_1_2"),
         )
     }
 

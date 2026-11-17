@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.careful.hyperfvm.compose.component.card.errataCardColors
 import com.careful.hyperfvm.compose.component.card.statusCardAccentColor
 import com.careful.hyperfvm.compose.component.card.statusCardBackgroundColor
 import com.careful.hyperfvm.compose.data.dashboard.DashboardCardId
@@ -36,6 +37,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Notes
+import top.yukonga.miuix.kmp.icon.extended.Update
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
@@ -66,6 +68,13 @@ private val PairCardGap = 8.dp
 
 /** 摘要文字的透明度：对“当前版本”那一档，取内容色的 70%。 */
 private const val SummaryAlpha = 0.7f
+
+/** 数据图更新提示卡的文案。 */
+private const val DataImageUpdateTitle = "数据图资源有新版本啦"
+private const val DataImageUpdateSummary = "点击立即前往数据图合集更新图片"
+
+/** 月末提醒卡的文案，同 Java 版 `text_dashboard_last_day_of_month`。 */
+private const val MonthEndText = "月末了，请注意清空积分和金券"
 
 /**
  * 仪表盘上「温馨礼包 + 更新公告」并排的一行：两张半宽卡，固定成对出现。
@@ -315,5 +324,86 @@ internal fun DashboardNoticeCard(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+    }
+}
+
+/**
+ * 「数据图资源有新版本」提示卡：左边两句文案、右边一个更新图标，点整卡进数据图合集。
+ *
+ * 只在云端版本比本地新时由仪表盘显示，显隐与展开动画都在那边控制；
+ * 配色跟温馨礼包卡同族，出现时不会像另一套视觉。
+ */
+@Composable
+internal fun DashboardDataImageUpdateCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val contentColor = CardDefaults.defaultColors(color = statusCardBackgroundColor()).contentColor
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        cornerRadius = CardCornerRadius,
+        colors = CardDefaults.defaultColors(color = statusCardBackgroundColor()),
+        pressFeedbackType = PressFeedbackType.Sink,
+        showIndication = true,
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = CardHorizontalPadding, vertical = CardVerticalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = DataImageUpdateTitle,
+                    style = MiuixTheme.textStyles.title3,
+                    fontWeight = FontWeight.SemiBold,
+                    color = contentColor,
+                )
+                Text(
+                    text = DataImageUpdateSummary,
+                    style = MiuixTheme.textStyles.body1,
+                    color = contentColor.copy(alpha = SummaryAlpha),
+                )
+            }
+            Spacer(modifier = Modifier.width(TitleStatusGap))
+            Icon(
+                imageVector = MiuixIcons.Update,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = statusCardAccentColor(),
+            )
+        }
+    }
+}
+
+/**
+ * 月末提醒卡：整卡一句提醒，配色同勘误卡（Java 版用的是 `colorErrorContainer`）。
+ *
+ * 对应 Java 版 `card_dashboard_last_day_of_month`：没有标题与状态之分，
+ * 整段 20sp 粗体红字，这里用 headline2 那档字号还原。
+ * 文案是固定的，不随任何数据源变化，也不再落到「获取失败」。
+ */
+@Composable
+internal fun DashboardMonthEndCard(modifier: Modifier = Modifier) {
+    val colors = errataCardColors()
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        cornerRadius = CardCornerRadius,
+        colors = colors,
+        pressFeedbackType = PressFeedbackType.Sink,
+        showIndication = true,
+        // 这张卡没有点击行为，但仍给一个空 onClick 才能拿到按压反馈。
+        onClick = {},
+    ) {
+        Text(
+            text = MonthEndText,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = CardHorizontalPadding, vertical = CardVerticalPadding),
+            style = MiuixTheme.textStyles.headline2,
+            fontWeight = FontWeight.Bold,
+            color = colors.contentColor,
+        )
     }
 }
