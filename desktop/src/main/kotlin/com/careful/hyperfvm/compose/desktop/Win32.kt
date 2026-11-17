@@ -59,6 +59,9 @@ internal interface User32 : StdCallLibrary {
 
     fun GetSystemMetrics(nIndex: Int): Int
 
+    // 单实例唤起：Windows 只允许「前台进程」把窗口顶到前面，跨进程得由对方把权限让过来。
+    fun AllowSetForegroundWindow(dwProcessId: Int): Boolean
+
     companion object {
         val INSTANCE: User32 by lazy { Native.load("user32", User32::class.java) }
     }

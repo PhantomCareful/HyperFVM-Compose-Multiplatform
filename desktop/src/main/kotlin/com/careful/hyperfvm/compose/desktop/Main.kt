@@ -22,6 +22,7 @@ import com.careful.hyperfvm.compose.ui.theme.keyColorFor
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
+import java.io.File
 
 /**
  * Windows 桌面入口：窗口 + 托盘常驻。
@@ -29,13 +30,28 @@ import java.awt.Toolkit
  * 生命周期约定（与 Android 不同，桌面端没有「系统管家」来托住进程）：
  * - 点窗口右上角的关闭按钮**不退出**，只是把窗口收回托盘，进程继续跑；
  * - 托盘图标左键单击 / 右键菜单第一项 = 重新显示窗口；
- * - 托盘右键菜单的「退出」才是真正的结束。
+ * - 托盘右键菜单的「退出」才是真正的结束；
+ * - 重复双击启动不会开第二个窗口：后启动的进程把激活请求递给已在跑的实例后立刻退出
+ *   （见 [SingleInstance]），已有窗口则从托盘 / 最小化状态回到前台。
  *
  * 界面与数据全部来自 :shared，这里只做窗口与托盘的壳。
  */
 fun main() {
     // 环境与设置在窗口出现之前就建好：首帧直接是用户上次选择的配色。
     val env = DesktopAppEnv()
+
+    // 单实例：已经有一个在跑时，这一次启动只负责把它的窗口唤到前台，自己不再开窗口。
+    // dev 版（不是 Gradle 注入版本号的那种）单独用一格实例目录，免得 IDE 里调试时
+    // 把用户装好的正式版顶掉。
+    val instanceDir = File(env.filesDir, if (env.appVersionName == "dev") "instance-dev" else "instance")
+    val instance = SingleInstance.acquire(instanceDir)
+    if (instance == null) {
+        val delivered = SingleInstance.requestActivate(instanceDir)
+        println("[single-instance] 已有实例在运行，激活请求送达=$delivered")
+        return
+    }
+    instance.start()
+
     val store = SettingsStore(env)
     // 桌面端没有下载通知这类外部入口，仍保留同一个参数以复用 Android 的根组合函数。
     val pendingRoute = MutableStateFlow<Route?>(null)
@@ -106,7 +122,28 @@ fun main() {
                 window.setLocationRelativeTo(null)
                 println("[window] screen=${screen.width}x${screen.height} work=${work.width}x${work.height} -> ${width}x$height")
             }
+
+            // 第二次双击启动时，另一个进程会通过单实例通道把请求送到这里：
+            // 走和托盘左键单击同一条路径把窗口拉回来。状态写入要等下一帧才落到 AWT
+            // 窗口上，所以这里直接把窗口置为可见再要焦点，否则 toFront 可能作用在
+            // 还隐藏着的窗口上、顶不到最前面。
+            LaunchedEffect(Unit) {
+                while (true) {
+                    instance.activateRequests.receive()
+                    showWindow()
+                    window.isVisible = true
+                    // 第二个进程已经把前台权限让过来了（见 SingleInstance）；这里再「临时置顶」兜一次底，
+                    // 保证窗口真的冒到最前面，而不是只闪一下任务栏。
+                    window.isAlwaysOnTop = true
+                    window.isAlwaysOnTop = false
+                    window.toFront()
+                    window.requestFocus()
+                }
+            }
             HyperFVMApp(env = env, store = store, pendingRoute = pendingRoute)
         }
     }
+
+    // 正常退出时把锁和端口文件一起清掉；被强杀的情况由操作系统释放锁。
+    instance.close()
 }
