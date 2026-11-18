@@ -248,12 +248,10 @@ fun DashboardScreen(outerPadding: PaddingValues) {
 
     val monthEnd = isMonthEnd()
     // 顺序以「行」为单位：成对的那一行永远显示，其余看有没有被关掉；
-    // 月末提醒只在当月最后一天出现；数据源判定「没有就不展示」的卡片
-    //（抢红包 / 走马观花 / 甜蜜岛 / 双爆）也在这一层滤掉。
+    // 月末提醒只在当月最后一天出现。没有活动时卡片也不消失，
+    // 只是右侧写「暂无」（见 DashboardStatus.None），所以这里不再按数据滤卡。
     val visibleSlots = orderState.order.filter { slot ->
-        slot.isVisible(preferences.hidden) &&
-            (slot != MonthEndSlot || monthEnd) &&
-            (slot !is DashboardSlot.Single || !entryOf(slot.id, entries, loaded).hidden)
+        slot.isVisible(preferences.hidden) && (slot != MonthEndSlot || monthEnd)
     }
     val lazyListState = rememberLazyListState()
 

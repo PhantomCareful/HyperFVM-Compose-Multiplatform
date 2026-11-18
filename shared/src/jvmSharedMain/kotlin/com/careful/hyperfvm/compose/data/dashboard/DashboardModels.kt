@@ -205,9 +205,11 @@ data class DashboardSheet(
  * [title] 用于覆盖枚举里的固定标题：双爆要换成「限时双爆 / 全天双爆」，
  * 二转打折要把卡表张数接在标题后面。
  *
- * [sheet] 是点击后弹出的详情；[hidden] 用于「没有则不展示」的卡片
- * （抢红包 / 走马观花 / 甜蜜岛 / 双爆）：数据源判定整张卡不该出现时置 true。
- * [error] 表示这一轮取数失败：温馨礼包的领取出错时卡片把右下角图标换成失败态。
+ * [sheet] 是点击后弹出的详情；[error] 表示这一轮取数失败：温馨礼包的领取出错时
+ * 卡片把右下角图标换成失败态。
+ *
+ * 卡片不会因为「暂时没有活动」而消失：这种情况状态写 [DashboardStatus.None]，
+ * 右侧照样显示「暂无」，卡片位置保持不动。
  */
 @Immutable
 data class DashboardEntry(
@@ -216,7 +218,6 @@ data class DashboardEntry(
     val title: String? = null,
     val style: DashboardStyle = DashboardStyle.Neutral,
     val sheet: DashboardSheet? = null,
-    val hidden: Boolean = false,
     val error: Boolean = false,
 ) {
     /** 0..1 的进度；非「X/Y」状态返回 null，卡片不画进度背景。 */
@@ -256,13 +257,11 @@ internal fun dashboardEntryWithSheet(
     links: List<DashboardLink> = emptyList(),
     todayTip: String? = null,
     errata: String? = null,
-    hidden: Boolean = false,
 ): DashboardEntry = DashboardEntry(
     status = status,
     detail = detail,
     title = title,
     style = style,
-    hidden = hidden,
     sheet = DashboardSheet(
         title = if (status == DashboardStatus.None) "${id.title}（上一轮）" else id.title,
         previousRound = status == DashboardStatus.None,

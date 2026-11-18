@@ -46,7 +46,7 @@ internal object DashboardGameSources {
      * 弹层里从今天起至多给三个双爆时段，每个时段一整行的「标题 + 摘要」卡：
      * 标题是全/限时，摘要是整段的「开始日期 至 结束日期，共 XX 天」；
      * 全天双爆且整段超过 2 天的那一行转绿底（文字改走版本卡配色）。
-     * 今天完全不在双爆段里（多是跨年时数据提供方还没更新次年配置）就整张卡不展示。
+     * 今天完全不在双爆段里（多是跨年时数据提供方还没更新次年配置）就写「暂无」。
      */
     fun doubleExplosion(): Map<DashboardCardId, DashboardEntry> {
         val body = DashboardNetwork.fetch(ActivityUrl) ?: return emptyMap()
@@ -56,7 +56,7 @@ internal object DashboardGameSources {
             val segments = doubleSegments(activities, today)
             val current = segments.firstOrNull { !it.start.isAfter(today) && !it.end.isBefore(today) }
             val entry = when {
-                segments.isEmpty() -> DashboardEntry(DashboardStatus.None, hidden = true)
+                segments.isEmpty() -> DashboardEntry(DashboardStatus.None)
                 current != null -> dashboardEntryWithSheet(
                     id = DashboardCardId.DoubleExplosion,
                     status = "持续到${current.end}，共${DashboardDates.daysBetween(today, current.end)}天",
@@ -354,7 +354,7 @@ internal object DashboardGameSources {
 
     /**
      * 今天有场次就是「今日开启」（勘误卡同款的醒目红），点卡片先弹提示、
-     * 说明今天的场次时段；今天没有则显示下一场的日期，未来一场都没有就不展示。
+     * 说明今天的场次时段；今天没有则显示下一场的日期，未来一场都没有就写「暂无」。
      *
      * 场次卡跟随 Java 版：整行大卡，除日期时段外还带红包总金额、个数与单个金额区间。
      */
@@ -380,10 +380,7 @@ internal object DashboardGameSources {
                 todayTip = tip,
             )
         }
-        val next = sessions.firstOrNull { it.begin > now } ?: return DashboardEntry(
-            DashboardStatus.None,
-            hidden = true,
-        )
+        val next = sessions.firstOrNull { it.begin > now } ?: return DashboardEntry(DashboardStatus.None)
         return dashboardEntryWithSheet(
             id = DashboardCardId.LuckyMoney,
             status = beijingDate(next.begin).toString(),
@@ -403,7 +400,7 @@ internal object DashboardGameSources {
 
     /**
      * 两个活动共用一套状态判断：今天那场还没结束就是「今日开启」（状态卡绿底），
-     * 否则显示接下来最近的开启日期，一场都不剩就整张卡不展示。
+     * 否则显示接下来最近的开启日期，一场都不剩就写「暂无」。
      * 走马观花只看 `tjbz_Open` 里第一个 `map`。
      */
     private fun sessionStatus(
@@ -430,8 +427,8 @@ internal object DashboardGameSources {
                 sessions = upcoming,
                 note = CalendarNote,
             )
-            // 今天没开、以后也没有场次：这张卡本轮不展示。
-            upcoming.isEmpty() -> DashboardEntry(DashboardStatus.None, hidden = true)
+            // 今天没开、以后也没有场次：卡片留着，右侧写「暂无」。
+            upcoming.isEmpty() -> DashboardEntry(DashboardStatus.None)
             else -> {
                 // 全部场次里排在今天之后的第一场；跨零点的场次把日期往后再推一格。
                 val next = sessions.firstOrNull { it.first > now && beijingDate(it.first) != today }
