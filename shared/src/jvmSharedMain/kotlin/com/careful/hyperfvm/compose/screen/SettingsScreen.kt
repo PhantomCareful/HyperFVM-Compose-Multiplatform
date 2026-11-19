@@ -277,29 +277,32 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                 }
             }
 
-            item(key = "interaction") {
-                SmallTitle("交互")
-                AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
-                    SwitchPreference(
-                        title = "滑动到底振动",
-                        summary = "列表滑到两端时给一次触感反馈",
-                        checked = settings.scrollEndHaptic,
-                        onCheckedChange = { enabled -> update { it.copy(scrollEndHaptic = enabled) } },
-                    )
-                    SwitchPreference(
-                        title = "左右滑动切换页面",
-                        summary = "允许在主界面左右滑动切换页面",
-                        checked = settings.pageUserScroll,
-                        onCheckedChange = { enabled -> update { it.copy(pageUserScroll = enabled) } },
-                    )
-                    AnimatedVisibility(visible = settings.pageUserScroll) {
-                        AppDropdownPreference(
-                            title = "切换手势模式",
-                            summary = "左右滑动翻页的接管方式",
-                            items = PagerGestureOptions,
-                            selectedIndex = settings.pagerInterceptionMode,
-                            onSelectedIndexChange = { index -> update { it.copy(pagerInterceptionMode = index) } },
+            // 交互分组是触屏专属：桌面端没有触感反馈，翻页手势也用不到这几项，整块隐藏。
+            if (!isDesktopPlatform) {
+                item(key = "interaction") {
+                    SmallTitle("交互")
+                    AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
+                        SwitchPreference(
+                            title = "滑动到底振动",
+                            summary = "列表滑到两端时给一次触感反馈",
+                            checked = settings.scrollEndHaptic,
+                            onCheckedChange = { enabled -> update { it.copy(scrollEndHaptic = enabled) } },
                         )
+                        SwitchPreference(
+                            title = "左右滑动切换页面",
+                            summary = "允许在主界面和带有分类标签的界面通过左右滑动来切换页面",
+                            checked = settings.pageUserScroll,
+                            onCheckedChange = { enabled -> update { it.copy(pageUserScroll = enabled) } },
+                        )
+                        AnimatedVisibility(visible = settings.pageUserScroll) {
+                            AppDropdownPreference(
+                                title = "切换手势模式",
+                                summary = "左右滑动翻页的接管方式",
+                                items = PagerGestureOptions,
+                                selectedIndex = settings.pagerInterceptionMode,
+                                onSelectedIndexChange = { index -> update { it.copy(pagerInterceptionMode = index) } },
+                            )
+                        }
                     }
                 }
             }
