@@ -23,13 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.data.settings.isGlassStyle
@@ -48,19 +45,15 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.ScrollBehavior
-import top.yukonga.miuix.kmp.basic.SmallTopAppBar
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurDefaults
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
-import top.yukonga.miuix.kmp.blur.ProgressiveBlur
 import top.yukonga.miuix.kmp.blur.layerBackdrop
-import top.yukonga.miuix.kmp.blur.progressiveTextureBlur
 import top.yukonga.miuix.kmp.blur.textureBlur
 import top.yukonga.miuix.kmp.glass.GlassIconButton
 import top.yukonga.miuix.kmp.glass.GlassTopAppBar
-import top.yukonga.miuix.kmp.glass.GlassTopAppBarDefaults
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.icon.extended.Refresh
@@ -304,36 +297,25 @@ private fun BlurredTopAppBar(
             // 以及折叠时标题的模糊过渡。backdrop 为 null（模糊关闭 / 设备不支持 RuntimeShader）
             // 时它自己退到半透明实色渐变带，不需要我们再垫分支。
             //
-            // 外面再垫一层常驻渐进模糊（demo BlurredBar 的做法，几何与内建带一致）：
-            // 模糊区域比顶栏高出一截，渐变尾巴垂进内容区，顶栏底边不会再切出一条硬线。
-            // 它不接滚动状态，内容不足一屏的页面顶栏也有材质；alpha 与内建带的进展互补，
-            // 未滚动时它负责全部材质，内容进顶栏后它淡出、内建带淡入，交叉淡化不叠加。
-            // 这一层只管模糊带：按钮的胶囊与阴影仍由 GlassTopAppBar 按真实滚动/回弹位移驱动，
-            // 与列表长短无关——所有页面走同一条路径，短页面不会因为它而提前浮起。
-            val glassBar: @Composable () -> Unit = {
-                GlassTopAppBar(
-                    title = title,
-                    subtitle = subtitle,
-                    expandable = !(isWide || compactTitle),
-                    progressiveBlur = true,
-                    backdrop = backdrop,
-                    scrollBehavior = scrollBehavior,
-                    defaultWindowInsetsPadding = !isWide,
-                    // 宽屏玻璃侧栏收起成胶囊后，胶囊就落在顶栏标题的位置上，
-                    // 标题跟着展开进度淡出（默认 1f，窄屏与二级页不受影响）。
-                    titleAlpha = LocalRailTitleAlpha.current,
-                    navigationIcon = navigationIcon,
-                    actions = spacedActions,
-                    bottomContent = bottomContent ?: {},
-                )
-            }
-            if (blurBackdrop != null) {
-                GlassBarBackdropBlur(backdrop = blurBackdrop, scrollBehavior = scrollBehavior) {
-                    glassBar()
-                }
-            } else {
-                glassBar()
-            }
+            // 模糊只交给内建带，不再自垫常驻层（对齐 miuix demo 的最小用法）：内建带紧贴
+            // 顶栏底边收尾，未滚动时 alpha = 0、滚动 48dp 内渐入，只有真正钻进顶栏的内容
+            // 才会被模糊。自己再叠一层比顶栏高出一截的常驻带，会把还没进顶栏的内容顶部
+            // 一起糊掉——小标题状态下尤其明显。
+            GlassTopAppBar(
+                title = title,
+                subtitle = subtitle,
+                expandable = !(isWide || compactTitle),
+                progressiveBlur = true,
+                backdrop = backdrop,
+                scrollBehavior = scrollBehavior,
+                defaultWindowInsetsPadding = !isWide,
+                // 宽屏玻璃侧栏收起成胶囊后，胶囊就落在顶栏标题的位置上，
+                // 标题跟着展开进度淡出（默认 1f，窄屏与二级页不受影响）。
+                titleAlpha = LocalRailTitleAlpha.current,
+                navigationIcon = navigationIcon,
+                actions = spacedActions,
+                bottomContent = bottomContent ?: {},
+            )
         } else {
             FrostedTopAppBar(
                 title = title,
@@ -351,7 +333,8 @@ private fun BlurredTopAppBar(
 }
 
 /**
- * 轻透磨砂的顶栏：大标题 [TopAppBar] / 小标题 [SmallTopAppBar]，模糊开启时垫一层高斯模糊。
+ * 轻透磨砂的顶栏：统一走 [TopAppBar]，宽屏 / compactTitle 时按 demo 的
+ * AdaptiveTopAppBar 用 `expandable = false` 固定成小标题；模糊开启时垫一层高斯模糊。
  *
  * 抽成独立 composable 是因为要跟着主题风格淡入淡出：分支里不能再提前 return。
  */
@@ -368,28 +351,20 @@ private fun FrostedTopAppBar(
     bottomContent: (@Composable () -> Unit)?,
 ) {
     val bar: @Composable (Color) -> Unit = { color ->
-        if (isWide || compactTitle) {
-            SmallTopAppBar(
-                title = title,
-                subtitle = subtitle,
-                color = color,
-                scrollBehavior = scrollBehavior,
-                defaultWindowInsetsPadding = false,
-                navigationIcon = navigationIcon,
-                actions = actions,
-                bottomContent = bottomContent ?: {},
-            )
-        } else {
-            TopAppBar(
-                title = title,
-                subtitle = subtitle,
-                color = color,
-                scrollBehavior = scrollBehavior,
-                navigationIcon = navigationIcon,
-                actions = actions,
-                bottomContent = bottomContent ?: {},
-            )
-        }
+        // 宽屏固定小标题不用 miuix 的 SmallTopAppBar：0.9.5-beta01 的
+        // SmallTopAppBarLayout 量完 actions 从未摆放，宽屏右上角按钮会整体消失。
+        // demo 的 AdaptiveTopAppBar 已改用 TopAppBar(expandable = false)，这里跟随同一条路径。
+        TopAppBar(
+            title = title,
+            subtitle = subtitle,
+            color = color,
+            expandable = !(isWide || compactTitle),
+            scrollBehavior = scrollBehavior,
+            defaultWindowInsetsPadding = !isWide,
+            navigationIcon = navigationIcon,
+            actions = actions,
+            bottomContent = bottomContent ?: {},
+        )
     }
 
     if (backdrop == null) {
@@ -422,72 +397,6 @@ internal const val ThemeStyleFadeMillis = 220
 
 /** 柔光玻璃顶栏里相邻两个图标按钮的间距。 */
 private val GlassActionSpacing = 8.dp
-
-/**
- * 玻璃顶栏常驻渐进模糊的参数，取 [GlassTopAppBar] 内建带同款：
- * 80dp 半径与 0.5 的 curve（强端集中、长软尾），渐变到底部自然归零。
- */
-private const val GlassBarBandBlurRadius = 80f
-
-/**
- * 常驻渐进模糊带比顶栏多画出的高度：让渐变尾巴落到内容区上再收尾，顶栏底边没有硬线。
- *
- * 内建带的尾巴约 20% + 20dp（折叠后约 40dp），这里取同一量级。
- */
-private val GlassBarBandOverhang = 40.dp
-
-/**
- * 玻璃顶栏的常驻渐进模糊层，几何与参数对齐 [GlassTopAppBar] 内建的渐进带：
- * 模糊区域比顶栏高出一截（[GlassBarBandOverhang]），渐变尾巴垂进内容区自然消失，
- * 不会在顶栏底边切出硬线；强度（curve 0.5、半径 80dp、surface 0.3）也与内建带一致。
- *
- * alpha 与内建带的进展互补（1 - ramp）：未滚动时由这一层负责顶栏材质，内容进顶栏后
- * 这层淡出、内建带淡入，两者交叉淡化，不叠加成一片更浓的模糊。
- */
-@Composable
-private fun GlassBarBackdropBlur(
-    backdrop: LayerBackdrop,
-    scrollBehavior: ScrollBehavior,
-    content: @Composable () -> Unit,
-) {
-    Layout(
-        content = {
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        val ramp = (-scrollBehavior.state.visualContentOffset /
-                            GlassTopAppBarDefaults.ProgressiveBlurRampDistance.toPx()).coerceIn(0f, 1f)
-                        alpha = 1f - ramp
-                    }
-                    .progressiveTextureBlur(
-                        backdrop = backdrop,
-                        shape = RectangleShape,
-                        gradient = ProgressiveBlur.Top.copy(curve = 0.5f),
-                        blurRadius = GlassBarBandBlurRadius,
-                        colors = BlurDefaults.blurColors(
-                            blendColors = listOf(
-                                BlendColorEntry(color = MiuixTheme.colorScheme.surface.copy(0.3f)),
-                            ),
-                        ),
-                    ),
-            )
-            content()
-        },
-    ) { measurables, constraints ->
-        val foreground = measurables[1].measure(constraints.copy(minWidth = 0, minHeight = 0))
-        // 顶栏是全宽布局，测量结果已经满足父约束，直接用它自己的尺寸。
-        val width = foreground.width
-        val height = foreground.height
-        // 尾巴伸到内容区上：内建带同样用超出顶栏高度的区域把渐变收尾。
-        val background = measurables[0].measure(
-            Constraints.fixed(width, height + GlassBarBandOverhang.roundToPx()),
-        )
-        layout(width, height) {
-            background.placeRelative(0, 0)
-            foreground.placeRelative(0, 0)
-        }
-    }
-}
 
 /**
  * 空界面占位内容。等各页面接入真实内容后逐个替换。
