@@ -78,7 +78,8 @@ private const val LotteryParseErrorTips = "公示页的结构变了，暂时无�
 private const val LotteryRefreshFailedTips = "概率刷新失败，当前为上次解析的结果"
 
 /**
- * 抽奖页的数据：动态解析的幸运转转在前，手工维护的数据表（许愿池等）在后。
+ * 抽奖页的数据：动态解析的幸运转转在前，手工维护的数据表（欢乐扭蛋、诸神宝殿、
+ * 塔罗寻宝、法老宝藏、许愿池）在后。
  *
  * 两页都用这套下标（类别 + 抽奖），所以列表与详情页必须共用同一个函数，不能各拼一份。
  */
@@ -172,7 +173,7 @@ fun OddsDisclosureIndexScreen(onBack: () -> Unit) {
             AppTopBarIconButton(onClick = { showSources = true }) {
                 Icon(imageVector = MiuixIcons.Link, contentDescription = "官方公示合集")
             }
-            // 目录菜单只服务于宝箱页：抽奖页只有一个「幸运转转」分节，不需要目录。
+            // 目录菜单只服务于宝箱页：抽奖页的分节随活动轮换（幸运转转为动态解析），不提供目录。
             if (pagerState.targetPage == BoxDisclosurePageIndex) {
                 // 目录按钮：菜单以按钮为锚点从右上角弹出。
                 AppIconDropdownMenu(entries = indexMenu) {
@@ -322,7 +323,8 @@ private fun BoxDisclosurePage(
  *
  * 公示页的物品会随活动轮换，所以不做本地数据表：进页就重新拉一次，解析结果按
  * 「幸运转转」一个分节、四个抽奖（普通转转 / 35000 保底奖励 / 140000 保底奖励 /
- * 豪华转转）展示，点条目进入 [LotteryOddsInfoScreen]。
+ * 豪华转转）展示；手工维护的抽奖按玩法分节（欢乐扭蛋 / 诸神宝殿 / 塔罗寻宝 /
+ * 法老宝藏 / 许愿池），保底奖励归在各自玩法下。点条目进入 [LotteryOddsInfoScreen]。
  *
  * 进程内保留上次的解析结果：再次进页先显示旧数据再静默刷新，刷新失败只轻提示，
  * 不至于把能看的列表变成失败页；只有一次都没成功过时才整页报错并给「重新加载」。
