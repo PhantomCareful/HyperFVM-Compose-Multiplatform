@@ -119,9 +119,10 @@ private const val ArchiveTips =
 /**
  * 更新公告合集页：B 站「版本更新」文集里的全部历史公告，一期一张卡。
  *
- * 列表接口一次返回全部篇目（当前 139 篇），按发布时间排。顶栏一个菜单管两件事：
+ * 列表接口一次返回全部篇目（当前 139 篇），按发布时间排。进入页面先把本地缓存上屏，
+ * 再静默刷新一次列表（有新一期就换上）；顶栏一个菜单管两件事：
  * 排序（倒序最新在前，默认；或顺序最早在前）和年份筛选（可多选，年份从全部篇目
- * 里自动归出来）。下拉刷新重新拉列表，正文点开时才拉，并落在磁盘缓存里。
+ * 里自动归出来）。下拉刷新同样重新拉列表，正文点开时才拉，并落在磁盘缓存里。
  *
  * 行样式沿用二级页内容卡：左侧大封面，右侧标题与日期。
  */
@@ -148,20 +149,26 @@ fun AnnouncementArchiveScreen(onBack: () -> Unit) {
     var selectedYears by rememberSaveable { mutableStateOf(setOf<Int>()) }
 
     LaunchedEffect(reloadToken) {
-        val refresh = reloadToken > 0
-        if (!refresh) {
-            // 内存里有列表就先上屏，后台再确认有没有新一期，避免每次进页面都白屏。
-            AnnouncementRepository.cachedArchive()?.let { state = ArchiveUiState.Ready(it) }
-            if (state !is ArchiveUiState.Ready) state = ArchiveUiState.Loading
-        }
+        val userRefresh = reloadToken > 0
         try {
-            state = ArchiveUiState.Ready(AnnouncementRepository.loadArchive(env, refresh))
+            if (!userRefresh) {
+                // 进入页面：内存 / 磁盘里的列表先上屏（离线也能看历史），
+                // 再静默确认有没有新一期——有缓存就不联网会让列表永远停在旧内容。
+                val cached = AnnouncementRepository.loadCachedArchive(env)
+                if (cached != null) state = ArchiveUiState.Ready(cached)
+                if (state !is ArchiveUiState.Ready) state = ArchiveUiState.Loading
+                val fresh = AnnouncementRepository.loadArchive(env, refresh = true)
+                // 列表没变就不动 state，避免无谓地重建整列、打断滚动位置与年份筛选。
+                if (cached != fresh) state = ArchiveUiState.Ready(fresh)
+            } else {
+                state = ArchiveUiState.Ready(AnnouncementRepository.loadArchive(env, refresh = true))
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             if (state is ArchiveUiState.Ready) {
-                // 已有旧内容时刷新失败只提示一下，不把列表清空。
-                toaster.show(e.message ?: "刷新失败")
+                // 已有旧内容时不把列表清空；下拉刷新失败提示一下，进页面时的后台刷新失败静默。
+                if (userRefresh) toaster.show(e.message ?: "刷新失败")
             } else {
                 state = ArchiveUiState.Failed(e.message ?: "公告合集加载失败。")
             }

@@ -78,23 +78,28 @@ object AnnouncementRepository {
     /**
      * 加载合集列表（B 站「版本更新」文集，当前 139 篇）。
      *
-     * 接口一次就返回全部篇目，磁盘缓存存原始 JSON：下拉刷新才重新请求。
+     * 接口一次就返回全部篇目，磁盘缓存存原始 JSON：[refresh] 为 false 时只读本地，
+     * 为 true 时跳过缓存重新请求（合集页进入时的静默刷新与下拉刷新都走这里）。
      */
     suspend fun loadArchive(env: AppEnv, refresh: Boolean = false): AnnouncementArchive =
         withContext(Dispatchers.IO) {
-            if (!refresh) {
-                cachedArchive?.let { return@withContext it }
-                readArchiveCache(env)?.let {
-                    cachedArchive = it
-                    return@withContext it
-                }
-            }
+            if (!refresh) loadCachedArchive(env)?.let { return@withContext it }
             val body = AnnouncementSource.fetchReadlistJson()
             val archive = AnnouncementSource.parseReadlist(body)
             writeCache(env, ArchiveCacheId, body)
             cachedArchive = archive
             archive
         }
+
+    /**
+     * 只读本地（内存 → 磁盘）的合集列表，不发起网络请求。
+     *
+     * 合集页进入时先拿它上屏（离线也能看历史），随后再静默刷新一次；
+     * 没有缓存时返回 null，由调用方决定是显示加载中还是直接请求。
+     */
+    suspend fun loadCachedArchive(env: AppEnv): AnnouncementArchive? = withContext(Dispatchers.IO) {
+        cachedArchive ?: readArchiveCache(env)?.also { cachedArchive = it }
+    }
 
     /**
      * 打开合集里的某一期。
