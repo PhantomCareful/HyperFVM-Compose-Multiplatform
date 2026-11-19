@@ -1,7 +1,6 @@
 package com.careful.hyperfvm.compose.screen
 
 import androidx.compose.foundation.lazy.LazyColumn
-import com.careful.hyperfvm.compose.shared.*
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -155,7 +154,7 @@ private val DataStationEntries = listOf(
  * `fragment_data_center.xml` 的 `title_data_center_special_features` 与
  * `title_data_center_data_station` 分组，顺序也保持一致。
  *
- * 特色功能目前有数据图合集、食神谱合集、概率公示合集、服装合集、翅膀合集五个入口，点击直接压栈；美食数据站都是外链，
+ * 特色功能目前有数据图合集、食神谱合集、概率公示合集、套装合集、翅膀合集五个入口，点击直接压栈；美食数据站都是外链，
  * 点击先弹 [VisitUrlDialog]，确认后才调起浏览器。
  *
  * 顶栏右侧是查黑系统的入口（Java 版在 Fragment 右上角的悬浮按钮），

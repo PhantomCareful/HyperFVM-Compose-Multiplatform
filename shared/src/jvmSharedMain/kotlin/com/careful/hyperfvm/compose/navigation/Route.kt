@@ -87,13 +87,13 @@ sealed interface Route : NavKey {
     data object DataPackUpdate : Route
 
     /**
-     * 服装合集页：全部套装的瀑布流，顶栏筛选性别、下方搜索，
+     * 套装合集页：全部套装的瀑布流，顶栏筛选性别、下方搜索，
      * 点卡片在同一页的弹层里看基础信息与续费价格。
      */
     data object ClothingCollection : Route
 
     /**
-     * 翅膀合集页：与服装合集同款布局，顶栏筛选性别、下方搜索，
+     * 翅膀合集页：与套装合集同款布局，顶栏筛选性别、下方搜索，
      * 点卡片在弹层里看基础信息与续费价格。
      */
     data object WingCollection : Route

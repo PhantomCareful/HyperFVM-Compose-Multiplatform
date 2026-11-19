@@ -11,7 +11,6 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -142,10 +141,10 @@ private val SexFilterOptions = listOf(
 )
 
 /**
- * 合集页（服装合集与翅膀合集共用）：顶栏右上角筛选男女，顶栏下方是搜索框，
+ * 合集页（套装合集与翅膀合集共用）：顶栏右上角筛选男女，顶栏下方是搜索框，
  * 下面是全部条目的瀑布流，右下角是回到顶部的悬浮按钮。
  *
- * [kind] 决定数据来源与文案（服装/翅膀）；条目与预览图都来自云端，第一次进入时
+ * [kind] 决定数据来源与文案（套装/翅膀）；条目与预览图都来自云端，第一次进入时
  * 自动下载并落盘，期间显示进度提示，断网时给错误与重试入口，不会闪退。
  *
  * 顶栏的更新按钮会重新拉取条目文件，完成后弹窗报告男女款各新增多少。
