@@ -4486,6 +4486,54 @@
        "remoteId": null
       }
      ]
+    },
+    {
+     "name": "星之神杖宝箱",
+     "image": "x13b75830",
+     "description": "塔罗寻宝消耗 160000 点券保底奖励中的宝箱。\n道具均绑定。",
+     "errata": "",
+     "items": [
+      {
+       "name": "神杖进化凭证",
+       "count": 1,
+       "image": "x12110a00",
+       "expected": false,
+       "odds": 0.3,
+       "remoteId": null
+      },
+      {
+       "name": "星之焕进化凭证",
+       "count": 1,
+       "image": "x12120c40",
+       "expected": false,
+       "odds": 0.3,
+       "remoteId": null
+      },
+      {
+       "name": "星之吻进化凭证",
+       "count": 1,
+       "image": "x12120c50",
+       "expected": false,
+       "odds": 0.25,
+       "remoteId": null
+      },
+      {
+       "name": "星之雨进化凭证",
+       "count": 1,
+       "image": "x12120c60",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "星之闪进化凭证",
+       "count": 1,
+       "image": "x12120c70",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      }
+     ]
     }
    ]
   },

@@ -4367,6 +4367,42 @@
 	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
 	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
 	  </item>
+	<item i_description="向前方连续发射2发豆浆子弹，几率附加击退效果|攻击力提升，子弹可过障碍|子弹数量+2" i_id="0x11123010" i_name="石磨豆浆" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="向前方连续发射2发豆浆子弹，几率附加击退效果|攻击力提升，子弹可过障碍|子弹数量+2" i_id="0x1112301e" i_name="超空石磨豆浆" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="向前方连续发射2发豆浆子弹，几率附加击退效果|攻击力提升，子弹可过障碍|子弹数量+2" i_id="0x1112301f" i_name="激流石磨豆浆" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="向前方投掷1个可以滚动一段距离的酒酿圆子|滚动距离+1格|子弹+1，滚动可以撞飞平民鼠" i_id="0x11123020" i_name="酒酿圆子" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="向前方投掷1个可以滚动一段距离的酒酿圆子|滚动距离+1格|子弹+1，滚动可以撞飞平民鼠" i_id="0x1112302e" i_name="家常酒酿圆子" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="向前方投掷1个可以滚动一段距离的酒酿圆子|滚动距离+1格|子弹+1，滚动可以撞飞平民鼠" i_id="0x1112302f" i_name="甜品酒酿圆子" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="清除范围内魂火，并在准备过后释放大量火苗|额外返还放卡消耗的火苗|产能提升，清除魂火范围扩大" i_id="0x11123030" i_name="地心火栗" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="清除范围内魂火，并在准备过后释放大量火苗|额外返还放卡消耗的火苗|产能提升，清除魂火范围扩大" i_id="0x1112303e" i_name="碳烤地心火栗" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
+	<item i_description="清除范围内魂火，并在准备过后释放大量火苗|额外返还放卡消耗的火苗|产能提升，清除魂火范围扩大" i_id="0x1112303f" i_name="焦糖地心火栗" i_type="1">
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="50000" i_count="1" i_desc="50000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="50000"/>
+	        <element i_buy_type="1" i_comm_currency_type="1" i_comm_price="60000" i_count="1" i_desc="60000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="60000"/>
+	  </item>
 
 
 
@@ -4447,6 +4483,9 @@
 	<item i_description="制作[红柳烤串机]的必要素材" i_id="0x12420610" i_name="红柳烤串机配方" i_type="1"/>
 	<item i_description="制作[泡椒春笋]的必要素材" i_id="0x12420620" i_name="泡椒春笋配方" i_type="1"/>
 	<item i_description="制作[元宝饺子鼎]的必要素材" i_id="0x12420630" i_name="元宝饺子鼎配方" i_type="1"/>
+	<item i_description="制作[石磨豆浆]的必要素材" i_id="0x12420640" i_name="石磨豆浆配方" i_type="1"/>
+	<item i_description="制作[酒酿圆子]的必要素材" i_id="0x12420650" i_name="酒酿圆子配方" i_type="1"/>
+	<item i_description="制作[地心火栗]的必要素材" i_id="0x12420660" i_name="地心火栗配方" i_type="1"/>
 	<item i_description="可以制作出以下结晶：[双子座结晶][小火炉结晶][大火炉结晶][酒杯灯结晶]" i_id="0x128203e0" i_name="火炉谱" i_type="1"/>
 	<item i_description="可以制作出以下结晶：[射手座结晶][三线酒架结晶][天蝎座结晶][热狗大炮结晶]" i_id="0x128203f0" i_name="多线谱" i_type="1"/>
 	<item i_description="可以制作出以下结晶：[双鱼座结晶][煮蛋器投手结晶][冰煮蛋器结晶][色拉投手结晶]" i_id="0x12820400" i_name="投掷谱" i_type="1"/>
@@ -4640,6 +4679,14 @@
 	<item i_description="制作[元宝饺子鼎]的必要素材" i_id="0x12411560" i_name="小汤锅" i_type="1"/>
 	<item i_description="制作[元宝饺子鼎]的必要素材" i_id="0x12411570" i_name="饺子皮" i_type="1"/>
 	<item i_description="制作[元宝饺子鼎]的必要素材" i_id="0x12411580" i_name="三鲜馅" i_type="1"/>
+	<item i_description="制作[石磨豆浆]的必要素材" i_id="0x12411590" i_name="黄豆" i_type="1"/>
+	<item i_description="制作[石磨豆浆]的必要素材" i_id="0x124115a0" i_name="石磨" i_type="1"/>
+	<item i_description="制作[酒酿圆子]的必要素材" i_id="0x124115b0" i_name="糯米圆子" i_type="1"/>
+	<item i_description="制作[酒酿圆子]的必要素材" i_id="0x124115c0" i_name="酒酿" i_type="1"/>
+	<item i_description="制作[酒酿圆子]的必要素材" i_id="0x124115d0" i_name="桂花干" i_type="1"/>
+	<item i_description="制作[地心火栗]的必要素材" i_id="0x12411600" i_name="板栗" i_type="1"/>
+	<item i_description="制作[地心火栗]的必要素材" i_id="0x12411610" i_name="石英砂" i_type="1"/>
+	<item i_description="制作[地心火栗]的必要素材" i_id="0x12411620" i_name="炭火" i_type="1"/>
 	
 	
 	
@@ -4911,6 +4958,8 @@
 	<item i_description="集齐AB两片[百味徽章]，就可以穿越通往九幽龙渊“百味关”深处的时空。" i_id="0x12500830" i_name="百味徽章B" i_type="1"/>
 	<item i_description="集齐AB两片[奶盖徽章]，就可以穿越通往九幽龙渊“奶盖桥”深处的时空。" i_id="0x12500840" i_name="奶盖徽章A" i_type="1"/>
 	<item i_description="集齐AB两片[奶盖徽章]，就可以穿越通往九幽龙渊“奶盖桥”深处的时空。" i_id="0x12500850" i_name="奶盖徽章B" i_type="1"/>
+	<item i_description="集齐AB两片[素斋徽章]，就可以穿越通往九幽龙渊“素斋宫”深处的时空。" i_id="0x12500860" i_name="素斋徽章A" i_type="1"/>
+	<item i_description="集齐AB两片[素斋徽章]，就可以穿越通往九幽龙渊“素斋宫”深处的时空。" i_id="0x12500870" i_name="素斋徽章B" i_type="1"/>
 	<item i_description="在这个快乐的日子里收集女神节祝福，可以兑换跟幸运有关的宝箱呦！&lt;br&gt;来源：[深渊][雪顶火山][卤料花园]" i_id="0x12615190" i_name="女神节祝福" i_type="1"/>
     <item i_description="节日兑换中领取各种幸运宝箱和礼包的重要道具。&lt;br&gt;来源：[美味岛][火山岛][浮空岛]" i_id="0x1260a430" i_name="幸运金币" i_type="1"/>	
 	<item i_description="壮壮牛-初级技能书X1&lt;br&gt;壮壮牛-高级技能书X1&lt;br&gt;壮壮牛-终级技能书X1&lt;br&gt;壮壮牛-究级技能书X1&lt;br&gt;道具不绑定" i_id="0x13af1840" i_name="壮壮牛技能书箱" i_type="1"/>	
@@ -5084,6 +5133,14 @@
 	<item i_description="" i_id="0x13af7b60" i_name="奇门马技能书箱" i_type="1"/>
 	<item i_description="" i_id="0x13af7b90" i_name="仙笛马技能书箱" i_type="1"/>
     <item i_description="" i_id="0x13af8420" i_name="星轨神技能书箱" i_type="1"/>
+	<item i_description="" i_id="0x13af8560" i_name="榴莲典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af8570" i_name="火龙果典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af8580" i_name="焦油喷壶典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af8590" i_name="13周年时光机典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af85a0" i_name="蛇羹煲典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af85b0" i_name="尖叫马咖典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af85c0" i_name="椒麻靓仔鸡典藏礼包" i_type="1"/>
+	<item i_description="" i_id="0x13af8670" i_name="符文马典藏礼包" i_type="1"/>
 
 	
 	
@@ -18163,7 +18220,10 @@
 		<element i_buy_type="1" i_comm_currency_type="1" i_comm_price="8000" i_count="1" i_desc="8000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="8000"/>
 		<element i_buy_type="1" i_comm_currency_type="1" i_comm_price="19000" i_count="1" i_desc="19000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="19000"/>
 	</item>	
-	
+	<item i_description="嵌入真爱谱中，可以加强护法神俱吠罗攻击力" i_id="0x14900141" i_name="护法神结晶" i_type="1">
+		<element i_buy_type="1" i_comm_currency_type="1" i_comm_price="8000" i_count="1" i_desc="8000点券30天" i_discount_price="0" i_expiry_date="2592000" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="8000"/>
+		<element i_buy_type="1" i_comm_currency_type="1" i_comm_price="19000" i_count="1" i_desc="19000点券永久" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="19000"/>
+	</item>	
 
 	<item i_description="初次使用后可以开启练习1级2级3级[速攻技能]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x12210110" i_name="小笼包-初级技能书" i_type="1">
 		<element i_buy_type="2" i_comm_currency_type="1" i_comm_price="100" i_count="1" i_desc="100点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="90"/>
@@ -21463,6 +21523,42 @@
 	<item i_description="初次使用后可以开启练习8级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a0f40" i_name="银河马-究极技能书" i_type="1">
 	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
 	 </item> 
+	<item i_description="初次使用后可以开启练习1级2级3级[速攻技能]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1010" i_name="石磨豆浆-初级技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习4级5级[速攻技能]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1020" i_name="石磨豆浆-高级技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习6级7级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1030" i_name="石磨豆浆-终极技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习8级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1040" i_name="石磨豆浆-究极技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习1级2级3级[速攻技能]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1110" i_name="酒酿圆子-初级技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习4级5级[速攻技能]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1120" i_name="酒酿圆子-高级技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习6级7级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1130" i_name="酒酿圆子-终极技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习8级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" i_id="0x122a1140" i_name="酒酿圆子-究极技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习1级2级3级[准备时间]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" i_id="0x122a1210" i_name="地心火栗-初级技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习4级5级[准备时间]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" i_id="0x122a1220" i_name="地心火栗-高级技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习6级7级[准备时间]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" i_id="0x122a1230" i_name="地心火栗-终极技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
+	<item i_description="初次使用后可以开启练习8级[准备时间]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" i_id="0x122a1240" i_name="地心火栗-究极技能书" i_type="1">
+	  <element i_buy_type="2" i_comm_currency_type="1" i_comm_price="20000" i_count="1" i_desc="20000点券1个" i_discount_price="0" i_expiry_date="-1" i_is_bind="2" i_renew_price="0" i_time_flag="2" i_used_count="-1" i_vip_price="20000"/>
+	 </item>
 	 
 	 
 	
@@ -24945,6 +25041,21 @@
 	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的星渊银河马进行二转|二转获得技能:子弹数+2，溅射范围扩大至3*5" i_id="0x13621345" i_name="银河马(二转凭证A)" i_type="1"/>
 	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的星渊银河马进行二转|二转获得技能:子弹数+2，溅射范围扩大至3*5" i_id="0x13622345" i_name="银河马(二转凭证B)" i_type="1"/>
 	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的星渊银河马进行二转|二转获得技能:子弹数+2，溅射范围扩大至3*5" i_id="0x13623345" i_name="银河马(二转凭证C)" i_type="1"/>	
+	<item i_description="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的石磨豆浆进行一转|一转获得技能:攻击力提升，子弹可过障碍" i_id="0x13611346" i_name="石磨豆浆(一转凭证A)" i_type="1"/>
+	<item i_description="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的石磨豆浆进行一转|一转获得技能:攻击力提升，子弹可过障碍" i_id="0x13612346" i_name="石磨豆浆(一转凭证B)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的超空石磨豆浆进行二转|二转获得技能:子弹数量+2" i_id="0x13621346" i_name="石磨豆浆(二转凭证A)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的超空石磨豆浆进行二转|二转获得技能:子弹数量+2" i_id="0x13622346" i_name="石磨豆浆(二转凭证B)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的超空石磨豆浆进行二转|二转获得技能:子弹数量+2" i_id="0x13623346" i_name="石磨豆浆(二转凭证C)" i_type="1"/>
+	<item i_description="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的酒酿圆子进行一转|一转获得技能:滚动距离+1格" i_id="0x13611347" i_name="酒酿圆子(一转凭证A)" i_type="1"/>
+	<item i_description="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的酒酿圆子进行一转|一转获得技能:滚动距离+1格" i_id="0x13612347" i_name="酒酿圆子(一转凭证B)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的家常酒酿圆子进行二转|二转获得技能:子弹+1，滚动可以撞飞平民鼠" i_id="0x13621347" i_name="酒酿圆子(二转凭证A)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的家常酒酿圆子进行二转|二转获得技能:子弹+1，滚动可以撞飞平民鼠" i_id="0x13622347" i_name="酒酿圆子(二转凭证B)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的家常酒酿圆子进行二转|二转获得技能:子弹+1，滚动可以撞飞平民鼠" i_id="0x13623347" i_name="酒酿圆子(二转凭证C)" i_type="1"/>
+	<item i_description="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的地心火栗进行一转|一转获得技能:额外返还放卡消耗的火苗" i_id="0x13611348" i_name="地心火栗(一转凭证A)" i_type="1"/>
+	<item i_description="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的地心火栗进行一转|一转获得技能:额外返还放卡消耗的火苗" i_id="0x13612348" i_name="地心火栗(一转凭证B)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的碳烤地心火栗进行二转|二转获得技能:产能提升，清除魂火范围扩大" i_id="0x13621348" i_name="地心火栗(二转凭证A)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的碳烤地心火栗进行二转|二转获得技能:产能提升，清除魂火范围扩大" i_id="0x13622348" i_name="地心火栗(二转凭证B)" i_type="1"/>
+	<item i_description="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的碳烤地心火栗进行二转|二转获得技能:产能提升，清除魂火范围扩大" i_id="0x13623348" i_name="地心火栗(二转凭证C)" i_type="1"/>
 		
 	
 	

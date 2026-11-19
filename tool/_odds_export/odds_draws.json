@@ -1305,6 +1305,1621 @@
        "remoteId": "x14d00a10"
       }
      ]
+    },
+    {
+     "name": "诸神宝殿",
+     "description": "概率来自 4399 官方公示帖。\n消耗 45000 点券、200000 点券的保底奖励已单独列出。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "极品香料",
+       "count": 45,
+       "image": "x12340090",
+       "expected": false,
+       "odds": 0.0998,
+       "remoteId": null
+      },
+      {
+       "name": "皇室香料",
+       "count": 20,
+       "image": "x123400a0",
+       "expected": false,
+       "odds": 0.1497,
+       "remoteId": null
+      },
+      {
+       "name": "皇室香料",
+       "count": 25,
+       "image": "x123400a0",
+       "expected": false,
+       "odds": 0.07984,
+       "remoteId": null
+      },
+      {
+       "name": "魔幻香料",
+       "count": 15,
+       "image": "x123400c0",
+       "expected": false,
+       "odds": 0.0998,
+       "remoteId": null
+      },
+      {
+       "name": "魔幻香料",
+       "count": 25,
+       "image": "x123400c0",
+       "expected": false,
+       "odds": 0.0499,
+       "remoteId": null
+      },
+      {
+       "name": "精灵香料",
+       "count": 12,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.05988,
+       "remoteId": null
+      },
+      {
+       "name": "精灵香料",
+       "count": 8,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.05988,
+       "remoteId": null
+      },
+      {
+       "name": "天使香料",
+       "count": 8,
+       "image": "x12340140",
+       "expected": false,
+       "odds": 0.01996,
+       "remoteId": null
+      },
+      {
+       "name": "圣灵香料",
+       "count": 5,
+       "image": "x12340160",
+       "expected": false,
+       "odds": 0.00998,
+       "remoteId": null
+      },
+      {
+       "name": "4级四叶草",
+       "count": 3,
+       "image": "x12320080",
+       "expected": false,
+       "odds": 0.1497,
+       "remoteId": null
+      },
+      {
+       "name": "5级四叶草",
+       "count": 2,
+       "image": "x123200a0",
+       "expected": false,
+       "odds": 0.11976,
+       "remoteId": null
+      },
+      {
+       "name": "6级四叶草",
+       "count": 1,
+       "image": "x123200e0",
+       "expected": false,
+       "odds": 0.02994,
+       "remoteId": null
+      },
+      {
+       "name": "诸神幸运草箱",
+       "count": 1,
+       "image": "x13b92030",
+       "expected": false,
+       "odds": 0.00998,
+       "remoteId": null
+      },
+      {
+       "name": "稀有番外卡牌宝箱",
+       "count": 1,
+       "image": "x13b81a30",
+       "expected": false,
+       "odds": 0.0499,
+       "remoteId": null
+      },
+      {
+       "name": "珍贵番外卡牌宝箱",
+       "count": 1,
+       "image": "x13b81b30",
+       "expected": false,
+       "odds": 0.00998,
+       "remoteId": null
+      },
+      {
+       "name": "爱神丘比特进化凭证",
+       "count": 1,
+       "image": "x12100000",
+       "expected": false,
+       "odds": 0.000126,
+       "remoteId": null
+      },
+      {
+       "name": "战神阿瑞斯进化凭证",
+       "count": 1,
+       "image": "x12100100",
+       "expected": false,
+       "odds": 8.999999999999999e-05,
+       "remoteId": null
+      },
+      {
+       "name": "雷神索尔进化凭证",
+       "count": 1,
+       "image": "x12100200",
+       "expected": false,
+       "odds": 8.999999999999999e-05,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神阿波罗进化凭证",
+       "count": 1,
+       "image": "x12100300",
+       "expected": false,
+       "odds": 0.00016199999999999998,
+       "remoteId": null
+      },
+      {
+       "name": "火神洛基进化凭证",
+       "count": 1,
+       "image": "x12100400",
+       "expected": false,
+       "odds": 8.999999999999999e-05,
+       "remoteId": null
+      },
+      {
+       "name": "海神波塞冬进化凭证",
+       "count": 1,
+       "image": "x12100500",
+       "expected": false,
+       "odds": 0.00016199999999999998,
+       "remoteId": null
+      },
+      {
+       "name": "月神狄安娜进化凭证",
+       "count": 1,
+       "image": "x12100600",
+       "expected": false,
+       "odds": 0.00016199999999999998,
+       "remoteId": null
+      },
+      {
+       "name": "金卡初级技能书箱",
+       "count": 1,
+       "image": "x13b44c30",
+       "expected": false,
+       "odds": 0.00016199999999999998,
+       "remoteId": null
+      },
+      {
+       "name": "金卡高级技能书箱",
+       "count": 1,
+       "image": "x13b44d30",
+       "expected": false,
+       "odds": 0.000171,
+       "remoteId": null
+      },
+      {
+       "name": "创造神梵天进化凭证",
+       "count": 1,
+       "image": "x12101000",
+       "expected": false,
+       "odds": 5e-06,
+       "remoteId": null
+      },
+      {
+       "name": "宴飨女神进化凭证",
+       "count": 1,
+       "image": "x12101100",
+       "expected": false,
+       "odds": 5e-06,
+       "remoteId": null
+      },
+      {
+       "name": "巨神尤弥尔进化凭证",
+       "count": 1,
+       "image": "x12101200",
+       "expected": false,
+       "odds": 4e-06,
+       "remoteId": null
+      },
+      {
+       "name": "恶作剧神进化凭证",
+       "count": 1,
+       "image": "x12101500",
+       "expected": false,
+       "odds": 4e-06,
+       "remoteId": null
+      },
+      {
+       "name": "神话番外卡牌宝箱",
+       "count": 1,
+       "image": "x13b81c30",
+       "expected": false,
+       "odds": 0.000288,
+       "remoteId": null
+      },
+      {
+       "name": "神谕之石宝箱",
+       "count": 1,
+       "image": "x13b82130",
+       "expected": false,
+       "odds": 0.000144,
+       "remoteId": null
+      },
+      {
+       "name": "诸神SSR草箱",
+       "count": 1,
+       "image": "x13b81d30",
+       "expected": false,
+       "odds": 0.000135,
+       "remoteId": null
+      },
+      {
+       "name": "爱神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70130",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "战神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70230",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "雷神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70330",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "火神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70430",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70530",
+       "expected": false,
+       "odds": 1.1999999999999999e-05,
+       "remoteId": null
+      },
+      {
+       "name": "海神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70630",
+       "expected": false,
+       "odds": 1.1000000000000001e-05,
+       "remoteId": null
+      },
+      {
+       "name": "月神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70730",
+       "expected": false,
+       "odds": 1e-05,
+       "remoteId": null
+      },
+      {
+       "name": "爱神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69430",
+       "expected": false,
+       "odds": 1.1999999999999999e-05,
+       "remoteId": null
+      },
+      {
+       "name": "战神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69530",
+       "expected": false,
+       "odds": 1.6e-05,
+       "remoteId": null
+      },
+      {
+       "name": "雷神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69630",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "火神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69730",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69830",
+       "expected": false,
+       "odds": 1.6e-05,
+       "remoteId": null
+      },
+      {
+       "name": "海神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69930",
+       "expected": false,
+       "odds": 2.3999999999999997e-05,
+       "remoteId": null
+      },
+      {
+       "name": "月神三转凭证套餐",
+       "count": 1,
+       "image": "x13a70030",
+       "expected": false,
+       "odds": 2e-05,
+       "remoteId": null
+      },
+      {
+       "name": "金卡终级技能书箱",
+       "count": 1,
+       "image": "x13b44e30",
+       "expected": false,
+       "odds": 2e-05,
+       "remoteId": null
+      },
+      {
+       "name": "金卡究极技能书箱",
+       "count": 1,
+       "image": "x13b44f30",
+       "expected": false,
+       "odds": 5.999999999999999e-06,
+       "remoteId": null
+      },
+      {
+       "name": "蛇年纪念草箱",
+       "count": 1,
+       "image": "x13b82030",
+       "expected": false,
+       "odds": 7e-06,
+       "remoteId": null
+      },
+      {
+       "name": "超级神谕之石宝箱",
+       "count": 1,
+       "image": "x13b82230",
+       "expected": false,
+       "odds": 4e-06,
+       "remoteId": null
+      },
+      {
+       "name": "终转凭证A宝箱",
+       "count": 1,
+       "image": "x13b77230",
+       "expected": false,
+       "odds": 5e-06,
+       "remoteId": null
+      },
+      {
+       "name": "13星番外卡片包",
+       "count": 1,
+       "image": "x13b81830",
+       "expected": false,
+       "odds": 1e-06,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "45000保底奖励",
+     "description": "消耗 45000 点券至少可以获取一个以下物品。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "爱神丘比特进化凭证",
+       "count": 1,
+       "image": "x12100000",
+       "expected": false,
+       "odds": 0.07,
+       "remoteId": null
+      },
+      {
+       "name": "战神阿瑞斯进化凭证",
+       "count": 1,
+       "image": "x12100100",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "雷神索尔进化凭证",
+       "count": 1,
+       "image": "x12100200",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神阿波罗进化凭证",
+       "count": 1,
+       "image": "x12100300",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "火神洛基进化凭证",
+       "count": 1,
+       "image": "x12100400",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "海神波塞冬进化凭证",
+       "count": 1,
+       "image": "x12100500",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "月神狄安娜进化凭证",
+       "count": 1,
+       "image": "x12100600",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "金卡初级技能书箱",
+       "count": 1,
+       "image": "x13b44c30",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "金卡高级技能书箱",
+       "count": 1,
+       "image": "x13b44d30",
+       "expected": false,
+       "odds": 0.095,
+       "remoteId": null
+      },
+      {
+       "name": "创造神梵天进化凭证",
+       "count": 1,
+       "image": "x12101000",
+       "expected": false,
+       "odds": 0.003,
+       "remoteId": null
+      },
+      {
+       "name": "宴飨女神进化凭证",
+       "count": 1,
+       "image": "x12101100",
+       "expected": false,
+       "odds": 0.003,
+       "remoteId": null
+      },
+      {
+       "name": "巨神尤弥尔进化凭证",
+       "count": 1,
+       "image": "x12101200",
+       "expected": false,
+       "odds": 0.002,
+       "remoteId": null
+      },
+      {
+       "name": "恶作剧神进化凭证",
+       "count": 1,
+       "image": "x12101500",
+       "expected": false,
+       "odds": 0.002,
+       "remoteId": null
+      },
+      {
+       "name": "神话番外卡牌宝箱",
+       "count": 1,
+       "image": "x13b81c30",
+       "expected": false,
+       "odds": 0.16,
+       "remoteId": null
+      },
+      {
+       "name": "神谕之石宝箱",
+       "count": 1,
+       "image": "x13b82130",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "诸神SSR草箱",
+       "count": 1,
+       "image": "x13b81d30",
+       "expected": false,
+       "odds": 0.075,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "200000保底奖励",
+     "description": "消耗 200000 点券至少可以获取一个以下物品。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "爱神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70130",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "战神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70230",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "雷神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70330",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "火神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70430",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70530",
+       "expected": false,
+       "odds": 0.06,
+       "remoteId": null
+      },
+      {
+       "name": "海神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70630",
+       "expected": false,
+       "odds": 0.055,
+       "remoteId": null
+      },
+      {
+       "name": "月神四转凭证套餐",
+       "count": 1,
+       "image": "x13a70730",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "爱神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69430",
+       "expected": false,
+       "odds": 0.06,
+       "remoteId": null
+      },
+      {
+       "name": "战神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69530",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "雷神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69630",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "火神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69730",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69830",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "海神三转凭证套餐",
+       "count": 1,
+       "image": "x13a69930",
+       "expected": false,
+       "odds": 0.12,
+       "remoteId": null
+      },
+      {
+       "name": "月神三转凭证套餐",
+       "count": 1,
+       "image": "x13a70030",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "金卡终级技能书箱",
+       "count": 1,
+       "image": "x13b44e30",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "金卡究极技能书箱",
+       "count": 1,
+       "image": "x13b44f30",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "蛇年纪念草箱",
+       "count": 1,
+       "image": "x13b82030",
+       "expected": false,
+       "odds": 0.035,
+       "remoteId": null
+      },
+      {
+       "name": "超级神谕之石宝箱",
+       "count": 1,
+       "image": "x13b82230",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "终转凭证A宝箱",
+       "count": 1,
+       "image": "x13b77230",
+       "expected": false,
+       "odds": 0.025,
+       "remoteId": null
+      },
+      {
+       "name": "13星番外卡片包",
+       "count": 1,
+       "image": "x13b81830",
+       "expected": false,
+       "odds": 0.005,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "塔罗寻宝",
+     "description": "概率来自 4399 官方公示帖。\n消耗 40000 点券、160000 点券的保底奖励已单独列出；星之神杖宝箱见「宝箱概率 - 武器相关宝箱」。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "精灵香料",
+       "count": 10,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "精灵香料",
+       "count": 5,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "皇室香料",
+       "count": 15,
+       "image": "x123400a0",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "皇室香料",
+       "count": 10,
+       "image": "x123400a0",
+       "expected": false,
+       "odds": 0.15,
+       "remoteId": null
+      },
+      {
+       "name": "魔幻香料",
+       "count": 5,
+       "image": "x123400c0",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "皇室香料",
+       "count": 15,
+       "image": "x123400a0",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "极品香料",
+       "count": 25,
+       "image": "x12340090",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "秘制香料",
+       "count": 35,
+       "image": "x12340080",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "5级四叶草",
+       "count": 1,
+       "image": "x123200a0",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "4级四叶草",
+       "count": 1,
+       "image": "x12320080",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "4级四叶草",
+       "count": 3,
+       "image": "x12320080",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "6级四叶草",
+       "count": 1,
+       "image": "x123200e0",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "40000保底奖励",
+     "description": "消耗 40000 点券至少可以获取一个以下物品。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "天秤座精灵",
+       "count": 1,
+       "image": "x11130074",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "射手座精灵",
+       "count": 1,
+       "image": "x111300e4",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座精灵",
+       "count": 1,
+       "image": "x111300c4",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座精灵",
+       "count": 1,
+       "image": "x11130064",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "双子座精灵",
+       "count": 1,
+       "image": "x11110054",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "金牛座精灵",
+       "count": 1,
+       "image": "x11190154",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "狮子座精灵",
+       "count": 1,
+       "image": "x11930074",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "二哈汪",
+       "count": 1,
+       "image": "x11130104",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "狩猎汪",
+       "count": 1,
+       "image": "x11130114",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "机械汪",
+       "count": 1,
+       "image": "x11130124",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "飞盘汪",
+       "count": 1,
+       "image": "x11430034",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "守能汪",
+       "count": 1,
+       "image": "x11210024",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "暖炉汪",
+       "count": 1,
+       "image": "x11190164",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "超能四叶草",
+       "count": 1,
+       "image": "x123200c0",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "SS四叶草",
+       "count": 1,
+       "image": "x12320120",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "法师猪",
+       "count": 1,
+       "image": "x11120120",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "投弹猪",
+       "count": 1,
+       "image": "x11120090",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "风力空投猪",
+       "count": 1,
+       "image": "x11120140",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "钱罐猪",
+       "count": 1,
+       "image": "x11120160",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "天使猪",
+       "count": 1,
+       "image": "x11390500",
+       "expected": false,
+       "odds": 0.01,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "160000保底奖励",
+     "description": "消耗 160000 点券至少可以获取一个以下物品。\n其中的星之神杖宝箱见「宝箱概率 - 武器相关宝箱」。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "爱神丘比特进化凭证",
+       "count": 1,
+       "image": "x12100000",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "战神阿瑞斯进化凭证",
+       "count": 1,
+       "image": "x12100100",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "雷神索尔进化凭证",
+       "count": 1,
+       "image": "x12100200",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "太阳神阿波罗进化凭证",
+       "count": 1,
+       "image": "x12100300",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "月神狄安娜进化凭证",
+       "count": 1,
+       "image": "x12100600",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "火神洛基进化凭证",
+       "count": 1,
+       "image": "x12100400",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "海神波塞冬进化凭证",
+       "count": 1,
+       "image": "x12100500",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "赫拉神使（0星，30天）",
+       "count": 1,
+       "image": "x1124002a",
+       "expected": false,
+       "odds": 0.15,
+       "remoteId": null
+      },
+      {
+       "name": "潘多拉（0星，31天）",
+       "count": 1,
+       "image": "x1112009a",
+       "expected": false,
+       "odds": 0.16,
+       "remoteId": null
+      },
+      {
+       "name": "SSS四叶草",
+       "count": 1,
+       "image": "x12320220",
+       "expected": false,
+       "odds": 0.16,
+       "remoteId": null
+      },
+      {
+       "name": "神器幸运宝箱",
+       "count": 1,
+       "image": "x13b49d30",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "神弩幸运宝箱",
+       "count": 1,
+       "image": "x13b50b80",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "战镰幸运宝箱",
+       "count": 1,
+       "image": "x13b50b90",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "神盾幸运宝箱",
+       "count": 1,
+       "image": "x13b51530",
+       "expected": false,
+       "odds": 0.01,
+       "remoteId": null
+      },
+      {
+       "name": "猪猪加强器",
+       "count": 1,
+       "image": "x11120110",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "小猪米花机",
+       "count": 1,
+       "image": "x11120100",
+       "expected": false,
+       "odds": 0.02,
+       "remoteId": null
+      },
+      {
+       "name": "猪猪猎手",
+       "count": 1,
+       "image": "x11120130",
+       "expected": false,
+       "odds": 0.07,
+       "remoteId": null
+      },
+      {
+       "name": "星之神杖宝箱",
+       "count": 1,
+       "image": "x13b75830",
+       "expected": false,
+       "odds": 0.01,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "法老宝藏",
+     "description": "概率来自 4399 官方公示帖。\n消耗 18000 点券、80000 点券的保底奖励已单独列出。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "精灵香料",
+       "count": 1,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.06,
+       "remoteId": null
+      },
+      {
+       "name": "魔幻香料",
+       "count": 1,
+       "image": "x123400c0",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "皇室香料",
+       "count": 1,
+       "image": "x123400a0",
+       "expected": false,
+       "odds": 0.3,
+       "remoteId": null
+      },
+      {
+       "name": "极品香料",
+       "count": 1,
+       "image": "x12340090",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "秘制香料",
+       "count": 1,
+       "image": "x12340080",
+       "expected": false,
+       "odds": 0.135,
+       "remoteId": null
+      },
+      {
+       "name": "4级四叶草",
+       "count": 1,
+       "image": "x12320080",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "5级四叶草",
+       "count": 1,
+       "image": "x123200a0",
+       "expected": false,
+       "odds": 0.15,
+       "remoteId": null
+      },
+      {
+       "name": "6级四叶草",
+       "count": 1,
+       "image": "x123200e0",
+       "expected": false,
+       "odds": 0.008,
+       "remoteId": null
+      },
+      {
+       "name": "超能四叶草",
+       "count": 1,
+       "image": "x123200c0",
+       "expected": false,
+       "odds": 0.006,
+       "remoteId": null
+      },
+      {
+       "name": "天秤座精灵",
+       "count": 1,
+       "image": "x11130074",
+       "expected": false,
+       "odds": 0.006500000000000001,
+       "remoteId": null
+      },
+      {
+       "name": "天蝎座精灵",
+       "count": 1,
+       "image": "x111300a4",
+       "expected": false,
+       "odds": 0.008,
+       "remoteId": null
+      },
+      {
+       "name": "狮子座精灵",
+       "count": 1,
+       "image": "x11930074",
+       "expected": false,
+       "odds": 0.008,
+       "remoteId": null
+      },
+      {
+       "name": "射手座精灵",
+       "count": 1,
+       "image": "x111300e4",
+       "expected": false,
+       "odds": 0.006500000000000001,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座精灵",
+       "count": 1,
+       "image": "x111300c4",
+       "expected": false,
+       "odds": 0.006500000000000001,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座精灵",
+       "count": 1,
+       "image": "x11130064",
+       "expected": false,
+       "odds": 0.006500000000000001,
+       "remoteId": null
+      },
+      {
+       "name": "双子座精灵",
+       "count": 1,
+       "image": "x11110054",
+       "expected": false,
+       "odds": 0.006500000000000001,
+       "remoteId": null
+      },
+      {
+       "name": "金牛座精灵",
+       "count": 1,
+       "image": "x11190154",
+       "expected": false,
+       "odds": 0.003,
+       "remoteId": null
+      },
+      {
+       "name": "初级技能书箱",
+       "count": 1,
+       "image": "x13b33630",
+       "expected": false,
+       "odds": 0.008,
+       "remoteId": null
+      },
+      {
+       "name": "高级技能书箱",
+       "count": 1,
+       "image": "x13b33730",
+       "expected": false,
+       "odds": 0.006500000000000001,
+       "remoteId": null
+      },
+      {
+       "name": "星座卡终级技能书箱",
+       "count": 1,
+       "image": "x13b33830",
+       "expected": false,
+       "odds": 0.0034999999999999996,
+       "remoteId": null
+      },
+      {
+       "name": "双子座二转凭证套餐",
+       "count": 1,
+       "image": "x13a56f30",
+       "expected": false,
+       "odds": 0.0025,
+       "remoteId": null
+      },
+      {
+       "name": "射手座二转凭证套餐",
+       "count": 1,
+       "image": "x13a57a30",
+       "expected": false,
+       "odds": 0.0025,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座二转凭证套餐",
+       "count": 1,
+       "image": "x13a57b30",
+       "expected": false,
+       "odds": 0.0025,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座二转凭证套餐",
+       "count": 1,
+       "image": "x13a57c30",
+       "expected": false,
+       "odds": 0.0025,
+       "remoteId": null
+      },
+      {
+       "name": "射手座一转凭证套餐",
+       "count": 1,
+       "image": "x13a55e30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座一转凭证套餐",
+       "count": 1,
+       "image": "x13a55f30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56a30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      },
+      {
+       "name": "双子座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56b30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      },
+      {
+       "name": "天秤座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56c30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      },
+      {
+       "name": "天蝎座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56d30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      },
+      {
+       "name": "狮子座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56e30",
+       "expected": false,
+       "odds": 0.0045000000000000005,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "18000保底奖励",
+     "description": "消耗 18000 点券至少可以获取一个以下物品。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "精灵香料",
+       "count": 20,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      },
+      {
+       "name": "天秤座精灵(30天)",
+       "count": 1,
+       "image": "x11130074",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "天蝎座精灵(30天)",
+       "count": 1,
+       "image": "x111300a4",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "狮子座精灵(30天)",
+       "count": 1,
+       "image": "x11930074",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "射手座精灵(30天)",
+       "count": 1,
+       "image": "x111300e4",
+       "expected": false,
+       "odds": 0.06,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座精灵(30天)",
+       "count": 1,
+       "image": "x111300c4",
+       "expected": false,
+       "odds": 0.06,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座精灵(30天)",
+       "count": 1,
+       "image": "x11130064",
+       "expected": false,
+       "odds": 0.06,
+       "remoteId": null
+      },
+      {
+       "name": "双子座精灵(30天)",
+       "count": 1,
+       "image": "x11110054",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "金牛座精灵(30天)",
+       "count": 1,
+       "image": "x11190154",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      },
+      {
+       "name": "6级四叶草",
+       "count": 1,
+       "image": "x123200e0",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "超能四叶草",
+       "count": 1,
+       "image": "x123200c0",
+       "expected": false,
+       "odds": 0.07,
+       "remoteId": null
+      },
+      {
+       "name": "星座卡初级技能书箱",
+       "count": 1,
+       "image": "x13b33630",
+       "expected": false,
+       "odds": 0.1,
+       "remoteId": null
+      },
+      {
+       "name": "星座卡高级技能书箱",
+       "count": 1,
+       "image": "x13b33730",
+       "expected": false,
+       "odds": 0.08,
+       "remoteId": null
+      }
+     ]
+    },
+    {
+     "name": "80000保底奖励",
+     "description": "消耗 80000 点券至少可以获取一个以下物品。",
+     "errata": "",
+     "prizes": [
+      {
+       "name": "双子座二转凭证套餐",
+       "count": 1,
+       "image": "x13a56f30",
+       "expected": false,
+       "odds": 0.05,
+       "remoteId": null
+      },
+      {
+       "name": "射手座二转凭证套餐",
+       "count": 1,
+       "image": "x13a57a30",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座二转凭证套餐",
+       "count": 1,
+       "image": "x13a57b30",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座二转凭证套餐",
+       "count": 1,
+       "image": "x13a57c30",
+       "expected": false,
+       "odds": 0.04,
+       "remoteId": null
+      },
+      {
+       "name": "射手座一转凭证套餐",
+       "count": 1,
+       "image": "x13a55e30",
+       "expected": false,
+       "odds": 0.07,
+       "remoteId": null
+      },
+      {
+       "name": "双鱼座一转凭证套餐",
+       "count": 1,
+       "image": "x13a55f30",
+       "expected": false,
+       "odds": 0.07,
+       "remoteId": null
+      },
+      {
+       "name": "巨蟹座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56a30",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "双子座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56b30",
+       "expected": false,
+       "odds": 0.09,
+       "remoteId": null
+      },
+      {
+       "name": "天秤座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56c30",
+       "expected": false,
+       "odds": 0.12,
+       "remoteId": null
+      },
+      {
+       "name": "天蝎座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56d30",
+       "expected": false,
+       "odds": 0.12,
+       "remoteId": null
+      },
+      {
+       "name": "狮子座一转凭证套餐",
+       "count": 1,
+       "image": "x13a56e30",
+       "expected": false,
+       "odds": 0.12,
+       "remoteId": null
+      },
+      {
+       "name": "星座卡终级技能书箱",
+       "count": 1,
+       "image": "x13b33830",
+       "expected": false,
+       "odds": 0.12,
+       "remoteId": null
+      },
+      {
+       "name": "精灵香料",
+       "count": 60,
+       "image": "x12340120",
+       "expected": false,
+       "odds": 0.03,
+       "remoteId": null
+      }
+     ]
     }
    ]
   },

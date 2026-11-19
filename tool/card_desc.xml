@@ -1100,6 +1100,15 @@
 	<item comefrom="" desc="召唤1颗陨石，对本行老鼠进行海陆空全方位打击|攻击力提升25%，眩晕巨型鼠|子弹数+2，溅射范围扩大至3*5" detail="" effect_area="1行" effect_condition="全天,," energy="380" hp="" id="0x11123000" index="0" name="银河马" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
 	<item comefrom="" desc="召唤1颗陨石，对本行老鼠进行海陆空全方位打击|攻击力提升25%，眩晕巨型鼠|子弹数+2，溅射范围扩大至3*5" detail="" effect_area="1行" effect_condition="全天,," energy="380" hp="" id="0x1112300e" index="0" name="星渊银河马" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
 	<item comefrom="" desc="召唤1颗陨石，对本行老鼠进行海陆空全方位打击|攻击力提升25%，眩晕巨型鼠|子弹数+2，溅射范围扩大至3*5" detail="" effect_area="1行" effect_condition="全天,," energy="380" hp="" id="0x1112300f" index="0" name="创世银河马" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="向前方连续发射2发豆浆子弹，几率附加击退效果|攻击力提升，子弹可过障碍|子弹数量+2" detail="" effect_area="1行" effect_condition="全天,," energy="290" hp="" id="0x11123010" index="0" name="石磨豆浆" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="向前方连续发射2发豆浆子弹，几率附加击退效果|攻击力提升，子弹可过障碍|子弹数量+2" detail="" effect_area="1行" effect_condition="全天,," energy="290" hp="" id="0x1112301e" index="0" name="超空石磨豆浆" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="向前方连续发射2发豆浆子弹，几率附加击退效果|攻击力提升，子弹可过障碍|子弹数量+2" detail="" effect_area="1行" effect_condition="全天,," energy="290" hp="" id="0x1112301f" index="0" name="激流石磨豆浆" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="向前方投掷1个可以滚动一段距离的酒酿圆子|滚动距离+1格|子弹+1，滚动可以撞飞平民鼠" detail="" effect_area="1行" effect_condition="全天,," energy="335" hp="" id="0x11123020" index="0" name="酒酿圆子" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="向前方投掷1个可以滚动一段距离的酒酿圆子|滚动距离+1格|子弹+1，滚动可以撞飞平民鼠" detail="" effect_area="1行" effect_condition="全天,," energy="335" hp="" id="0x1112302e" index="0" name="家常酒酿圆子" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="向前方投掷1个可以滚动一段距离的酒酿圆子|滚动距离+1格|子弹+1，滚动可以撞飞平民鼠" detail="" effect_area="1行" effect_condition="全天,," energy="335" hp="" id="0x1112302f" index="0" name="甜品酒酿圆子" sex="" strengthen_desc="[攻击力]" type="攻击型"/>
+	<item comefrom="" desc="清除范围内魂火，并在准备过后释放大量火苗|额外返还放卡消耗的火苗|产能提升，清除魂火范围扩大" detail="" effect_area="1格" effect_condition="全天,," energy="50" hp="" id="0x11123030" index="0" name="地心火栗" sex="" strengthen_desc="[火苗能量]" type="生产型"/>
+	<item comefrom="" desc="清除范围内魂火，并在准备过后释放大量火苗|额外返还放卡消耗的火苗|产能提升，清除魂火范围扩大" detail="" effect_area="1格" effect_condition="全天,," energy="50" hp="" id="0x1112303e" index="0" name="碳烤地心火栗" sex="" strengthen_desc="[火苗能量]" type="生产型"/>
+	<item comefrom="" desc="清除范围内魂火，并在准备过后释放大量火苗|额外返还放卡消耗的火苗|产能提升，清除魂火范围扩大" detail="" effect_area="1格" effect_condition="全天,," energy="50" hp="" id="0x1112303f" index="0" name="焦糖地心火栗" sex="" strengthen_desc="[火苗能量]" type="生产型"/>
 
 	
 	
@@ -1202,6 +1211,9 @@
 	<item comefrom="龙渊除厄" desc="制作[红柳烤串机]的必要素材" detail="制作[红柳烤串机]的必要素材：红柳烤串机配方，红柳枝，羊羔肉，小茴香" effect_area="" effect_condition="" energy="" hp="" id="0x12420610" index="0" name="红柳烤串机配方" sex="" strengthen_desc="" type="材料道具"/>
 	<item comefrom="龙渊除厄" desc="制作[泡椒春笋]的必要素材" detail="制作[泡椒春笋]的必要素材：泡椒春笋配方，小米泡椒，新鲜春笋，调料包" effect_area="" effect_condition="" energy="" hp="" id="0x12420620" index="0" name="泡椒春笋配方" sex="" strengthen_desc="" type="材料道具"/>
 	<item comefrom="龙渊除厄" desc="制作[元宝饺子鼎]的必要素材" detail="制作[元宝饺子鼎]的必要素材：元宝饺子鼎配方，小汤锅，饺子皮，三鲜馅" effect_area="" effect_condition="" energy="" hp="" id="0x12420630" index="0" name="元宝饺子鼎配方 " sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[石磨豆浆]的必要素材" detail="制作[石磨豆浆]的必要素材：石磨豆浆配方，黄豆，石磨，山泉水" effect_area="" effect_condition="" energy="" hp="" id="0x12420640" index="0" name="石磨豆浆配方" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[酒酿圆子]的必要素材" detail="制作[酒酿圆子]的必要素材：酒酿圆子配方，糯米圆子，酒酿，桂花干" effect_area="" effect_condition="" energy="" hp="" id="0x12420650" index="0" name="酒酿圆子配方" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[地心火栗]的必要素材" detail="制作[地心火栗]的必要素材：地心火栗配方，板栗，石英砂，炭火" effect_area="" effect_condition="" energy="" hp="" id="0x12420660" index="0" name="地心火栗配方" sex="" strengthen_desc="" type="材料道具"/>
 	
 	
 	<item comefrom="" desc="可以制作出以下结晶：[双子座结晶][小火炉结晶][大火炉结晶][酒杯灯结晶]" detail="制作需要[琥珀石]和[翡翠石]" effect_area="" effect_condition="" energy="" hp="" id="0x128203e0" index="0" name="火炉谱" sex="" strengthen_desc="" type="材料道具"/>
@@ -1503,6 +1515,14 @@
 	<item comefrom="龙渊除厄" desc="制作[元宝饺子鼎]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411560" index="0" name="小汤锅" sex="" strengthen_desc="" type="材料道具"/>
 	<item comefrom="龙渊除厄" desc="制作[元宝饺子鼎]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411570" index="0" name="饺子皮" sex="" strengthen_desc="" type="材料道具"/>
 	<item comefrom="龙渊除厄" desc="制作[元宝饺子鼎]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411580" index="0" name="三鲜馅" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[石磨豆浆]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411590" index="0" name="黄豆" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[石磨豆浆]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x124115a0" index="0" name="石磨" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[酒酿圆子]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x124115b0" index="0" name="糯米圆子" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[酒酿圆子]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x124115c0" index="0" name="酒酿" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[酒酿圆子]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x124115d0" index="0" name="桂花干" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[地心火栗]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411600" index="0" name="板栗" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[地心火栗]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411610" index="0" name="石英砂" sex="" strengthen_desc="" type="材料道具"/>
+	<item comefrom="龙渊除厄" desc="制作[地心火栗]的必要素材" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12411620" index="0" name="炭火" sex="" strengthen_desc="" type="材料道具"/>
 	
 
 	
@@ -1673,6 +1693,8 @@
 	<item comefrom="" desc="集齐AB两片[百味徽章]，就可以穿越通往九幽龙渊“百味关”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500830" index="0" name="百味徽章B" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="集齐AB两片[奶盖徽章]，就可以穿越通往九幽龙渊“奶盖桥”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500840" index="0" name="奶盖徽章A" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="集齐AB两片[奶盖徽章]，就可以穿越通往九幽龙渊“奶盖桥”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500850" index="0" name="奶盖徽章B" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两片[素斋徽章]，就可以穿越通往九幽龙渊“素斋宫”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500860" index="0" name="素斋徽章A" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两片[素斋徽章]，就可以穿越通往九幽龙渊“素斋宫”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500870" index="0" name="素斋徽章B" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="集齐AB两片[堡王徽章]，就可以穿越通往“堡王星”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500770" index="0" name="堡王徽章A" sex="" strengthen_desc="" type="功能道具"/>	
 	<item comefrom="" desc="集齐AB两片[堡王徽章]，就可以穿越通往“堡王星”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500780" index="0" name="堡王徽章B" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="集齐AB两片[星云徽章]，就可以探索“多拿滋星云”深处的时空。" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12500790" index="0" name="星云徽章A" sex="" strengthen_desc="" type="功能道具"/>	
@@ -7474,6 +7496,16 @@
 	<item comefrom="" desc="花火龙（0星，30天，绑定）X1&lt;br&gt;花火龙一转套餐X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8440" index="0" name="一转花火龙礼包" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="百变蛇（0星，30天，绑定）X1&lt;br&gt;百变蛇一转套餐X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8450" index="0" name="一转百变蛇礼包" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="音盒马一转套餐X1&lt;br&gt;音盒马二转套餐X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af85d0" index="0" name="音盒马进化礼包" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="12星卡片随机大宝箱X1&lt;br&gt;11星卡片随机大宝箱X2&lt;br&gt;SSR四叶草X2&lt;br&gt;SSS四叶草X2&lt;br&gt;中级原石X200&lt;br&gt;高级原石X540&lt;br&gt;魅力经验(3000魅力经验)X20&lt;br&gt;醉翁幻梦宝箱（绑定）X20&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af85e0" index="0" name="16周年充值礼包" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="12星卡片随机大宝箱X1&lt;br&gt;SSR四叶草X1&lt;br&gt;SSS四叶草X1&lt;br&gt;醉翁幻梦宝箱（绑定）X5&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af85f0" index="0" name="16周年消费礼包" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="符文马（0星，30天，绑定）X1&lt;br&gt;符文马(一转凭证A)X1&lt;br&gt;符文马(一转凭证B)X1&lt;br&gt;符文马(二转凭证A)X1&lt;br&gt;符文马(二转凭证B)X1&lt;br&gt;符文马(二转凭证C)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8670" index="0" name="符文马典藏礼包" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="法师蛇一转套餐X1&lt;br&gt;法师蛇二转套餐X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8680" index="0" name="法师蛇进化礼包" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="石磨豆浆(一转凭证A)X1&lt;br&gt;石磨豆浆(一转凭证B)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8600" index="0" name="石磨豆浆一转套餐" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="石磨豆浆(二转凭证A)X1&lt;br&gt;石磨豆浆(二转凭证B)X1&lt;br&gt;石磨豆浆(二转凭证C)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8610" index="0" name="石磨豆浆二转套餐" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="酒酿圆子(一转凭证A)X1&lt;br&gt;酒酿圆子(一转凭证B)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8620" index="0" name="酒酿圆子一转套餐" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="酒酿圆子(二转凭证A)X1&lt;br&gt;酒酿圆子(二转凭证B)X1&lt;br&gt;酒酿圆子(二转凭证C)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8640" index="0" name="酒酿圆子二转套餐" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="地心火栗(一转凭证A)X1&lt;br&gt;地心火栗(一转凭证B)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8650" index="0" name="地心火栗一转套餐" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="地心火栗(二转凭证A)X1&lt;br&gt;地心火栗(二转凭证B)X1&lt;br&gt;地心火栗(二转凭证C)X1&lt;br&gt;道具绑定" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13af8660" index="0" name="地心火栗二转套餐" sex="" strengthen_desc="" type="功能道具"/>
 	
 	<item comefrom="" desc="准备好做一名专业大厨了吗？" detail="" effect_area="" effect_condition="" energy="" hp="体力+5" id="0x14200110" index="0" name="厨师帽" sex="男" strengthen_desc="" type="男帽"/>
 	<item comefrom="" desc="在寒冷的冬日给你带来温温的暖意" detail="" effect_area="" effect_condition="" energy="" hp="体力+5" id="0x14200210" index="0" name="毛线帽" sex="男" strengthen_desc="" type=""/>
@@ -8904,6 +8936,7 @@
 	<item comefrom="" desc="嵌入真爱谱中，可以加强15周年猴赛雷的攻击力" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x14900138" index="3" name="15周年猴赛雷结晶" sex="" strengthen_desc="" type="结晶"/>
 	<item comefrom="" desc="嵌入真爱谱中，可以加强工匠神鲁班的攻击力" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x14900140" index="3" name="工匠神结晶" sex="" strengthen_desc="" type="结晶"/>
 	<item comefrom="" desc="嵌入真爱谱中，可以加强全能糖球投手的攻击力" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x14900139" index="3" name="全能糖球投手结晶" sex="" strengthen_desc="" type="结晶"/>
+	<item comefrom="" desc="嵌入真爱谱中，可以加强护法神俱吠罗的攻击力" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x14900141" index="3" name="护法神结晶" sex="" strengthen_desc="" type="结晶"/>
 	<item comefrom="" desc="初次使用后可以开启练习1级2级3级[速攻技能]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12210110" index="0" name="小笼包-初级技能书" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="初次使用后可以开启练习4级5级[速攻技能]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12210120" index="0" name="小笼包-高级技能书" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="初次使用后可以开启练习6级7级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12210130" index="0" name="小笼包-终极技能书" sex="" strengthen_desc="" type="功能道具"/>
@@ -10003,6 +10036,18 @@
 	<item comefrom="" desc="初次使用后可以开启练习4级5级[速攻技能]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a0f20" index="0" name="银河马-高级技能书" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="初次使用后可以开启练习6级7级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a0f30" index="0" name="银河马-终极技能书" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="初次使用后可以开启练习8级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a0f40" index="0" name="银河马-究极技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习1级2级3级[速攻技能]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1010" index="0" name="石磨豆浆-初级技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习4级5级[速攻技能]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1020" index="0" name="石磨豆浆-高级技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习6级7级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1030" index="0" name="石磨豆浆-终极技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习8级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1040" index="0" name="石磨豆浆-究极技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习1级2级3级[速攻技能]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1110" index="0" name="酒酿圆子-初级技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习4级5级[速攻技能]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1120" index="0" name="酒酿圆子-高级技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习6级7级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1130" index="0" name="酒酿圆子-终极技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习8级[速攻技能]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[速攻技能]等级越高该类卡片的攻击速度越高" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1140" index="0" name="酒酿圆子-究极技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习1级2级3级[准备时间]&lt;br&gt;后续每使用一次+40点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1210" index="0" name="地心火栗-初级技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习4级5级[准备时间]&lt;br&gt;后续每使用一次+200点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1220" index="0" name="地心火栗-高级技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习6级7级[准备时间]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1230" index="0" name="地心火栗-终极技能书" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="初次使用后可以开启练习8级[准备时间]&lt;br&gt;后续每使用一次+400点技能熟练度&lt;br&gt;[准备时间]等级越高该类卡片的准备时间越短" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x122a1240" index="0" name="地心火栗-究极技能书" sex="" strengthen_desc="" type="功能道具"/>
 
 	
 	
@@ -15382,6 +15427,21 @@
 	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的星渊银河马进行二转|二转获得技能:子弹数+2，溅射范围扩大至3*5" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13621345" index="0" name="银河马(二转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的星渊银河马进行二转|二转获得技能:子弹数+2，溅射范围扩大至3*5" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13622345" index="0" name="银河马(二转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
 	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的星渊银河马进行二转|二转获得技能:子弹数+2，溅射范围扩大至3*5" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13623345" index="0" name="银河马(二转凭证C)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的石磨豆浆进行一转|一转获得技能:攻击力提升，子弹可过障碍" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13611346" index="0" name="石磨豆浆(一转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的石磨豆浆进行一转|一转获得技能:攻击力提升，子弹可过障碍" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13612346" index="0" name="石磨豆浆(一转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的超空石磨豆浆进行二转|二转获得技能:子弹数量+2" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13621346" index="0" name="石磨豆浆(二转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的超空石磨豆浆进行二转|二转获得技能:子弹数量+2" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13622346" index="0" name="石磨豆浆(二转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的超空石磨豆浆进行二转|二转获得技能:子弹数量+2" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13623346" index="0" name="石磨豆浆(二转凭证C)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的酒酿圆子进行一转|一转获得技能:滚动距离+1格" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13611347" index="0" name="酒酿圆子(一转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的酒酿圆子进行一转|一转获得技能:滚动距离+1格" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13612347" index="0" name="酒酿圆子(一转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的家常酒酿圆子进行二转|二转获得技能:子弹+1，滚动可以撞飞平民鼠" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13621347" index="0" name="酒酿圆子(二转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的家常酒酿圆子进行二转|二转获得技能:子弹+1，滚动可以撞飞平民鼠" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13622347" index="0" name="酒酿圆子(二转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的家常酒酿圆子进行二转|二转获得技能:子弹+1，滚动可以撞飞平民鼠" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13623347" index="0" name="酒酿圆子(二转凭证C)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的地心火栗进行一转|一转获得技能:额外返还放卡消耗的火苗" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13611348" index="0" name="地心火栗(一转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐AB两张凭证后去合成屋转职,可使强化到9星以上的地心火栗进行一转|一转获得技能:额外返还放卡消耗的火苗" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13612348" index="0" name="地心火栗(一转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的碳烤地心火栗进行二转|二转获得技能:产能提升，清除魂火范围扩大" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13621348" index="0" name="地心火栗(二转凭证A)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的碳烤地心火栗进行二转|二转获得技能:产能提升，清除魂火范围扩大" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13622348" index="0" name="地心火栗(二转凭证B)" sex="" strengthen_desc="" type="功能道具"/>
+	<item comefrom="" desc="集齐ABC三张凭证后去合成屋转职,可使强化到12星以上的碳烤地心火栗进行二转|二转获得技能:产能提升，清除魂火范围扩大" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x13623348" index="0" name="地心火栗(二转凭证C)" sex="" strengthen_desc="" type="功能道具"/>
 
 	
 	<item comefrom="" desc="集齐主卡皇冠菠萝面包+太阳能高效炉+皇冠菠萝面包初级融合菜谱【能量】，再配合5个初级融合剂，可以在合成屋融合新卡片-火炉菠萝面包" detail="" effect_area="" effect_condition="" energy="" hp="" id="0x12b00010" index="0" name="皇冠菠萝面包初级融合菜谱【能量】" sex="" strengthen_desc="" type="功能道具"/>
