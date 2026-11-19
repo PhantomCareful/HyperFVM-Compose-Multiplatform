@@ -6,8 +6,13 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 
-/** 概率文本（百分数形式）最多精确到的小数位数，与 Java 版 `OddsItem` 一致。 */
-private const val MaxOddsPrecision = 3
+/**
+ * 概率文本（百分数形式）最多精确到的小数位数。
+ *
+ * 官方公示已出现 0.0001%~0.0006% 级别的条目（如诸神宝殿的番外卡片包、神谕之石宝箱），
+ * 只保留 3 位会被四舍五入成 0.000%，因此取 4 位。
+ */
+private const val MaxOddsPrecision = 4
 
 /** 判断小数是否已精确到整数所使用的浮点误差容差。 */
 private const val OddsPrecisionEpsilon = 1e-6
@@ -58,7 +63,7 @@ class OddsItem(
 }
 
 /**
- * 同一次公示里统一取用的概率小数位数：取各项所需位数的最大值（下限 1、上限 3），
+ * 同一次公示里统一取用的概率小数位数：取各项所需位数的最大值（下限 1、上限 [MaxOddsPrecision]），
  * 避免同一个宝箱里出现 "3%" 与 "0.003%" 混排。
  */
 val List<OddsItem>.oddsTextPrecision: Int
