@@ -2,7 +2,6 @@ package com.careful.hyperfvm.compose.data.cardCatalog
 
 import com.careful.hyperfvm.compose.platform.Logs
 import com.careful.hyperfvm.compose.platform.createHanTransliterator
-import org.jetbrains.compose.resources.DrawableResource
 import java.text.Normalizer
 import java.util.Locale
 
@@ -14,12 +13,12 @@ import java.util.Locale
  * 用什么分隔符，当场决定。
  *
  * @param name 形态名，目录页第二行展示的就是它。
- * @param image 该形态的卡图，必须是 `x11*.webp`。
+ * @param image 该形态的卡图 id（数据包 images/ 下的文件名），必须是 `x11*`。
  */
 internal data class CardForm(
     val name: String,
-    // 跨端资源对象：Android 与桌面共用同一份 composeResources，不再依赖 R 类的 int id。
-    val image: DrawableResource,
+    // 数据包内的图片 id：文件在运行时从本地数据包加载，随包安装包不再包含图片。
+    val image: String,
 )
 
 /**
@@ -109,10 +108,10 @@ internal object CardCatalog {
     }
 
     /**
-     * 形态卡图 → 所属防御卡。资源 id 在运行时唯一，同一张图不会出现在两张卡里，
+     * 形态卡图 id → 所属防御卡。图片 id 在数据表内唯一，同一张图不会出现在两张卡里，
      * 所以可以拿任意形态的卡图反查出整张卡（含其余形态名与卡图）。
      */
-    private val imageIndex: Map<DrawableResource, DefenseCard> by lazy {
+    private val imageIndex: Map<String, DefenseCard> by lazy {
         buildMap {
             cards.forEach { card ->
                 card.forms.forEach { form -> put(form.image, card) }
@@ -121,7 +120,7 @@ internal object CardCatalog {
     }
 
     /** 按任意形态的卡图反查防御卡；未登记过的图返回 null。 */
-    fun cardOf(image: DrawableResource): DefenseCard? = imageIndex[image]
+    fun cardOf(image: String): DefenseCard? = imageIndex[image]
 
     /**
      * 按形态名精确查卡：仪表盘弹层里的名单写的是主名或别名，

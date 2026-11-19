@@ -33,6 +33,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.dashboard.DashboardDataImageUpdateCard
+import com.careful.hyperfvm.compose.component.dashboard.DashboardDataPackUpdateCard
 import com.careful.hyperfvm.compose.component.dashboard.DashboardDetailSheet
 import com.careful.hyperfvm.compose.component.dashboard.DashboardGiftPairRow
 import com.careful.hyperfvm.compose.component.dashboard.DashboardMonthEndCard
@@ -50,6 +51,7 @@ import com.careful.hyperfvm.compose.data.dashboard.DashboardStatus
 import com.careful.hyperfvm.compose.data.dashboard.isMonthEnd
 import com.careful.hyperfvm.compose.data.dashboard.isVisible
 import com.careful.hyperfvm.compose.data.dashboard.token
+import com.careful.hyperfvm.compose.data.datapack.DataPackRepository
 import com.careful.hyperfvm.compose.data.image.DataImageUpdateChecker
 import com.careful.hyperfvm.compose.data.notification.NotificationRepository
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
@@ -128,6 +130,9 @@ private const val DataImageUpdateHideMillis = 160
 /** 数据图更新提示卡在 LazyColumn 里的 key。 */
 private const val DataImageUpdateCardKey = "dashboardDataImageUpdate"
 
+/** 数据包更新提示卡在 LazyColumn 里的 key。 */
+private const val DataPackUpdateCardKey = "dashboardDataPackUpdate"
+
 /**
  * 本次进程里首屏那次「自动刷新 + 进度条喷出」是否已经做过。
  * 底栏是 HorizontalPager，切到别的页面再切回来，DashboardScreen 会整页重建，
@@ -145,8 +150,9 @@ private object LaunchRefresh {
  * 卡片右侧是状态文案（暂无 / 即将开启 / 12/21 等）；点开卡片弹通用详情
  * （时间行、返场卡片名单、场次与底部按钮），抢红包在今日开启时改为弹提示。
  *
- * 列表顶部另有两张不参与排序的卡：数据图有新版本时的更新提示（回到本页时
- * 才检查，不跟下拉刷新走），以及每月最后一天的月末提醒。
+ * 列表顶部另有三张不参与排序的卡：数据包有新版本时的更新提示（点进去是首次更新那套界面），
+ * 数据图有新版本时的更新提示（回到本页时才检查，不跟下拉刷新走），
+ * 以及每月最后一天的月末提醒。
  */
 @Composable
 fun DashboardScreen(outerPadding: PaddingValues) {
@@ -244,6 +250,21 @@ fun DashboardScreen(outerPadding: PaddingValues) {
             null
         }
         if (hasNew != null) dataImageUpdate = hasNew
+    }
+
+    // 数据包有没有新版本：与数据图同一种时机，两条检查各自独立，互不拖慢。
+    // 更新完成后从更新页返回仪表盘，本效果重跑，卡会自行收起。
+    var dataPackUpdate by remember { mutableStateOf(false) }
+    LaunchedEffect(atDashboard, resumeTick) {
+        if (!atDashboard) return@LaunchedEffect
+        val hasNew = try {
+            DataPackRepository.hasNewVersion(env)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            null
+        }
+        if (hasNew != null) dataPackUpdate = hasNew
     }
 
     val monthEnd = isMonthEnd()
@@ -344,6 +365,24 @@ fun DashboardScreen(outerPadding: PaddingValues) {
                     bottom = padding.calculateBottomPadding() + 12.dp,
                 ),
             ) {
+                // 数据包有新版本：点整卡直接进更新页（首次更新那套界面）。
+                // 与数据图卡一样，条件出现的提醒不参与拖动排序，也不进「卡片管理」。
+                item(key = DataPackUpdateCardKey) {
+                    AnimatedVisibility(
+                        visible = dataPackUpdate,
+                        enter = expandVertically(animationSpec = tween(DataImageUpdateRevealMillis)) +
+                            fadeIn(animationSpec = tween(DataImageUpdateRevealMillis)),
+                        exit = shrinkVertically(animationSpec = tween(DataImageUpdateHideMillis)) +
+                            fadeOut(animationSpec = tween(DataImageUpdateHideMillis)),
+                    ) {
+                        DashboardDataPackUpdateCard(
+                            onClick = { navigator.push(Route.DataPackUpdate) },
+                            modifier = Modifier
+                                .padding(horizontal = CardSidePadding)
+                                .padding(bottom = CardGap),
+                        )
+                    }
+                }
                 // 数据图有新版本时的提示卡：固定在月末提醒之上，不参与拖动排序，
                 // 也不进「卡片管理」——它是条件出现的提醒，不是常驻卡片。
                 item(key = DataImageUpdateCardKey) {

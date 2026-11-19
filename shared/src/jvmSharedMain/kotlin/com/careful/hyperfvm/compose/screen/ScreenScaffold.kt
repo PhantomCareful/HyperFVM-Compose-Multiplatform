@@ -101,6 +101,9 @@ private const val ProgressiveBaseAlpha = 1.0f
  *
  * [snackbarHost] 挂在 Scaffold 底部的提示宿主：带 Action 的 Snackbar 走这里，
  * miuix 会把它抬到底栏 / 导航栏安全区之上。
+ *
+ * [floatingActionButton] 是右下角的悬浮按钮槽位：由 miuix Scaffold 摆放，
+ * 自带底边距与导航栏安全区避让，位置不随越界回弹移动。
  */
 @Composable
 fun ScreenScaffold(
@@ -118,6 +121,7 @@ fun ScreenScaffold(
     bottomContent: (@Composable () -> Unit)? = null,
     overlay: @Composable BoxScope.(PaddingValues) -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
+    floatingActionButton: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val settings = LocalAppSettings.current
@@ -143,6 +147,7 @@ fun ScreenScaffold(
                 )
             },
             snackbarHost = snackbarHost,
+            floatingActionButton = { floatingActionButton?.invoke() },
         ) { innerPadding ->
             val padding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),

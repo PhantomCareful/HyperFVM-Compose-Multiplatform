@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
 import org.jetbrains.compose.resources.painterResource
@@ -60,7 +61,7 @@ fun VisitUrlDialog(
     ) {
         if (contentTarget != null) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (contentTarget.iconRes != null) {
+                if (contentTarget.iconRes != null || contentTarget.imageId != null) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -72,12 +73,20 @@ fun VisitUrlDialog(
                         } else {
                             Modifier.size(150.dp)
                         }
-                        Image(
-                            modifier = iconModifier,
-                            painter = painterResource(contentTarget.iconRes),
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
-                        )
+                        if (contentTarget.imageId != null) {
+                            PackImage(
+                                id = contentTarget.imageId,
+                                modifier = iconModifier,
+                                contentScale = ContentScale.Fit,
+                            )
+                        } else {
+                            Image(
+                                modifier = iconModifier,
+                                painter = painterResource(contentTarget.iconRes!!),
+                                contentDescription = null,
+                                contentScale = ContentScale.Fit,
+                            )
+                        }
                     }
                 }
                 Text(

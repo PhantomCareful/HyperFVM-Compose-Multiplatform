@@ -1,5 +1,9 @@
 package com.careful.hyperfvm.compose
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,20 +22,27 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.imageviewer.DataImageViewerHostOverlay
 import com.careful.hyperfvm.compose.component.liquid.IosLiquidGlassNavigationBar
+import com.careful.hyperfvm.compose.data.datapack.DataPackRepository
+import com.careful.hyperfvm.compose.data.datapack.DataPackState
+import com.careful.hyperfvm.compose.screen.datapack.DataPackSetupScreen
 import com.careful.hyperfvm.compose.platform.AppEnv
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
@@ -64,9 +75,12 @@ import com.careful.hyperfvm.compose.screen.tools.CardOddsCalculatorScreen
 import com.careful.hyperfvm.compose.screen.tools.ResourceCalculatorScreen
 import com.careful.hyperfvm.compose.screen.tools.TodayLuckyScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.dataImages.DataImagesScreen
+import com.careful.hyperfvm.compose.screen.dataCenter.clothing.ClothingCollectionScreen
+import com.careful.hyperfvm.compose.screen.dataCenter.wings.WingCollectionScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.cookery.CookeryIndexScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.fraud.FraudListScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.fraud.IcuFraudScreen
+import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.LotteryOddsInfoScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureIndexScreen
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureInfoScreen
 import com.careful.hyperfvm.compose.screen.meishi.MeishiWechatScreen
@@ -104,7 +118,12 @@ import top.yukonga.miuix.kmp.nav.core.NavDisplay
 import top.yukonga.miuix.kmp.nav.core.NavDisplayEffects
 import top.yukonga.miuix.kmp.nav.core.navBackStackOf
 import top.yukonga.miuix.kmp.nav.core.rememberNavSystemCornerRadius
+import top.yukonga.miuix.kmp.nav.runtime.NavChange
+import top.yukonga.miuix.kmp.nav.transition.NavGesture
+import top.yukonga.miuix.kmp.nav.transition.NavRole
+import top.yukonga.miuix.kmp.nav.transition.NavSettleSpec
 import top.yukonga.miuix.kmp.nav.transition.NavSwipeDirection
+import top.yukonga.miuix.kmp.nav.transition.NavTransitionScope
 import top.yukonga.miuix.kmp.nav.transition.NavTransitions
 import top.yukonga.miuix.kmp.squircle.LocalSquircleEnabled
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -159,21 +178,146 @@ fun HyperFVMApp(env: AppEnv, store: SettingsStore, pendingRoute: MutableStateFlo
                 // 超椭圆轮廓固定启用，不提供开关。运行时着色器不支持时 miuix 会自己回退到普通圆角。
                 LocalSquircleEnabled provides true,
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    MainFrame(pendingRoute)
-                    // Snackbar 宿主放在导航宿主之上：二级页面与图查看器展开时提示依旧可见。
-                    // 底部留出一级页面的悬浮底栏高度，避免提示被遮住。
-                    SnackbarHost(
-                        state = snackbarState,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth()
-                            .padding(bottom = if (env.capabilities.snackbarHints) 92.dp else 0.dp),
-                    )
+                // 所有图片与概率公示数据都在数据包里。正式启动前先同步摸底：本地已装包
+                // 就是 Ready，主界面首帧直接出，不会先闪一下「正在检查」；没装才是 Missing，
+                // 由引导页接管整个界面。下载与索引建立继续交给 check 在后台跑。
+                remember(env) { DataPackRepository.prime(env) }
+                val packState by DataPackRepository.state.collectAsState()
+                LaunchedEffect(Unit) { DataPackRepository.check(env) }
+                // 只有本地缺包时才停在引导页；数据包更新走主界面里的二级页（Route.DataPackUpdate），
+                // 下载期间的 Downloading / Preparing 状态不会把整页门禁重新拉起来。
+                // 首次安装后停在「一切就绪」，用户点按钮才进主界面并播整页转场。
+                val gateInitially = remember(env) { !DataPackRepository.isInstalled(env) }
+                var gateActive by remember { mutableStateOf(gateInitially) }
+                PackGate(
+                    state = packState,
+                    showMain = !gateActive,
+                    animateEntry = gateInitially,
+                    onDownload = { scope.launch { DataPackRepository.download(env) } },
+                    onEnter = { gateActive = false },
+                ) { modifier ->
+                    Box(modifier) {
+                        MainFrame(pendingRoute)
+                        // Snackbar 宿主放在导航宿主之上：二级页面与图查看器展开时提示依旧可见。
+                        // 底部留出一级页面的悬浮底栏高度，避免提示被遮住。
+                        SnackbarHost(
+                            state = snackbarState,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .padding(bottom = if (env.capabilities.snackbarHints) 92.dp else 0.dp),
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+/**
+ * 数据包引导页 ⇄ 主界面。
+ *
+ * 用户点「进入」时的整页转场直接借 [NavDisplay] 的那套 [NavTransition]（设置里选的
+ * miuix 滑动 / 跨活动两档），只是自己驱动一条 0→1 的栈顶深度：引导页是被覆盖的一层
+ * （深度 top），主界面是从右侧压上来的一层（深度 top - 1），几何公式与二级页面 push
+ * 完全一致，手感不会有出入。
+ *
+ * 日常启动（本次会话没出现过引导页）不播转场，直接换内容。
+ */
+@Composable
+private fun PackGate(
+    state: DataPackState,
+    showMain: Boolean,
+    animateEntry: Boolean,
+    onDownload: () -> Unit,
+    onEnter: () -> Unit,
+    main: @Composable (Modifier) -> Unit,
+) {
+    val settings = LocalAppSettings.current
+    val navTransition = if (settings.navTransitionStyle == 1) CrossActivityTransition else NavTransitions.MiuixDefault
+    // 时长与曲线跟着这套转场自己的 motion 走（miuix 是短补间，跨活动是 450ms 的曲线）。
+    val motion = remember(navTransition) { navTransition.motion.programmatic.toAnimationSpec() }
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val layoutSize = LocalWindowInfo.current.containerSize
+
+    // 0 = 引导页在栈顶，1 = 主界面在栈顶，与 NavDisplay 内部的 relativeDepth 同一口径。
+    val top = remember { Animatable(0f) }
+    var entryDone by remember { mutableStateOf(false) }
+    LaunchedEffect(showMain) {
+        if (!showMain || !animateEntry) return@LaunchedEffect
+        top.animateTo(1f, motion)
+        entryDone = true
+    }
+
+    // 引导页：被覆盖的一层，转场结束才撤掉，免得它的动态背景在后台继续跑。
+    val setupScope = remember(navTransition, layoutDirection, density, layoutSize) {
+        PackGateScope(
+            depth = { top.value },
+            roleOf = { d -> if (d > 0f) NavRole.Covered else NavRole.Top },
+            layoutSize = layoutSize,
+            layoutDirection = layoutDirection,
+            density = density,
+        )
+    }
+    // 主界面：压上来的一层。
+    val mainScope = remember(navTransition, layoutDirection, density, layoutSize) {
+        PackGateScope(
+            depth = { top.value - 1f },
+            roleOf = { d -> if (d < 0f) NavRole.Incoming else NavRole.Top },
+            layoutSize = layoutSize,
+            layoutDirection = layoutDirection,
+            density = density,
+        )
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // 先画引导页，主界面后画：转场时压上来的一层盖在它上面。
+        // 只有真的需要引导页（门禁未解除）或「点进入」的转场还没播完时才继续组合它，
+        // 日常启动不经过引导页，不会在背后白跑一层动态背景。
+        val setupVisible = !showMain || (animateEntry && !entryDone)
+        if (setupVisible) {
+            Box(modifier = with(navTransition) { Modifier.fillMaxSize().transformEntry(setupScope) }) {
+                DataPackSetupScreen(
+                    state = state,
+                    onDownload = onDownload,
+                    onEnter = onEnter,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+        if (showMain) {
+            val modifier = if (animateEntry) {
+                with(navTransition) { Modifier.fillMaxSize().transformEntry(mainScope) }
+            } else {
+                Modifier.fillMaxSize()
+            }
+            main(modifier)
+        }
+    }
+}
+
+/**
+ * 把 [NavTransition] 从 NavDisplay 里借到普通布局中用：它只读 scope 上的深度和手势上下文，
+ * 这里给一条由动画驱动的深度，其余按「一次到顶的 push」填默认值。
+ */
+private class PackGateScope(
+    private val depth: () -> Float,
+    private val roleOf: (Float) -> NavRole,
+    override val layoutSize: IntSize,
+    override val layoutDirection: LayoutDirection,
+    override val density: Density,
+) : NavTransitionScope {
+    override val relativeDepth: Float get() = depth()
+    override val role: NavRole get() = roleOf(relativeDepth)
+    override val change: NavChange get() = NavChange.Push
+    override val gesture: NavGesture? get() = null
+}
+
+/** NavMotion 给 settle 用的参数和 Compose 的 AnimationSpec 是同一套语义，直接换算。 */
+private fun NavSettleSpec.toAnimationSpec(): AnimationSpec<Float> = when (this) {
+    is NavSettleSpec.Spring -> spring(dampingRatio = dampingRatio, stiffness = stiffness)
+    is NavSettleSpec.Tween -> tween(durationMillis = durationMillis, easing = easing)
 }
 
 /**
@@ -183,6 +327,11 @@ fun HyperFVMApp(env: AppEnv, store: SettingsStore, pendingRoute: MutableStateFlo
 @Composable
 private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
     val settings = LocalAppSettings.current
+    val env = LocalAppEnv.current
+    val scope = rememberCoroutineScope()
+    // 下载 / 准备期间锁住更新页的返回。用去重后的布尔流，不跟着进度字节重组整棵树；
+    // 页面内部的进度状态由更新页自己收集。
+    val updateLocked by DataPackRepository.running.collectAsState(initial = false)
 
     // 防御卡目录的拼音分节是静态数据：启动时先在后台算好，首次切到
     // 「防御卡」Tab 时就不用再等 ICU 转写（373 张卡约一千个名字）。
@@ -239,7 +388,12 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
         Box(modifier = Modifier.fillMaxSize()) {
             NavDisplay(
                 backStack = navigator.backStack,
-                onBack = { navigator.pop() },
+                // 数据包更新下载中不允许退回仪表盘。失败（Error）后回到重试界面，
+                // 这时放行返回：网络一直不通也不至于把人困死在更新页。
+                onBack = {
+                    val lockedHere = navigator.backStack.lastOrNull() == Route.DataPackUpdate && updateLocked
+                    if (!lockedHere) navigator.pop()
+                },
                 transition = transition,
                 effects = effects,
             ) {
@@ -303,8 +457,35 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
                         onBack = { navigator.pop() },
                     )
                 }
+                entry<Route.LotteryOddsInfo>(swipeDismiss = swipeBackDirection) { route ->
+                    LotteryOddsInfoScreen(
+                        categoryIndex = route.categoryIndex,
+                        drawIndex = route.drawIndex,
+                        onBack = { navigator.pop() },
+                    )
+                }
                 entry<Route.DataImages>(swipeDismiss = swipeBackDirection) {
                     DataImagesScreen(onBack = { navigator.pop() })
+                }
+                entry<Route.DataPackUpdate>(
+                    // 下载 / 准备期间把侧滑关掉（None），点下载前照常可侧滑返回。
+                    swipeDismiss = if (updateLocked) NavSwipeDirection.None else swipeBackDirection,
+                ) {
+                    // 进度状态在本页内部收集：只有这层跟着进度重组，仪表盘与其它页面不受影响。
+                    val packState by DataPackRepository.state.collectAsState()
+                    DataPackSetupScreen(
+                        state = packState,
+                        update = true,
+                        onDownload = { scope.launch { DataPackRepository.download(env) } },
+                        onEnter = { navigator.pop() },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                entry<Route.ClothingCollection>(swipeDismiss = swipeBackDirection) {
+                    ClothingCollectionScreen(onBack = { navigator.pop() })
+                }
+                entry<Route.WingCollection>(swipeDismiss = swipeBackDirection) {
+                    WingCollectionScreen(onBack = { navigator.pop() })
                 }
                 entry<Route.CookeryIndex>(swipeDismiss = swipeBackDirection) {
                     CookeryIndexScreen(onBack = { navigator.pop() })

@@ -43,8 +43,8 @@ val TipsCardOuterPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12
 
 /** 页面顶部的 tips 卡：一行说明文字，对应 Java 版的 Important 卡。
  *
- * [onClick] 不为空时整张卡可点击（如概率公示目录页点击它打开官方原帖）；
- * 无论是否可点击都保留 Sink 按压反馈，与 Java 版的统一手感一致。
+ * 卡片本身不跳转，只保留 Sink 按压反馈，与 Java 版的统一手感一致；
+ * 外链统一走各页面顶栏的入口（如概率公示合集的「官方公示合集」弹层）。
  * [outerPadding] 按调用方的版心调整：已经自带内容边距的容器（如瀑布流）传
  * `PaddingValues(0.dp)` 即可，避免双重缩进。
  * [colors] 默认是 Important 配色；个别页面需要别的语义色（如查黑「没有记录」用状态卡绿）
@@ -55,7 +55,6 @@ fun TipsCard(
     tips: String,
     modifier: Modifier = Modifier,
     outerPadding: PaddingValues = TipsCardOuterPadding,
-    onClick: (() -> Unit)? = null,
     colors: CardColors? = null,
 ) {
     val cardColors = colors ?: importantCardColors()
@@ -66,7 +65,7 @@ fun TipsCard(
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         // showIndication = true，同时要给一个 onClick 事件，才能让 Card 显示点击时的视觉反馈效果
-        onClick = onClick ?: {},
+        onClick = {},
         cornerRadius = 20.dp,
         colors = cardColors,
     ) {

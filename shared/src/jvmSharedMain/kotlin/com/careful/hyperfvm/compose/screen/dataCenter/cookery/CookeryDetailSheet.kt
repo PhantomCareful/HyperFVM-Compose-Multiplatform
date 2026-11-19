@@ -18,8 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -27,13 +30,14 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.card.DefenseCardRow
 import com.careful.hyperfvm.compose.component.card.ErrataCard
 import com.careful.hyperfvm.compose.component.card.TipsCard
+import com.careful.hyperfvm.compose.component.image.PackImage
+import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import com.careful.hyperfvm.compose.data.cardCatalog.CardCatalog
+import com.careful.hyperfvm.compose.data.datapack.PackImages
 import com.careful.hyperfvm.compose.data.cookery.CookeryAuxiliaryCard
 import com.careful.hyperfvm.compose.data.cookery.CookeryCard
 import com.careful.hyperfvm.compose.data.cookery.CookeryRecipe
 import com.careful.hyperfvm.compose.data.cookery.CookerySource
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.SmallTitle
@@ -176,10 +180,9 @@ private fun BaseInfoCard(card: CookeryCard) {
                     fontSize = MiuixTheme.textStyles.body2.fontSize,
                 )
             }
-            Image(
+            PackImage(
+                id = card.image,
                 modifier = Modifier.size(60.dp),
-                painter = painterResource(card.image),
-                contentDescription = null,
                 contentScale = ContentScale.Fit,
             )
         }
@@ -227,11 +230,10 @@ private fun SourceCard(source: CookerySource) {
                     fontSize = MiuixTheme.textStyles.body2.fontSize,
                 )
             }
-            source.icons.forEach { iconRes ->
-                Image(
+            source.icons.forEach { icon ->
+                RemoteItemImage(
+                    id = icon,
                     modifier = Modifier.size(44.dp),
-                    painter = painterResource(iconRes),
-                    contentDescription = null,
                     contentScale = ContentScale.Fit,
                 )
             }
@@ -280,8 +282,8 @@ private fun RecipeCell(recipe: CookeryRecipe, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            RecipeImage(res = recipe.cardRes)
-            RecipeImage(res = recipe.starRes)
+            RecipeImage(id = recipe.cardRes)
+            RecipeImage(id = recipe.starRes)
         }
     }
 }
@@ -292,20 +294,22 @@ private val RecipeImageHeight = 50.dp
 /**
  * 配方图：高度固定，宽度按原图宽高比反推；由所在行的 SpaceBetween 实现左右靠边。
  *
- * 不能只给 height：这批 webp 是 40×50 / 57×55 像素的小图，Image 在宽度未约束时
- * 会直接拿 intrinsic 像素宽当尺寸，导致画出来非常小。用 intrinsicSize 算出比例再
- * 跟一个固定高度，实际显示尺寸才与增幅名单卡图（40×50dp）一致。
+ * 不能只给 height：这批 webp 是 40×50 / 57×55 像素的小图，宽度未约束时按原图像素
+ * 尺寸作画会非常小。宽高比改从数据包解码出的 bitmap 取，再配一个固定高度，
+ * 实际显示尺寸才与增幅名单卡图（40×50dp）一致。
  */
 @Composable
-private fun RecipeImage(res: DrawableResource) {
-    val painter = painterResource(res)
-    val intrinsic = painter.intrinsicSize
-    val aspectRatio = if (intrinsic.height > 0f) intrinsic.width / intrinsic.height else 1f
+private fun RecipeImage(id: String) {
+    val bitmap by produceState<ImageBitmap?>(initialValue = PackImages.peek(id), id) {
+        if (value == null) value = PackImages.load(id)
+    }
+    val current = bitmap ?: return
+    val aspectRatio = if (current.height > 0) current.width.toFloat() / current.height else 1f
     Image(
         modifier = Modifier
             .height(RecipeImageHeight)
             .aspectRatio(aspectRatio),
-        painter = painter,
+        bitmap = current,
         contentDescription = null,
         contentScale = ContentScale.Fit,
     )
@@ -341,10 +345,9 @@ private fun AuxiliaryCardRow(card: CookeryAuxiliaryCard) {
                     fontSize = MiuixTheme.textStyles.headline1.fontSize,
                     fontWeight = FontWeight.Medium,
                 )
-                Image(
+                PackImage(
+                    id = card.image,
                     modifier = Modifier.size(AuxiliaryCardImageSize),
-                    painter = painterResource(card.image),
-                    contentDescription = null,
                     contentScale = ContentScale.Fit,
                 )
             }

@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.effect.BgEffectBackground
+import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
@@ -361,10 +362,9 @@ private fun AboutContent(
                                 title = "Phantom_Careful",
                                 summary = "QQ空间1-8服·喵帕斯赛高",
                                 startAction = {
-                                    Image(
+                                    PackImage(
+                                        id = "phantom_careful",
                                         modifier = Modifier.padding(end = 12.dp).size(50.dp).clip(CircleShape),
-                                        painter = painterResource(Res.drawable.phantom_careful),
-                                        contentDescription = null,
                                         contentScale = ContentScale.Crop,
                                     )
                                 },

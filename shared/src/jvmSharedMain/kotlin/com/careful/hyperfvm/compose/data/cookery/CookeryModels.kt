@@ -1,12 +1,10 @@
 package com.careful.hyperfvm.compose.data.cookery
 
-import org.jetbrains.compose.resources.DrawableResource
 /**
  * 食神谱的一张卡片，对应 Java 版一个 `fragment_bottom_sheet_cookery_X_Y` 布局与
  * `CookeryBottomSheetFragment_X_Y` 的绑定结果。
  *
- * [image] 是 drawable 资源对象只能在运行时读取，不再依赖 R 类的 int id。
- * 一旦用 const 固化进字节码，运行时 painterResource 会抛 Resources$NotFoundException。
+ * [image] 是数据包内的图片 id（不含扩展名），界面通过 PackImage 按 id 加载。
  */
 internal class CookeryCard(
     val name: String,
@@ -14,7 +12,7 @@ internal class CookeryCard(
     val category: String,
     /** 奖励文案，如「奖励40食神点」，即 Java 版 `reward_card_data_cookery_*`。 */
     val reward: String,
-    val image: DrawableResource,
+    val image: String,
     /** 一句话描述，显示在目录行与详情页的描述卡里。 */
     val description: String,
     /** 获取途径（不含各种返利活动）。 */
@@ -33,14 +31,14 @@ internal class CookerySource(
     val title: String,
     val description: String,
     /** 右侧一排 44dp 小图标（地图饼干、宝箱、钥匙等），数量不定。 */
-    val icons: List<DrawableResource>,
+    val icons: List<String>,
 )
 
 /** 合成材料里的一格：防御卡图标 + 星级图标。 */
 internal class CookeryRecipe(
-    val cardRes: DrawableResource,
+    val cardRes: String,
     /** `star_image_N` 星级图。 */
-    val starRes: DrawableResource,
+    val starRes: String,
 )
 
 /** 一组辅助卡：标题 + 若干提示卡 + 一个卡表。 */
@@ -64,7 +62,7 @@ internal class CookeryTip(
 /** 辅助卡表里的一行：卡名 + 卡图。 */
 internal class CookeryAuxiliaryCard(
     val name: String,
-    val image: DrawableResource,
+    val image: String,
 )
 
 /** 目录页的一个分组（上等佳肴 / 秘制佳肴 / 极品佳肴），对应 Java 版索引页的三个分节。 */

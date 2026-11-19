@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.screen.tools
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,11 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.card.TipsCard
+import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import com.careful.hyperfvm.compose.data.resourceCalculator.ResourceCalculatorData
 import com.careful.hyperfvm.compose.data.resourceCalculator.ResourceSection
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
@@ -40,9 +39,12 @@ import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import com.careful.hyperfvm.compose.ui.isTabletLayout
 import kotlinx.coroutines.launch
+import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.TabRowDefaults
 import top.yukonga.miuix.kmp.basic.TextField
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Image
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PagerNavigationSpringSpec
 import top.yukonga.miuix.kmp.utils.springAnimateToPage
@@ -180,12 +182,7 @@ private fun ReserveSectionPage(
                     .padding(bottom = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Image(
-                    modifier = Modifier.size(60.dp),
-                    painter = painterResource(field.leadingIconRes),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                )
+                ReserveFieldIcon(id = field.leadingIconRes)
                 TextField(
                     value = inputs.getOrElse(index) { "" },
                     onValueChange = { raw ->
@@ -207,13 +204,33 @@ private fun ReserveSectionPage(
                         KeyboardActions.Default
                     },
                 )
-                Image(
-                    modifier = Modifier.size(60.dp),
-                    painter = painterResource(field.trailingIconRes),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                )
+                ReserveFieldIcon(id = field.trailingIconRes)
             }
+        }
+    }
+}
+
+/**
+ * 行首/行尾的 60dp 图标：有 id 时交给 [RemoteItemImage]——游戏道具 id 走图床，
+ * 自制的数据包图片 id（如威望页的储备图标）回退读数据包；
+ * 没有 id 时画 Miuix 的图片占位图标，与数据图合集里未下载卡片的占位完全一致。
+ */
+@Composable
+private fun ReserveFieldIcon(id: String?) {
+    if (id != null) {
+        RemoteItemImage(
+            id = id,
+            modifier = Modifier.size(60.dp),
+            contentScale = ContentScale.Fit,
+        )
+    } else {
+        Box(modifier = Modifier.size(60.dp), contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = MiuixIcons.Image,
+                contentDescription = null,
+                modifier = Modifier.size(28.dp),
+                tint = MiuixTheme.colorScheme.onBackgroundVariant,
+            )
         }
     }
 }

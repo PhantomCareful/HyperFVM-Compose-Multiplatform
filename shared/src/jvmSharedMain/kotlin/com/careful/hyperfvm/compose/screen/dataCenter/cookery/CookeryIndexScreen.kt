@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.screen.dataCenter.cookery
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,11 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.data.cookery.CookeryCard
 import com.careful.hyperfvm.compose.data.cookery.CookeryData
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
@@ -131,10 +130,9 @@ fun CookeryIndexScreen(onBack: () -> Unit) {
                                 title = card.name,
                                 summary = card.description,
                                 startAction = {
-                                    Image(
+                                    PackImage(
+                                        id = card.image,
                                         modifier = Modifier.padding(end = 12.dp).size(44.dp),
-                                        painter = painterResource(card.image),
-                                        contentDescription = null,
                                         contentScale = ContentScale.Fit,
                                     )
                                 },

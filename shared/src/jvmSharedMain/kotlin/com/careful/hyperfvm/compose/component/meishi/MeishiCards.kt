@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.component.meishi
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,8 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.data.meishi.MeishiAccount
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
+import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -185,7 +183,7 @@ internal fun MeishiAccountCard(
 internal fun MeishiGiftRow(
     title: String,
     description: String,
-    icon: DrawableResource,
+    icon: String,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -217,8 +215,8 @@ internal fun MeishiGiftRow(
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Image(
-                painter = painterResource(icon),
+            RemoteItemImage(
+                id = icon,
                 contentDescription = null,
                 modifier = Modifier.size(GiftIconSize),
                 contentScale = ContentScale.Fit,

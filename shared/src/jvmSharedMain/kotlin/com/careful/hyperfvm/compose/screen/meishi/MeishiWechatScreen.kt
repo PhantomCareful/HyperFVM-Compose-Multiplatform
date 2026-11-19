@@ -46,7 +46,6 @@ import com.careful.hyperfvm.compose.platform.rememberBiometricGate
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.shared.*
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.DrawableResource
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
@@ -70,18 +69,18 @@ import top.yukonga.miuix.kmp.utils.PressFeedbackType
 private class GiftItem(
     val title: String,
     val description: String,
-    val icon: DrawableResource,
+    val icon: String,
 )
 
 private val GiftItems = listOf(
-    GiftItem("道具双爆卡(2小时)×2", "装备后一定时间内，战斗中物品掉落率提高100%", Res.drawable.item_2h_double_item),
-    GiftItem("强化水晶×5", "满足一定数量可强化宝石(1–10级)", Res.drawable.item_crystal),
-    GiftItem("上等香料×10", "集齐5个后在卡片制作中使用，可以直接制作出2星的卡片", Res.drawable.item_spice_2),
-    GiftItem("秘制香料×5", "集齐5个后在卡片制作中使用，可以直接制作出3星的卡片", Res.drawable.item_spice_3),
-    GiftItem("极品香料×5", "集齐5个后在卡片制作中使用，可以直接制作出4星的卡片", Res.drawable.item_spice_4),
-    GiftItem("1级四叶草×5", "提高强化成功率1.2倍", Res.drawable.item_four_leaf_clover_1),
-    GiftItem("2级四叶草×3", "提高强化成功率1.4倍", Res.drawable.item_four_leaf_clover_2),
-    GiftItem("3级四叶草×1", "提高强化成功率1.7倍", Res.drawable.item_four_leaf_clover_3),
+    GiftItem("道具双爆卡(2小时)×2", "装备后一定时间内，战斗中物品掉落率提高100%", "x13120210"),
+    GiftItem("强化水晶×5", "满足一定数量可强化宝石(1–10级)", "x12700010"),
+    GiftItem("上等香料×10", "集齐5个后在卡片制作中使用，可以直接制作出2星的卡片", "x12340020"),
+    GiftItem("秘制香料×5", "集齐5个后在卡片制作中使用，可以直接制作出3星的卡片", "x12340080"),
+    GiftItem("极品香料×5", "集齐5个后在卡片制作中使用，可以直接制作出4星的卡片", "x12340090"),
+    GiftItem("1级四叶草×5", "提高强化成功率1.2倍", "x12320010"),
+    GiftItem("2级四叶草×3", "提高强化成功率1.4倍", "x12320060"),
+    GiftItem("3级四叶草×1", "提高强化成功率1.7倍", "x12320070"),
 )
 
 /** 使用说明，前两条同 Java 版 `content_meishi_wechat_rules_*`。

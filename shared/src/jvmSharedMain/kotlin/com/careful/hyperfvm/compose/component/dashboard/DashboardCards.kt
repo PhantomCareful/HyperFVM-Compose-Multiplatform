@@ -73,6 +73,10 @@ private const val SummaryAlpha = 0.7f
 private const val DataImageUpdateTitle = "数据图资源有新版本啦"
 private const val DataImageUpdateSummary = "点击立即前往数据图合集更新图片"
 
+/** 数据包更新提示卡的文案。 */
+private const val DataPackUpdateTitle = "数据包有新版本啦"
+private const val DataPackUpdateSummary = "点击更新，获取最新的道具图片、防御卡图片、概率公示等数据"
+
 /** 月末提醒卡的文案，同 Java 版 `text_dashboard_last_day_of_month`。 */
 private const val MonthEndText = "月末了，请注意清空积分和金券"
 
@@ -338,6 +342,40 @@ internal fun DashboardDataImageUpdateCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    DashboardUpdateCard(
+        title = DataImageUpdateTitle,
+        summary = DataImageUpdateSummary,
+        onClick = onClick,
+        modifier = modifier,
+    )
+}
+
+/**
+ * 「数据包有新版本」提示卡：与数据图那张同款，点整卡直接进更新页（首次更新那套界面）。
+ *
+ * 只在云端数据包版本比本地新时出现；进页后下载完成回到本页，卡会随下一轮检查自行收起。
+ */
+@Composable
+internal fun DashboardDataPackUpdateCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    DashboardUpdateCard(
+        title = DataPackUpdateTitle,
+        summary = DataPackUpdateSummary,
+        onClick = onClick,
+        modifier = modifier,
+    )
+}
+
+/** 两张「有新版本」提示卡共用的排版：左边标题与摘要，右边一个更新图标。 */
+@Composable
+private fun DashboardUpdateCard(
+    title: String,
+    summary: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val contentColor = CardDefaults.defaultColors(color = statusCardBackgroundColor()).contentColor
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -355,13 +393,13 @@ internal fun DashboardDataImageUpdateCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = DataImageUpdateTitle,
+                    text = title,
                     style = MiuixTheme.textStyles.title3,
                     fontWeight = FontWeight.SemiBold,
                     color = contentColor,
                 )
                 Text(
-                    text = DataImageUpdateSummary,
+                    text = summary,
                     style = MiuixTheme.textStyles.body1,
                     color = contentColor.copy(alpha = SummaryAlpha),
                 )

@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.component.card
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.data.cardCatalog.DefenseCard
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
 import top.yukonga.miuix.kmp.basic.Card
@@ -78,9 +77,8 @@ internal fun DefenseCardRow(
             Spacer(modifier = Modifier.width(CardActionSpacing))
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 card.forms.forEach { form ->
-                    Image(
-                        painter = painterResource(form.image),
-                        contentDescription = null,
+                    PackImage(
+                        id = form.image,
                         modifier = Modifier.size(width = 40.dp, height = 50.dp),
                         contentScale = ContentScale.Fit,
                     )

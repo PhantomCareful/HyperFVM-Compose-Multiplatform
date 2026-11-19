@@ -17,11 +17,18 @@ local.properties
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/csv-editor.xml
 
 .DS_Store
 
-# 本地参考资料（208 MB：第三方 zip/apk 与解压出来的反编译源码），不入库
-/tool/
+# 本地参考资料（208 MB：第三方 zip/apk 与解压出来的反编译源码），不入库；
+# 数据包源与打包脚本是构建必需，按下述白名单单独入库。
+/tool/*
+!/tool/build_data_pack.py
+!/tool/_odds_export
+!/tool/card_desc.xml
+!/tool/market_item.xml
+!/tool/data_pack_src
 
 # app/src/main/res/drawable 是指向 shared/src/commonMain/composeResources/drawable
 # 的目录联接（junction），只为让 Android 视图与 Resource Manager 能浏览图片。

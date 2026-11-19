@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,15 +14,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.card.ErrataCard
 import com.careful.hyperfvm.compose.component.card.TipsCard
 import com.careful.hyperfvm.compose.component.card.importantCardColors
-import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDisclosureData
+import com.careful.hyperfvm.compose.component.image.RemoteItemImage
+import com.careful.hyperfvm.compose.component.image.prefetchItemImages
+import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDataRepository
 import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsItem
 import com.careful.hyperfvm.compose.data.oddsDisclosure.oddsTextPrecision
+import com.careful.hyperfvm.compose.data.oddsDisclosure.resolvedErrata
+import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -31,16 +33,12 @@ import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
-/** 详情页第二张卡（错误色容器）：这一箱概率公示的勘误说明。 */
-private const val InfoErrataTips =
-    "本概率公示获取自官方发布的帖子。\n内容为人工整理，若您发现可能有误的地方，请先前往原帖进行核实，如确实有误，请向开发者反馈。"
-
 /**
  * 宝箱概率公示详情页，对应 Java 版 `OddsDisclosureInfoActivity`：
  * 宝箱说明（Important 卡）+ 勘误提醒 + 逐条掉落物概率。
  *
- * 数据不随导航参数传递，而是用类别下标 / 宝箱下标从 [OddsDisclosureData] 里取，
- * 进程重建后恢复同一个 Route 也能拿到完全一样的内容。
+ * 数据不随导航参数传递，而是用类别下标 / 宝箱下标从 [OddsDataRepository]
+ * （数据包内的 `odds_boxes.json`）里取，进程重建后恢复同一个 Route 也能拿到完全一样的内容。
  */
 @Composable
 fun OddsDisclosureInfoScreen(
@@ -48,7 +46,7 @@ fun OddsDisclosureInfoScreen(
     boxIndex: Int,
     onBack: () -> Unit,
 ) {
-    val box = OddsDisclosureData.categories.getOrNull(categoryIndex)?.boxes?.getOrNull(boxIndex)
+    val box = OddsDataRepository.boxCategories.getOrNull(categoryIndex)?.boxes?.getOrNull(boxIndex)
     if (box == null) {
         // 数据表调整后旧返回栈可能指向已经不存在的下标，直接退回目录页。
         LaunchedEffect(Unit) { onBack() }
@@ -57,6 +55,15 @@ fun OddsDisclosureInfoScreen(
 
     // 同一箱内所有概率统一小数位数，避免 "3%" 与 "0.003%" 混排。
     val precision = remember(box) { box.items.oddsTextPrecision }
+    // 图标从图床按 id 取：进页先把整箱的图拉下来，滚动时不用逐行等下载。
+    val env = LocalAppEnv.current
+    LaunchedEffect(box) {
+        prefetchItemImages(env, box.items.mapNotNull { it.remoteId ?: it.image })
+    }
+    // 说明卡：描述文字没有默认文案，null 表示这箱不显示说明卡。
+    val description = box.description
+    // 勘误卡：null 不显示；空串用统一默认文案；非空为宝箱自己的文案。
+    val errata = box.errata.resolvedErrata
 
     ScreenScaffold(
         title = box.name,
@@ -71,11 +78,15 @@ fun OddsDisclosureInfoScreen(
                 bottom = padding.calculateBottomPadding() + 150.dp,
             ),
         ) {
-            item(key = "description") {
-                TipsCard(tips = box.description)
+            if (description != null) {
+                item(key = "description") {
+                    TipsCard(tips = description)
+                }
             }
-            item(key = "errata") {
-                ErrataCard(text = InfoErrataTips)
+            if (errata != null) {
+                item(key = "errata") {
+                    ErrataCard(text = errata)
+                }
             }
             itemsIndexed(
                 items = box.items,
@@ -90,12 +101,18 @@ fun OddsDisclosureInfoScreen(
 /**
  * 单条掉落物：左边 44dp 图标，中间「名称×数量」，右边概率。
  *
+ * [OddsItem.image] 与 [OddsItem.remoteId] 都是道具 id，统一由 [RemoteItemImage] 从图床取图，
+ * 不再读数据包；两者都为空时（如幸运转转）左侧图标位整个省掉，文字直接顶到卡片内边距。
+ * 下载中或失败时留 44dp 空位，卡片高度不会因图片晚到而抖动。
  * 重点关注项（转职凭证 / 武器等）用 Important 卡突出，与 Java 版的
  * `item_odds_item_expected` 一致；其余用普通内容卡。
+ *
+ * 抽奖详情页（[LotteryOddsInfoScreen]）的奖品列表复用同一张卡，保证两页排版一致。
  */
 @Composable
-private fun OddsItemCard(item: OddsItem, precision: Int) {
+internal fun OddsItemCard(item: OddsItem, precision: Int) {
     val colors = if (item.expected) importantCardColors() else CardDefaults.defaultColors()
+    val imageId = item.remoteId ?: item.image
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,17 +130,21 @@ private fun OddsItemCard(item: OddsItem, precision: Int) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                modifier = Modifier.size(44.dp),
-                painter = painterResource(item.image),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-            )
+            if (imageId != null) {
+                RemoteItemImage(
+                    id = imageId,
+                    modifier = Modifier.size(44.dp),
+                    contentScale = ContentScale.Fit,
+                )
+            }
             Text(
                 text = item.nameAndCount,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 16.dp),
+                    .padding(
+                        start = if (imageId != null) 16.dp else 0.dp,
+                        end = 16.dp,
+                    ),
                 color = colors.contentColor,
                 // 与目录页 ArrowPreference 的 title 同号（miuix headline1 = 17sp），
                 // 两页的条目名称才不会一粗一大。

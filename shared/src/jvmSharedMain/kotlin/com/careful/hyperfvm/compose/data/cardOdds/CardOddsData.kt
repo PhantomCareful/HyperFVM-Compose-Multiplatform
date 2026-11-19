@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.data.cardOdds
 
-import org.jetbrains.compose.resources.DrawableResource
 import com.careful.hyperfvm.compose.shared.*
 
 import kotlin.collections.get
@@ -103,37 +102,37 @@ internal object CardOddsData {
     )
 
     /** 星级 0~16 的展示图（主卡用 0~15，副卡用 0~16）。 */
-    val StarDrawables: Array<DrawableResource> = arrayOf(
-        Res.drawable.star_image_0, Res.drawable.star_image_1, Res.drawable.star_image_2,
-        Res.drawable.star_image_3, Res.drawable.star_image_4, Res.drawable.star_image_5,
-        Res.drawable.star_image_6, Res.drawable.star_image_7, Res.drawable.star_image_8,
-        Res.drawable.star_image_9, Res.drawable.star_image_10, Res.drawable.star_image_11,
-        Res.drawable.star_image_12, Res.drawable.star_image_13, Res.drawable.star_image_14,
-        Res.drawable.star_image_15, Res.drawable.star_image_16,
+    val StarDrawables: Array<String> = arrayOf(
+        "star_image_0", "star_image_1", "star_image_2",
+        "star_image_3", "star_image_4", "star_image_5",
+        "star_image_6", "star_image_7", "star_image_8",
+        "star_image_9", "star_image_10", "star_image_11",
+        "star_image_12", "star_image_13", "star_image_14",
+        "star_image_15", "star_image_16",
     )
 
     /** 四叶草 12 项的展示图（1~6级、超能、SS、SSS、SSR、蛇年、马年）。 */
-    val CloverDrawables: Array<DrawableResource> = arrayOf(
-        Res.drawable.item_four_leaf_clover_1, Res.drawable.item_four_leaf_clover_2,
-        Res.drawable.item_four_leaf_clover_3, Res.drawable.item_four_leaf_clover_4,
-        Res.drawable.item_four_leaf_clover_5, Res.drawable.item_four_leaf_clover_6,
-        Res.drawable.item_four_leaf_clover_s, Res.drawable.item_four_leaf_clover_ss,
-        Res.drawable.item_four_leaf_clover_sss, Res.drawable.item_four_leaf_clover_ssr,
-        Res.drawable.item_four_leaf_clover_snake, Res.drawable.item_four_leaf_clover_horse,
+    val CloverDrawables: Array<String> = arrayOf(
+        "x12320010", "x12320060",
+        "x12320070", "x12320080",
+        "x123200a0", "x123200e0",
+        "x123200c0", "x12320120",
+        "x12320220", "x12320320",
+        "x12320420", "x12320520",
     )
 
     /** VIP 等级 1~16 的展示图。 */
-    val VipDrawables: Array<DrawableResource> = arrayOf(
-        Res.drawable.vip_1, Res.drawable.vip_2, Res.drawable.vip_3, Res.drawable.vip_4,
-        Res.drawable.vip_5, Res.drawable.vip_6, Res.drawable.vip_7, Res.drawable.vip_8,
-        Res.drawable.vip_9, Res.drawable.vip_10, Res.drawable.vip_11, Res.drawable.vip_12,
-        Res.drawable.vip_13, Res.drawable.vip_14, Res.drawable.vip_15, Res.drawable.vip_16,
+    val VipDrawables: Array<String> = arrayOf(
+        "vip_1", "vip_2", "vip_3", "vip_4",
+        "vip_5", "vip_6", "vip_7", "vip_8",
+        "vip_9", "vip_10", "vip_11", "vip_12",
+        "vip_13", "vip_14", "vip_15", "vip_16",
     )
 
     /**
      * 未选中（-1）时展示位统一使用的占位图。
      */
-    val PLACEHOLDER = Res.drawable.card_data_x
+    val PLACEHOLDER = "card_data_x"
 
     /** 四叶草名字（与 [Preset] 解析、菜单文字顺序一致，首项「不选」）。 */
     private val FourLeafCloverNames = arrayOf(

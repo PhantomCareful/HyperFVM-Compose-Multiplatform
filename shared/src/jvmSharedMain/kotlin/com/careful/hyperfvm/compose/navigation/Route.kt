@@ -54,20 +54,49 @@ sealed interface Route : NavKey {
     /** 强卡成功率计算器页：按主卡/副卡/四叶草/VIP/公会组合估算强化成功率。 */
     data object CardOddsCalculator : Route
 
-    /** 宝箱概率公示合集目录页：按类别分列全部宝箱。 */
+    /** 概率公示合集目录页：宝箱概率 / 抽奖概率两页，按类别分列全部条目。 */
     data object OddsDisclosure : Route
 
     /**
      * 单个宝箱的概率公示详情页。
      *
      * Java 版用 Intent 传整个 Parcelable 数组，这里只存两个下标：内容从静态的
-     * [com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDisclosureData] 里取，
+     * [com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDataRepository] 里取，
      * 返回栈恢复时只要有下标就能拿到同一份数据。
      */
     data class OddsDisclosureInfo(val categoryIndex: Int, val boxIndex: Int) : Route
 
+    /**
+     * 单场抽奖的概率公示详情页。
+     *
+     * 与 [OddsDisclosureInfo] 同构：只存两个下标，内容从静态的
+     * [com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDataRepository] 里取，
+     * 返回栈恢复时只要有下标就能拿到同一份数据。
+     */
+    data class LotteryOddsInfo(val categoryIndex: Int, val drawIndex: Int) : Route
+
     /** 数据图合集页：全部数据图的瀑布流，点开图片在看器覆盖层里浏览。 */
     data object DataImages : Route
+
+    /**
+     * 数据包更新页：与首次更新共用同一套界面，只是标题与副标题不同。
+     *
+     * 由仪表盘的「数据包有新版本」提示卡进入；用户点下载之前可以返回，
+     * 一旦开始下载就锁在本页，直到「开启新世界」才回到仪表盘。
+     */
+    data object DataPackUpdate : Route
+
+    /**
+     * 服装合集页：全部套装的瀑布流，顶栏筛选性别、下方搜索，
+     * 点卡片在同一页的弹层里看基础信息与续费价格。
+     */
+    data object ClothingCollection : Route
+
+    /**
+     * 翅膀合集页：与服装合集同款布局，顶栏筛选性别、下方搜索，
+     * 点卡片在弹层里看基础信息与续费价格。
+     */
+    data object WingCollection : Route
 
     /** 食神谱合集目录页：按上等佳肴 / 秘制佳肴 / 极品佳肴分组列出全部食神谱。 */
     data object CookeryIndex : Route
@@ -138,7 +167,11 @@ sealed interface Route : NavKey {
             CardOddsCalculator -> "cardOddsCalculator"
             OddsDisclosure -> "oddsDisclosure"
             is OddsDisclosureInfo -> "oddsDisclosureInfo/$categoryIndex/$boxIndex"
+            is LotteryOddsInfo -> "lotteryOddsInfo/$categoryIndex/$drawIndex"
             DataImages -> "dataImages"
+            DataPackUpdate -> "dataPackUpdate"
+            ClothingCollection -> "clothingCollection"
+            WingCollection -> "wingCollection"
             CookeryIndex -> "cookeryIndex"
             is IcuFraud -> "icuFraud/$qq"
             FraudList -> "fraudList"
@@ -147,6 +180,9 @@ sealed interface Route : NavKey {
     companion object {
         /** [OddsDisclosureInfo] 的 id 前缀，后面跟「类别下标/宝箱下标」。 */
         private const val OddsDisclosureInfoIdPrefix = "oddsDisclosureInfo/"
+
+        /** [LotteryOddsInfo] 的 id 前缀，后面跟「类别下标/抽奖下标」。 */
+        private const val LotteryOddsInfoIdPrefix = "lotteryOddsInfo/"
 
         /** [IcuFraud] 的 id 前缀，后面跟 QQ 号。 */
         private const val IcuFraudIdPrefix = "icuFraud/"
@@ -164,6 +200,12 @@ sealed interface Route : NavKey {
                 val categoryIndex = args.getOrNull(0)?.toIntOrNull() ?: return null
                 val boxIndex = args.getOrNull(1)?.toIntOrNull() ?: return null
                 return OddsDisclosureInfo(categoryIndex, boxIndex)
+            }
+            if (id.startsWith(LotteryOddsInfoIdPrefix)) {
+                val args = id.removePrefix(LotteryOddsInfoIdPrefix).split('/')
+                val categoryIndex = args.getOrNull(0)?.toIntOrNull() ?: return null
+                val drawIndex = args.getOrNull(1)?.toIntOrNull() ?: return null
+                return LotteryOddsInfo(categoryIndex, drawIndex)
             }
             if (id.startsWith(IcuFraudIdPrefix)) {
                 val qq = id.removePrefix(IcuFraudIdPrefix)
@@ -196,6 +238,9 @@ sealed interface Route : NavKey {
                 "cardOddsCalculator" -> CardOddsCalculator
                 "oddsDisclosure" -> OddsDisclosure
                 "dataImages" -> DataImages
+                "dataPackUpdate" -> DataPackUpdate
+                "clothingCollection" -> ClothingCollection
+                "wingCollection" -> WingCollection
                 "cookeryIndex" -> CookeryIndex
                 "fraudList" -> FraudList
                 else -> null

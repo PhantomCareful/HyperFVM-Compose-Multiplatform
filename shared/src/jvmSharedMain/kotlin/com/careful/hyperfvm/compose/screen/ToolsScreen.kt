@@ -3,7 +3,6 @@ package com.careful.hyperfvm.compose.screen
 import androidx.compose.foundation.lazy.LazyColumn
 import com.careful.hyperfvm.compose.shared.*
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,8 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.unit.dp
+import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
@@ -44,10 +43,9 @@ fun ToolsScreen(outerPadding: PaddingValues) {
                         title = "今日运势",
                         summary = "多个快速播放不同星级海星的动图",
                         startAction = {
-                            Image(
+                            PackImage(
+                                id = "tools_image_today_lucky",
                                 modifier = Modifier.padding(end = 12.dp).size(50.dp),
-                                painter = painterResource(Res.drawable.tools_image_today_lucky),
-                                contentDescription = null,
                                 contentScale = ContentScale.Fit,
                             )
                         },
@@ -61,10 +59,10 @@ fun ToolsScreen(outerPadding: PaddingValues) {
                         title = "资源储备计算器",
                         summary = "计算威望、金币、礼券、魅力币的储备总量",
                         startAction = {
-                            Image(
+                            // 自制的数据包图标（非游戏内道具），与其它入口同尺寸。
+                            PackImage(
+                                id = "data_center_image_prestige_calculator",
                                 modifier = Modifier.padding(end = 12.dp).size(50.dp),
-                                painter = painterResource(Res.drawable.tools_image_prestige_calculator),
-                                contentDescription = null,
                                 contentScale = ContentScale.Fit,
                             )
                         },
@@ -78,10 +76,9 @@ fun ToolsScreen(outerPadding: PaddingValues) {
                         title = "强卡成功率计算器",
                         summary = "可以快捷计算不同星级组合的强卡成功率，不能模拟上卡哦",
                         startAction = {
-                            Image(
+                            PackImage(
+                                id = "data_center_image_card_calculator",
                                 modifier = Modifier.padding(end = 12.dp).size(50.dp),
-                                painter = painterResource(Res.drawable.data_center_image_card_calculator),
-                                contentDescription = null,
                                 contentScale = ContentScale.Fit,
                             )
                         },

@@ -49,7 +49,9 @@ private class BitmapRegionImageDecoder : DataImageDecoder {
     override fun decodeBytes(bytes: ByteArray, sampleSize: Int): ImageBitmap? = try {
         val options = BitmapFactory.Options().apply {
             inSampleSize = sampleSize.coerceAtLeast(1)
-            inPreferredConfig = Bitmap.Config.RGB_565
+            // 数据包里的卡图 / 图标多为带透明底的 WebP，不能用 RGB_565 解码，
+            // 否则透明区域会变成黑块；缓存按 4 字节/像素计费，与 ARGB_8888 一致。
+            inPreferredConfig = Bitmap.Config.ARGB_8888
         }
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)?.asImageBitmap()
     } catch (_: Exception) {

@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.platform.AppEnv
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
@@ -40,7 +41,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * @param title 对话框正中的目标名（如「哔哩哔哩」）。
  * @param subtitle 目标名下方的说明（如账号名），为空则整行不显示。
  * @param url 确认后交给浏览器的真实地址。
- * @param iconRes 目标站图标资源，对话框里显示在目标名上方；为 null 则不显示。
+ * @param iconRes 本地矢量图标（XML，随包分发）；为 null 则不显示。[imageId] 与它二选一。
+ * @param imageId 数据包内的图片 id（WebP），彩色插图用它。
  * @param circleIcon 大图是否裁成正圆（[VisitUrlDialog] 用）；单色版 [UrlConfirmDialog] 不读取该字段。
  */
 data class UrlTarget(
@@ -48,6 +50,7 @@ data class UrlTarget(
     val subtitle: String?,
     val url: String,
     val iconRes: DrawableResource? = null,
+    val imageId: String? = null,
     val circleIcon: Boolean = false,
 )
 
@@ -91,6 +94,19 @@ fun UrlConfirmDialog(
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             colorFilter = ColorFilter.tint(MiuixTheme.colorScheme.onBackground),
+                        )
+                    }
+                } else if (contentTarget.imageId != null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        PackImage(
+                            id = contentTarget.imageId,
+                            modifier = Modifier.size(150.dp),
+                            contentScale = ContentScale.Fit,
                         )
                     }
                 }

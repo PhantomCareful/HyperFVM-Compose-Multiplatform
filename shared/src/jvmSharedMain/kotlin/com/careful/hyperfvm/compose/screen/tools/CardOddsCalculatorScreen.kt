@@ -1,6 +1,5 @@
 package com.careful.hyperfvm.compose.screen.tools
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
@@ -56,14 +55,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.careful.hyperfvm.compose.component.card.TipsCard
 import com.careful.hyperfvm.compose.component.card.importantCardColors
+import com.careful.hyperfvm.compose.component.image.PackImage
+import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import com.careful.hyperfvm.compose.data.cardOdds.CardOddsData
 import com.careful.hyperfvm.compose.platform.KeyValueStore
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardColors
@@ -373,26 +372,26 @@ private fun SelectorSection(selection: CardOddsSelection) {
     ) {
         IconSelector(
             title = "副卡1",
-            drawable = starDrawable(selection.sub1),
+            imageId = starDrawable(selection.sub1),
             entry = starMenu(selection.sub1, 16) { selection.selectSub1(it) },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconSelector(
                 title = "副卡2",
-                drawable = starDrawable(selection.sub2),
+                imageId = starDrawable(selection.sub2),
                 entry = starMenu(selection.sub2, 16) { selection.selectSub2(it) },
             )
             Spacer(modifier = Modifier.width(20.dp))
             IconSelector(
                 title = "主卡",
-                drawable = starDrawable(selection.main),
+                imageId = starDrawable(selection.main),
                 entry = starMenu(selection.main, 15) { selection.selectMain(it) },
             )
             Spacer(modifier = Modifier.width(20.dp))
             IconSelector(
                 title = "副卡3",
-                drawable = starDrawable(selection.sub3),
+                imageId = starDrawable(selection.sub3),
                 entry = starMenu(selection.sub3, 16) { selection.selectSub3(it) },
             )
         }
@@ -405,13 +404,13 @@ private fun SelectorSection(selection: CardOddsSelection) {
         ) {
             IconSelector(
                 title = "四叶草",
-                drawable = cloverDrawable(selection.clover),
+                imageId = cloverDrawable(selection.clover),
                 entry = cloverMenu(selection.clover) { selection.selectClover(it) },
             )
             ConsortiaSelector(selection = selection)
             IconSelector(
                 title = "VIP等级",
-                drawable = vipDrawable(selection.vip),
+                imageId = vipDrawable(selection.vip),
                 entry = vipMenu(selection.vip) { selection.selectVip(it) },
             )
         }
@@ -428,7 +427,7 @@ private fun SelectorSection(selection: CardOddsSelection) {
 @Composable
 private fun IconSelector(
     title: String,
-    drawable: DrawableResource,
+    imageId: String,
     entry: DropdownEntry,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -449,10 +448,9 @@ private fun IconSelector(
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Image(
+            PackImage(
+                id = imageId,
                 modifier = Modifier.size(55.dp),
-                painter = painterResource(drawable),
-                contentDescription = null,
                 contentScale = ContentScale.Fit,
             )
         }
@@ -629,9 +627,9 @@ private fun starMenu(selected: Int, maxStar: Int, onSelect: (Int) -> Unit): Drop
                 selected = logic == selected,
                 onClick = { onSelect(logic) },
                 icon = { iconModifier ->
-                    Image(
+                    PackImage(
+                        id = starDrawable(logic),
                         modifier = iconModifier.size(40.dp),
-                        painter = painterResource(starDrawable(logic)),
                         contentDescription = if (logic < 0) NotSelect else "$logic",
                         contentScale = ContentScale.Fit,
                     )
@@ -650,10 +648,9 @@ private fun cloverMenu(selected: Int, onSelect: (Int) -> Unit): DropdownEntry =
                 selected = logic == selected,
                 onClick = { onSelect(logic) },
                 icon = { iconModifier ->
-                    Image(
+                    RemoteItemImage(
+                        id = cloverDrawable(logic),
                         modifier = iconModifier.size(40.dp),
-                        painter = painterResource(cloverDrawable(logic)),
-                        contentDescription = null,
                         contentScale = ContentScale.Fit,
                     )
                 },
@@ -671,9 +668,9 @@ private fun vipMenu(selected: Int, onSelect: (Int) -> Unit): DropdownEntry =
                 selected = logic == selected,
                 onClick = { onSelect(logic) },
                 icon = { iconModifier ->
-                    Image(
+                    PackImage(
+                        id = vipDrawable(logic),
                         modifier = iconModifier.size(40.dp),
-                        painter = painterResource(vipDrawable(logic)),
                         contentDescription = if (logic < 0) NotSelect else "${logic + 1}",
                         contentScale = ContentScale.Fit,
                     )
@@ -702,7 +699,7 @@ private fun cloverLabel(logic: Int): String =
         .toPlainString() + "倍"
 
 /** 星级逻辑值 → 展示图；未选中或越界显示占位图。 */
-private fun starDrawable(logic: Int): DrawableResource =
+private fun starDrawable(logic: Int): String =
     if (logic in CardOddsData.StarDrawables.indices) {
         CardOddsData.StarDrawables[logic]
     } else {
@@ -710,7 +707,7 @@ private fun starDrawable(logic: Int): DrawableResource =
     }
 
 /** 四叶草逻辑值 → 展示图；未选中或越界显示占位图。 */
-private fun cloverDrawable(logic: Int): DrawableResource =
+private fun cloverDrawable(logic: Int): String =
     if (logic in CardOddsData.CloverDrawables.indices) {
         CardOddsData.CloverDrawables[logic]
     } else {
@@ -718,7 +715,7 @@ private fun cloverDrawable(logic: Int): DrawableResource =
     }
 
 /** VIP 逻辑值 → 展示图；未选中或越界显示占位图。 */
-private fun vipDrawable(logic: Int): DrawableResource =
+private fun vipDrawable(logic: Int): String =
     if (logic in CardOddsData.VipDrawables.indices) {
         CardOddsData.VipDrawables[logic]
     } else {
@@ -929,11 +926,10 @@ private fun PresetCard(preset: CardOddsData.Preset, onClick: () -> Unit) {
 }
 
 @Composable
-private fun PresetPreview(drawable: DrawableResource) {
-    Image(
+private fun PresetPreview(id: String) {
+    PackImage(
+        id = id,
         modifier = Modifier.size(32.dp),
-        painter = painterResource(drawable),
-        contentDescription = null,
         contentScale = ContentScale.Fit,
     )
 }
