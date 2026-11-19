@@ -1,5 +1,6 @@
 package com.careful.hyperfvm.compose.screen.meishi
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -19,9 +20,12 @@ import com.careful.hyperfvm.compose.platform.AppEnv
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.platform.Toaster
+import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
+import com.careful.hyperfvm.compose.ui.rememberWindowBackdrop
 import com.careful.hyperfvm.compose.ui.theme.HyperFVMTheme
 import com.careful.hyperfvm.compose.ui.theme.keyColorFor
 import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.squircle.LocalSquircleEnabled
 
 /**
@@ -62,16 +66,36 @@ fun MeishiLinkReceiverScreen(
             LocalToaster provides toaster,
             LocalSquircleEnabled provides true,
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                // 窗口本身是透明的，这里再刷一层主题色就会把来源应用整块盖住。
-                containerColor = Color.Transparent,
-            ) { _ ->
-                MeishiLinkReceiverSheet(
-                    link = pending,
-                    onDismissRequest = { pending = null },
-                    onFinished = onFinished,
+            // 透明窗口背后是来源应用，没有页面可采样，玻璃弹层会退化成不透明实色。
+            // 垫一层专用取样层：它只把内容录进离屏层（见 rememberWindowBackdrop），
+            // 屏幕上仍然透明，弹层取样到的就是这层「假背板」。
+            val receiverBackdrop = rememberWindowBackdrop()
+            Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (receiverBackdrop != null) {
+                                Modifier.layerBackdrop(receiverBackdrop)
+                            } else {
+                                Modifier
+                            },
+                        ),
                 )
+                // 弹层与取样层是兄弟节点：玻璃面板才能安全地取样背板。
+                CompositionLocalProvider(LocalBlurBackdrop provides receiverBackdrop) {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        // 窗口本身是透明的，这里再刷一层主题色就会把来源应用整块盖住。
+                        containerColor = Color.Transparent,
+                    ) { _ ->
+                        MeishiLinkReceiverSheet(
+                            link = pending,
+                            onDismissRequest = { pending = null },
+                            onFinished = onFinished,
+                        )
+                    }
+                }
             }
         }
     }

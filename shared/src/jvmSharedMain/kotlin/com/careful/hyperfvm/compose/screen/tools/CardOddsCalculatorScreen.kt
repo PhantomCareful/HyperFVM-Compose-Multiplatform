@@ -36,6 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
@@ -44,6 +46,7 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -58,13 +61,16 @@ import com.careful.hyperfvm.compose.component.card.importantCardColors
 import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import com.careful.hyperfvm.compose.data.cardOdds.CardOddsData
+import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.platform.KeyValueStore
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlin.math.roundToInt
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownDefaults
@@ -72,15 +78,19 @@ import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownImpl
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.PopupPositionProvider
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.ListView
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
+import com.careful.hyperfvm.compose.ui.GlassMenuPanelHosted
+import com.careful.hyperfvm.compose.ui.overlayBackdrop
+import top.yukonga.miuix.kmp.glass.GlassDropdownPopup
+import top.yukonga.miuix.kmp.glass.GlassPopupSizing
 import top.yukonga.miuix.kmp.overlay.OverlayListPopup
-import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
+import com.careful.hyperfvm.compose.ui.AppDropdownPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.math.BigDecimal
@@ -273,7 +283,7 @@ fun CardOddsCalculatorScreen(onBack: () -> Unit) {
         outerPadding = PaddingValues(0.dp),
         onBack = onBack,
         actions = {
-            IconButton(onClick = { showPresets = true }) {
+            AppTopBarIconButton(onClick = { showPresets = true }) {
                 Icon(
                     imageVector = MiuixIcons.ListView,
                     contentDescription = "预设组合",
@@ -431,8 +441,10 @@ private fun IconSelector(
     entry: DropdownEntry,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    // 玻璃面板按窗口坐标对齐锚点，整列的位置每次重组后刷新即可。
+    var anchorBounds by remember { mutableStateOf(Rect.Zero) }
     val interactionSource = remember { MutableInteractionSource() }
-    Box {
+    Box(modifier = Modifier.onGloballyPositioned { anchorBounds = it.boundsInWindow() }) {
         Column(
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
@@ -457,6 +469,7 @@ private fun IconSelector(
         SelectorPopup(
             entry = entry,
             show = expanded,
+            anchorBounds = anchorBounds,
             onDismiss = { expanded = false },
         )
     }
@@ -466,8 +479,9 @@ private fun IconSelector(
 @Composable
 private fun ConsortiaSelector(selection: CardOddsSelection) {
     var expanded by remember { mutableStateOf(false) }
+    var anchorBounds by remember { mutableStateOf(Rect.Zero) }
     val interactionSource = remember { MutableInteractionSource() }
-    Box {
+    Box(modifier = Modifier.onGloballyPositioned { anchorBounds = it.boundsInWindow() }) {
         Column(
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
@@ -501,6 +515,7 @@ private fun ConsortiaSelector(selection: CardOddsSelection) {
         SelectorPopup(
             entry = consortiaMenu(selection.consortia) { selection.selectConsortia(it) },
             show = expanded,
+            anchorBounds = anchorBounds,
             onDismiss = { expanded = false },
         )
     }
@@ -512,12 +527,62 @@ private fun ConsortiaSelector(selection: CardOddsSelection) {
  * 不能直接用 OverlayDropdownPopup：它内部固定走 ListPopupColumn，把宽度硬编码在 200dp~288dp，
  * 只有一张图的星级/VIP 菜单会被撑成长条。这里改用 [OverlayListPopup] 并放开 minWidth，
  * 宽度交给 [CompactPopupColumn] 按最宽条目决定。
+ *
+ * 柔光玻璃下换成从图标下方展开的玻璃面板，宽度同样按最宽条目收缩。
  */
 @Composable
-private fun SelectorPopup(entry: DropdownEntry, show: Boolean, onDismiss: () -> Unit) {
+private fun SelectorPopup(
+    entry: DropdownEntry,
+    show: Boolean,
+    anchorBounds: Rect,
+    onDismiss: () -> Unit,
+) {
     val hapticFeedback = LocalHapticFeedback.current
     val dropdownColors = DropdownDefaults.dropdownColors()
     val items = entry.items
+
+    if (LocalAppSettings.current.isGlassStyle) {
+        // 行内容仍然是 DropdownImpl：菜单里是资源图片，GlassPopupItem 只收 ImageVector，
+        // 但容器色置空，背景整块交给玻璃面板，否则会盖出一块磨砂实色。
+        val glassColors = dropdownColors.copy(
+            containerColor = Color.Transparent,
+            selectedContainerColor = Color.Transparent,
+        )
+        val hosted = GlassMenuPanelHosted {
+            GlassDropdownPopup(
+                show = show,
+                onDismissRequest = onDismiss,
+                anchorBounds = anchorBounds,
+                backdrop = overlayBackdrop(),
+                // 原生习惯 200dp 起，这里放开让面板按最宽条目收缩
+                sizing = GlassPopupSizing(minWidth = 0.dp),
+            ) {
+                items.forEachIndexed { index, item ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        // 把最小宽度约束继续传给行，整行背景与点击区才铺满弹层
+                        propagateMinConstraints = true,
+                    ) {
+                        DropdownImpl(
+                            item = item,
+                            optionSize = items.size,
+                            isSelected = item.selected,
+                            index = index,
+                            dropdownColors = glassColors,
+                            enabled = entry.enabled && item.enabled,
+                            onSelectedIndexChange = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                                item.onClick?.invoke()
+                                onDismiss()
+                            },
+                        )
+                    }
+                }
+            }
+        }
+        if (hosted) return
+    }
+
     val scrollState = rememberScrollState()
     // 每行在菜单内的纵向位置，用来把当前选中项滚到菜单顶部
     val rowOffsets = remember { mutableStateMapOf<Int, Int>() }
@@ -753,7 +818,7 @@ private fun PercentRow(result: CardOddsResult) {
 
 @Composable
 private fun PercentCard(text: String, colors: CardColors, modifier: Modifier = Modifier) {
-    Card(
+    AppCard(
         modifier = modifier,
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
@@ -794,7 +859,7 @@ private fun CostRow(result: CardOddsResult) {
 
 @Composable
 private fun CostCard(title: String, value: String, modifier: Modifier = Modifier) {
-    Card(
+    AppCard(
         modifier = modifier,
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
@@ -822,25 +887,25 @@ private fun CostCard(title: String, value: String, modifier: Modifier = Modifier
 /** 三张副卡的类型选择，放在同一张 General 卡里。 */
 @Composable
 private fun CategoryCard(selection: CardOddsSelection) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .padding(bottom = 12.dp),
     ) {
-        OverlayDropdownPreference(
+        AppDropdownPreference(
             title = "副卡1",
             items = CategoryLabels,
             selectedIndex = categoryMenuIndex(selection.sub1Category),
             onSelectedIndexChange = { selection.selectSub1Category(categoryLogic(it)) },
         )
-        OverlayDropdownPreference(
+        AppDropdownPreference(
             title = "副卡2",
             items = CategoryLabels,
             selectedIndex = categoryMenuIndex(selection.sub2Category),
             onSelectedIndexChange = { selection.selectSub2Category(categoryLogic(it)) },
         )
-        OverlayDropdownPreference(
+        AppDropdownPreference(
             title = "副卡3",
             items = CategoryLabels,
             selectedIndex = categoryMenuIndex(selection.sub3Category),
@@ -862,7 +927,7 @@ private fun PresetSheet(
     onDismissRequest: () -> Unit,
     onSelect: (Int) -> Unit,
 ) {
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = "预设组合",
         onDismissRequest = onDismissRequest,
@@ -888,13 +953,13 @@ private fun PresetSheet(
  * 一条预设：独立 Card 承载，可点击套用。
  *
  * 弹层背景是 `background`，与 Card 默认的 `surfaceContainer` 同色；
- * 按 miuix demo 的 BottomSheet 内容卡改回 `secondaryContainer`，卡片才能在弹层里分辨出来。
+ * 按弹层内容卡的统一约定换成 [sheetCardColor]，卡片才能在弹层里分辨出来。
  */
 @Composable
 private fun PresetCard(preset: CardOddsData.Preset, onClick: () -> Unit) {
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         onClick = onClick,

@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.careful.hyperfvm.compose.component.card.errataContentColor
 import com.careful.hyperfvm.compose.data.meishi.MeishiAccount
 import com.careful.hyperfvm.compose.data.meishi.MeishiAccounts
 import com.careful.hyperfvm.compose.data.meishi.MeishiFetchResult
@@ -45,15 +44,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.basic.TextFieldDefaults
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /** 弹层里字段标题的内边距：与仪表盘详情弹层的分组标题一致，左端对齐卡片里的正文。 */
@@ -171,7 +171,7 @@ internal fun MeishiAddLinkSheet(
         }
     }
 
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = "添加链接",
         onDismissRequest = onDismissRequest,
@@ -196,7 +196,10 @@ internal fun MeishiAddLinkSheet(
                 value = input,
                 onValueChange = { input = it },
                 modifier = Modifier.fillMaxWidth(),
+                // 弹层里的输入框与其余内容卡同一种底色：轻透磨砂下是灰调 secondaryContainer，
+                // 柔光玻璃下换成不透明的 surfaceContainer，才不会跟着玻璃面板一起发透。
                 colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = sheetCardColor(),
                     labelColor = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                 ),
                 label = AddLinkHint,
@@ -227,21 +230,21 @@ internal fun MeishiAddLinkSheet(
             Spacer(modifier = Modifier.height(SheetButtonGap))
             // 两个按钮在请求期间不再置灰：禁用的瞬间会刷成灰底灰字，结果回来再刷回主色，
             // 看起来就像按钮在闪。重复点击由 submit 里的 busy 守卫拦下。
-            TextButton(
+            AppDialogButton(
                 text = "测试链接",
                 onClick = { submit(testOnly = true) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.textButtonColorsPrimary(),
+                role = AppDialogButtonRole.Primary,
             )
             Spacer(modifier = Modifier.height(SheetButtonGap))
-            TextButton(
+            AppDialogButton(
                 text = "添加链接",
                 onClick = { submit(testOnly = false) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.textButtonColorsPrimary(),
+                role = AppDialogButtonRole.Primary,
             )
             Spacer(modifier = Modifier.height(SheetButtonGap))
-            TextButton(
+            AppDialogButton(
                 text = "关闭窗口",
                 onClick = onDismissRequest,
                 modifier = Modifier.fillMaxWidth(),
@@ -275,7 +278,7 @@ internal fun MeishiAccountSheet(
 
     var playerName by remember(current.openId) { mutableStateOf(current.playerName) }
 
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = "账号信息",
         onDismissRequest = onDismissRequest,
@@ -303,12 +306,14 @@ internal fun MeishiAccountSheet(
                 onValueChange = { playerName = it },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                // 与添加链接弹层的输入框同款：弹层里统一用内容卡底色。
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = sheetCardColor()),
             )
             SmallTitle(text = "所在区服", insideMargin = SheetLabelMargin)
             MeishiTextCard(text = current.serverName.ifBlank { UnknownServerName })
             // 与添加链接弹层保持一致：最后一组内容到按钮组的间距，等于按钮之间的间距。
             Spacer(modifier = Modifier.height(SheetButtonGap))
-            TextButton(
+            AppDialogButton(
                 text = "保存更改",
                 onClick = {
                     store.rename(current.openId, playerName.trim())
@@ -316,23 +321,21 @@ internal fun MeishiAccountSheet(
                     onDismissRequest()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.textButtonColorsPrimary(),
+                role = AppDialogButtonRole.Primary,
             )
             Spacer(modifier = Modifier.height(SheetButtonGap))
-            TextButton(
+            AppDialogButton(
                 text = "关闭窗口",
                 onClick = onDismissRequest,
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(SheetButtonGap))
-            TextButton(
+            AppDialogButton(
                 text = "删除账号",
                 onClick = { onDelete(current) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.textButtonColors(
-                    // 与页面里的勘误提醒卡同色：删除不可逆，警示色全应用只留这一份。
-                    textColor = errataContentColor(),
-                ),
+                // 删除不可逆，用玻璃弹层的破坏性语气（勘误红文字）而不是普通正文色。
+                role = AppDialogButtonRole.Destructive,
             )
         }
     }
@@ -394,7 +397,7 @@ internal fun MeishiLinkReceiverSheet(
         }
     }
 
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = link != null && (parsing || ready != null),
         // 结果出来之后标题换成一句问句：这时候用户要做的正是核对信息。
         title = if (ready != null) "请确认信息是否正确" else "添加链接",
@@ -456,20 +459,20 @@ internal fun MeishiLinkReceiverSheet(
                     MeishiFieldCard(label = "所在区服", value = info.serverName)
                     Spacer(modifier = Modifier.height(SheetBottomPadding))
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        TextButton(
+                        AppDialogButton(
                             text = "取消",
                             onClick = onDismissRequest,
                             modifier = Modifier.weight(1f),
                         )
                         Spacer(modifier = Modifier.width(20.dp))
-                        TextButton(
+                        AppDialogButton(
                             text = "添加",
                             onClick = {
                                 store.saveAccount(openId, info, toaster)
                                 onDismissRequest()
                             },
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.textButtonColorsPrimary(),
+                            role = AppDialogButtonRole.Primary,
                         )
                     }
                 }
@@ -477,7 +480,7 @@ internal fun MeishiLinkReceiverSheet(
         }
     }
 
-    OverlayDialog(
+    AppDialog(
         show = failed,
         title = "添加链接",
         onDismissRequest = { closeFailure() },
@@ -494,13 +497,13 @@ internal fun MeishiLinkReceiverSheet(
                 fontWeight = FontWeight.Medium,
                 color = MiuixTheme.colorScheme.onSurface,
             )
-            TextButton(
+            AppDialogButton(
                 text = "好的",
                 onClick = { closeFailure() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                colors = ButtonDefaults.textButtonColorsPrimary(),
+                role = AppDialogButtonRole.Primary,
             )
         }
     }

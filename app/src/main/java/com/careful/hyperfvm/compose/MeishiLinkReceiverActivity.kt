@@ -47,6 +47,11 @@ class MeishiLinkReceiverActivity : ComponentActivity() {
         // 小米设备会强制给导航栏加对比度遮罩，透明窗口下会留下一条灰带。
         window.isNavigationBarContrastEnforced = false
 
+        // 有意不启用系统跨窗口模糊（setBackgroundBlurRadius）：它会把窗口背后的来源应用
+        // 整块糊掉，这里要的是「看清楚背后的微信再点确认」，不是全屏磨砂。
+        // 弹层的玻璃感由页面自己的取样层提供（见 MeishiLinkReceiverScreen 的 rememberWindowBackdrop），
+        // 不需要系统再糊一层。
+
         val env = AndroidAppEnv(applicationContext)
         val store = SettingsStore(env)
         setContent {

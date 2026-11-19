@@ -28,6 +28,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -82,11 +83,15 @@ import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.ZoomableState
 import me.saket.telephoto.zoomable.rememberZoomableState
 import me.saket.telephoto.zoomable.zoomable
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
+import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
+import com.careful.hyperfvm.compose.ui.rememberViewerBackdrop
+import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.io.File
@@ -341,12 +346,21 @@ internal fun DataImageViewer(
     // 查看器是黑底，状态栏图标要切到浅色；退出时恢复。桌面端没有状态栏，由平台层空实现。
     ViewerSystemBarsEffect()
 
+    // 操作面板要用柔光玻璃：查看器铺在根层，LocalBlurBackdrop 到这里是 null，
+    // 面板会退化成不透明实色。这里给它垫一层专用取样层，录「黑底 + 图片 + 页码」，
+    // 面板通过下面的 CompositionLocalProvider 拿到它。
+    val viewerBackdrop = rememberViewerBackdrop()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         contentWindowInsets = WindowInsets(0),
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (viewerBackdrop != null) Modifier.layerBackdrop(viewerBackdrop) else Modifier),
+        ) {
             // 背景不参与缩放：只有图片「从卡片里长出来」，遮罩是淡入的。
             Box(
                 modifier = Modifier
@@ -694,8 +708,10 @@ internal fun DataImageViewer(
                         .padding(horizontal = 12.dp, vertical = 4.dp),
                 )
             }
-
-            // 长按拉起的操作面板：Overlay 组件渲染在 Scaffold 的弹层里，一定在图片之上。
+        }
+        // 长按拉起的操作面板：Scaffold 会把 content 包进一个 Box，所以这里与画面是兄弟节点，
+        // 叠在它上面但不在取样层里——不依赖弹层宿主自身的取样行为。
+        CompositionLocalProvider(LocalBlurBackdrop provides viewerBackdrop) {
             DataImageViewerActionsSheet(
                 item = items.getOrNull(pagerState.currentPage),
                 show = showActions,
@@ -870,11 +886,11 @@ private fun ActionCard(
     summary: String,
     onClick: () -> Unit,
 ) {
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         // 弹层是浅色圆角面板，与 Card 默认的 surface 同色，
-        // 换成 secondaryContainer 才能在弹层里分辨出卡片边界。
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        // 换成弹层内容卡底色才能在弹层里分辨出卡片边界。
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         showIndication = true,
         onClick = onClick,
     ) {
@@ -905,7 +921,7 @@ internal fun DataImageViewerActionsSheet(
     // 底下把分享卡压住，这里补齐。
     val navigationBarBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show && item != null,
         onDismissRequest = onDismiss,
     ) {

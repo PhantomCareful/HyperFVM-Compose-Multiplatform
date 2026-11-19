@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.data.meishi.MeishiAccount
 import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -49,7 +50,7 @@ internal const val UnknownServerName = "未知区服"
 /**
  * 弹层里一个字段的展示卡：body2 标签 + title3 加粗数值。
  *
- * 与仪表盘详情弹层里的「开始时间 / 结束时间」卡同规格（同圆角、同底色、同内边距），
+ * 与仪表盘详情弹层里的「开始时间 / 结束时间」卡同规格（同圆角、同弹层内容卡底色、同内边距），
  * 添加链接时解析出的角色 ID 与所在区服就用它展示。
  */
 @Composable
@@ -58,11 +59,11 @@ internal fun MeishiFieldCard(
     value: String,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = MeishiCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         // 展示卡只有按压反馈，没有点击动作；空回调只为了把水波纹挂上。
@@ -99,11 +100,11 @@ internal fun MeishiTextCard(
     modifier: Modifier = Modifier,
     onCopy: (() -> Unit)? = null,
 ) {
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = MeishiCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         onClick = {},
@@ -144,7 +145,7 @@ internal fun MeishiAccountCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = MeishiCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
@@ -186,7 +187,7 @@ internal fun MeishiGiftRow(
     icon: String,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = MeishiCardCornerRadius,
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),

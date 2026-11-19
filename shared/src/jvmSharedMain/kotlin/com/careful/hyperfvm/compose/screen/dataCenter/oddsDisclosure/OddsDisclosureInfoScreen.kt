@@ -27,7 +27,7 @@ import com.careful.hyperfvm.compose.data.oddsDisclosure.oddsTextPrecision
 import com.careful.hyperfvm.compose.data.oddsDisclosure.resolvedErrata
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -113,7 +113,7 @@ fun OddsDisclosureInfoScreen(
 internal fun OddsItemCard(item: OddsItem, precision: Int) {
     val colors = if (item.expected) importantCardColors() else CardDefaults.defaultColors()
     val imageId = item.remoteId ?: item.image
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)

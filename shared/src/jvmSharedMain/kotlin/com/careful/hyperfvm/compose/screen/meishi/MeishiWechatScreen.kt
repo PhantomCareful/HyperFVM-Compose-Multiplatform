@@ -49,10 +49,10 @@ import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.SnackbarDuration
 import top.yukonga.miuix.kmp.basic.SnackbarHost
@@ -187,7 +187,7 @@ fun MeishiWechatScreen(onBack: () -> Unit) {
         outerPadding = PaddingValues(0.dp),
         onBack = onBack,
         actions = {
-            IconButton(onClick = { showAddSheet = true }) {
+            AppTopBarIconButton(onClick = { showAddSheet = true }) {
                 Icon(imageVector = MiuixIcons.Add, contentDescription = "添加链接")
             }
         },
@@ -281,7 +281,7 @@ fun MeishiWechatScreen(onBack: () -> Unit) {
  */
 @Composable
 private fun LinksPermissionCard(onClick: () -> Unit) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = MeishiSidePadding)
@@ -330,7 +330,7 @@ private fun LinksPermissionCard(onClick: () -> Unit) {
  */
 @Composable
 private fun RuleCard(text: String) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = MeishiSidePadding)

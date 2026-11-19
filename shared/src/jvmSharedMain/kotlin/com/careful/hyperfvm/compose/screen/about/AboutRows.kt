@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 
 /**
@@ -15,7 +15,7 @@ import top.yukonga.miuix.kmp.basic.CardDefaults
  */
 @Composable
 fun AboutContentCard(content: @Composable ColumnScope.() -> Unit) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)

@@ -22,11 +22,12 @@ import com.careful.hyperfvm.compose.component.card.TipsCard
 import com.careful.hyperfvm.compose.data.catalog.CatalogItem
 import com.careful.hyperfvm.compose.data.catalog.CatalogRenewal
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
@@ -60,7 +61,7 @@ fun CatalogDetailSheet(
     noun: String,
 ) {
     if (item == null) return
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = item.name,
         onDismissRequest = onDismissRequest,
@@ -136,11 +137,11 @@ private fun DetailFieldCard(
     value: String,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AppCard(
         modifier = modifier,
         cornerRadius = SheetCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         // 信息卡只有按压反馈，没有点击动作。
@@ -166,19 +167,19 @@ private fun DetailFieldCard(
 
 /**
  * 描述卡：整行一段说明，样式与温馨礼包的「使用说明」卡一致
- * （body2、onBackground 色、secondaryContainer 底）。
+ * （body2、onBackground 色、弹层内容卡底色）。
  * 源数据里没有描述的条目显示一行变体色的「暂无描述」。
  */
 @Composable
 private fun DescriptionCard(description: String?) {
     val text = description?.takeIf { it.isNotBlank() }
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = SheetCardBottomPadding),
         cornerRadius = SheetCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         onClick = {},
@@ -231,11 +232,11 @@ private fun RenewalGrid(renewals: List<CatalogRenewal>) {
 /** 一档续费：body2 档位名 + title3 加粗售价。 */
 @Composable
 private fun RenewalCard(renewal: CatalogRenewal, modifier: Modifier = Modifier) {
-    Card(
+    AppCard(
         modifier = modifier,
         cornerRadius = SheetCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         onClick = {},

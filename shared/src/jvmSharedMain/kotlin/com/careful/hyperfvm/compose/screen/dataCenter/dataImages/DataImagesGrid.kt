@@ -39,7 +39,7 @@ import com.careful.hyperfvm.compose.data.image.DataImageCategory
 import com.careful.hyperfvm.compose.data.image.DataImageEntry
 import com.careful.hyperfvm.compose.data.image.DataImageThumbnails
 import kotlinx.coroutines.delay
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
@@ -207,7 +207,7 @@ fun DataImageCard(
         }
     }
 
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         cornerRadius = cornerRadius,
         // 预览图要贴到卡片边缘，内边距由下面的内容自己加。

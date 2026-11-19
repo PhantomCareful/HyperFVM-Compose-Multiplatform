@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.card.statusCardAccentColor
 import com.careful.hyperfvm.compose.component.card.statusCardBackgroundColor
 import com.careful.hyperfvm.compose.data.cardCatalog.CardCatalog
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
@@ -119,7 +119,7 @@ private fun OverviewBigCard(
     val titleColor = colors.contentColor.copy(alpha = 0.7f)
     // 同 KernelSU：Monet 下图标取主题色 0.8 透明度，静态色板下用固定的状态绿。
     val iconTint = statusCardAccentColor()
-    Card(
+    AppCard(
         modifier = modifier,
         cornerRadius = OverviewCornerRadius,
         insideMargin = PaddingValues(0.dp),
@@ -190,7 +190,7 @@ private fun OverviewSmallCard(
     count: Int,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AppCard(
         modifier = modifier,
         cornerRadius = OverviewCornerRadius,
         insideMargin = PaddingValues(OverviewInsidePadding),

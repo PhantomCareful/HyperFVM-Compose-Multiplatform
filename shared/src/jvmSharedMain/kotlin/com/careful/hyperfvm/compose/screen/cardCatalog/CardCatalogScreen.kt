@@ -47,6 +47,7 @@ import com.careful.hyperfvm.compose.component.card.DefenseCardRow
 import com.careful.hyperfvm.compose.data.cardCatalog.CardCatalog
 import com.careful.hyperfvm.compose.data.cardCatalog.DefenseCard
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
+import com.careful.hyperfvm.compose.ui.AppSearchCancelAction
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import top.yukonga.miuix.kmp.basic.InputField
@@ -243,10 +244,11 @@ internal fun CardCatalogScreen(outerPadding: PaddingValues) {
 }
 
 /**
- * 顶栏里的搜索框：输入框 + 展开时从右侧滑出的「取消」。
+ * 顶栏里的搜索框：输入框 + 展开时从右侧滑出的取消动作。
  *
  * 结构与 miuix 官方 `SearchBar` 的首行一致：输入框两侧 12dp 内边距，
  * 取消按钮紧跟其后（间距即这 12dp），滑出 / 滑回使用相同的过渡参数。
+ * 轻透磨砂下取消是文字，柔光玻璃下是玻璃圆钮上的 ×。
  */
 @Composable
 private fun CatalogSearchBar(
@@ -284,13 +286,9 @@ private fun CatalogSearchBar(
             enter = expandHorizontally() + slideInHorizontally(initialOffsetX = { it }),
             exit = shrinkHorizontally() + slideOutHorizontally(targetOffsetX = { it }),
         ) {
-            Text(
-                text = "取消",
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable(interactionSource = null, indication = null, onClick = onCancel),
-                style = MiuixTheme.textStyles.main,
-                color = MiuixTheme.colorScheme.primary,
+            AppSearchCancelAction(
+                onCancel = onCancel,
+                modifier = Modifier.padding(end = 16.dp),
             )
         }
     }

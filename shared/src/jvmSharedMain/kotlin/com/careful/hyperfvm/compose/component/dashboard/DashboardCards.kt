@@ -31,7 +31,7 @@ import com.careful.hyperfvm.compose.component.card.statusCardAccentColor
 import com.careful.hyperfvm.compose.component.card.statusCardBackgroundColor
 import com.careful.hyperfvm.compose.data.dashboard.DashboardCardId
 import com.careful.hyperfvm.compose.data.dashboard.DashboardEntry
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
@@ -134,7 +134,7 @@ internal fun DashboardStatusCard(
 ) {
     val progress = entry.progress
     val palette = dashboardCardPalette(style = entry.style, hasProgress = progress != null)
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = CardCornerRadius,
         colors = palette.card,
@@ -220,7 +220,7 @@ internal fun DashboardGiftCard(
     modifier: Modifier = Modifier,
 ) {
     val contentColor = CardDefaults.defaultColors(color = statusCardBackgroundColor()).contentColor
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = CardCornerRadius,
         colors = CardDefaults.defaultColors(color = statusCardBackgroundColor()),
@@ -283,7 +283,7 @@ internal fun DashboardNoticeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = CardCornerRadius,
         colors = CardDefaults.defaultColors(),
@@ -377,7 +377,7 @@ private fun DashboardUpdateCard(
     modifier: Modifier = Modifier,
 ) {
     val contentColor = CardDefaults.defaultColors(color = statusCardBackgroundColor()).contentColor
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = CardCornerRadius,
         colors = CardDefaults.defaultColors(color = statusCardBackgroundColor()),
@@ -425,7 +425,7 @@ private fun DashboardUpdateCard(
 @Composable
 internal fun DashboardMonthEndCard(modifier: Modifier = Modifier) {
     val colors = errataCardColors()
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = CardCornerRadius,
         colors = colors,

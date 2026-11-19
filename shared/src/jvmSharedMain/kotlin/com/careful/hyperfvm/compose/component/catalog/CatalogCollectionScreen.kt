@@ -65,31 +65,38 @@ import com.careful.hyperfvm.compose.data.catalog.CatalogLoadState
 import com.careful.hyperfvm.compose.data.catalog.CatalogRepository
 import com.careful.hyperfvm.compose.data.catalog.CatalogSex
 import com.careful.hyperfvm.compose.data.catalog.CatalogUpdateResult
+import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
+import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import com.careful.hyperfvm.compose.ui.isTabletLayout
 import kotlinx.coroutines.launch
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.FloatingActionButton
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppIconDropdownMenu
+import com.careful.hyperfvm.compose.ui.AppSearchCancelAction
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.InputField
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.SearchBarDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.glass.GlassFloatingActionButton
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.icon.extended.Filter
 import top.yukonga.miuix.kmp.icon.extended.Update
-import top.yukonga.miuix.kmp.menu.OverlayIconDropdownMenu
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
@@ -271,7 +278,7 @@ fun CatalogCollectionScreen(
         scrollBehavior = scrollBehavior,
         // 本页没有下拉刷新，滚动连接照旧由脚手架统一挂。
         actions = {
-            IconButton(
+            AppTopBarIconButton(
                 onClick = { updateDialog = UpdateDialogState(UpdatePhase.Confirm) },
                 // 首次加载进行中不让点，避免和自动加载抢同一把锁；加载失败时允许，
                 // 更新也能当「重试」用。
@@ -280,7 +287,7 @@ fun CatalogCollectionScreen(
                 Icon(imageVector = MiuixIcons.Update, contentDescription = "更新${kind.noun}资源")
             }
             if (loadState is CatalogLoadState.Ready) {
-                OverlayIconDropdownMenu(entries = filterMenu) {
+                AppIconDropdownMenu(entries = filterMenu) {
                     Icon(imageVector = MiuixIcons.Filter, contentDescription = "筛选性别")
                 }
             }
@@ -306,19 +313,22 @@ fun CatalogCollectionScreen(
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
-                FloatingActionButton(
-                    onClick = {
-                        // animateScrollToItem 是弹簧动画，回顶过程有过渡而不是瞬移。
-                        scope.launch { gridState.animateScrollToItem(0) }
-                    },
-                ) {
-                    Icon(
-                        // Back 是左箭头，rotate 正角度为顺时针，转 90° 后箭头朝上。
-                        imageVector = MiuixIcons.Back,
-                        contentDescription = "回到顶部",
-                        modifier = Modifier.rotate(90f),
-                        tint = Color.White,
-                    )
+                val onFabClick: () -> Unit = {
+                    // animateScrollToItem 是弹簧动画，回顶过程有过渡而不是瞬移。
+                    scope.launch { gridState.animateScrollToItem(0) }
+                }
+                if (LocalAppSettings.current.isGlassStyle) {
+                    // 柔光玻璃：OS4 的玻璃圆钮；backdrop 为 null（模糊关或设备不支持）时它自己用主色填充。
+                    GlassFloatingActionButton(
+                        onClick = onFabClick,
+                        backdrop = LocalBlurBackdrop.current,
+                    ) {
+                        BackToTopIcon()
+                    }
+                } else {
+                    FloatingActionButton(onClick = onFabClick) {
+                        BackToTopIcon()
+                    }
                 }
             }
         },
@@ -494,7 +504,7 @@ private fun CatalogUpdateDialog(
     if (state != null) lastState = state
     val content = state ?: lastState
 
-    OverlayDialog(
+    AppDialog(
         show = state != null,
         title = when (content?.phase) {
             UpdatePhase.Confirm -> "确认更新"
@@ -508,7 +518,7 @@ private fun CatalogUpdateDialog(
             if (content?.phase != UpdatePhase.Updating) onDismiss()
         },
     ) {
-        if (content == null) return@OverlayDialog
+        if (content == null) return@AppDialog
         Column(modifier = Modifier.fillMaxWidth()) {
             when (content.phase) {
                 UpdatePhase.Confirm -> {
@@ -525,17 +535,17 @@ private fun CatalogUpdateDialog(
                             .padding(top = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        TextButton(
+                        AppDialogButton(
                             text = "取消",
                             onClick = onDismiss,
                             modifier = Modifier.weight(1f),
                         )
                         Spacer(Modifier.width(20.dp))
-                        TextButton(
+                        AppDialogButton(
                             text = "确定",
                             onClick = onConfirm,
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.textButtonColorsPrimary(),
+                            role = AppDialogButtonRole.Primary,
                         )
                     }
                 }
@@ -567,13 +577,13 @@ private fun CatalogUpdateDialog(
                         fontSize = MiuixTheme.textStyles.body1.fontSize,
                         textAlign = TextAlign.Center,
                     )
-                    TextButton(
+                    AppDialogButton(
                         text = "我知道了",
                         onClick = onDismiss,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 20.dp),
-                        colors = ButtonDefaults.textButtonColorsPrimary(),
+                        role = AppDialogButtonRole.Primary,
                     )
                 }
 
@@ -585,13 +595,13 @@ private fun CatalogUpdateDialog(
                         fontSize = MiuixTheme.textStyles.body1.fontSize,
                         textAlign = TextAlign.Center,
                     )
-                    TextButton(
+                    AppDialogButton(
                         text = "我知道了",
                         onClick = onDismiss,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 20.dp),
-                        colors = ButtonDefaults.textButtonColorsPrimary(),
+                        role = AppDialogButtonRole.Primary,
                     )
                 }
             }
@@ -618,7 +628,7 @@ private fun CatalogCard(item: CatalogItem, onClick: () -> Unit) {
         if (value == null) value = CatalogImages.load(imageFile)
     }
 
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         cornerRadius = PreviewCardCornerRadius,
         // 图片要贴到卡片边缘，内边距由内容自己加。
@@ -669,7 +679,8 @@ private fun CatalogCard(item: CatalogItem, onClick: () -> Unit) {
 }
 
 /**
- * 顶栏里的搜索框：输入框 + 展开时从右侧滑出的「取消」，与查黑系统、防御卡目录同款。
+ * 顶栏里的搜索框：输入框 + 展开时从右侧滑出的取消动作，与查黑系统、防御卡目录同款。
+ * 轻透磨砂下取消是文字，柔光玻璃下是玻璃圆钮上的 ×。
  */
 @Composable
 private fun CatalogSearchBar(
@@ -708,14 +719,21 @@ private fun CatalogSearchBar(
             enter = expandHorizontally() + slideInHorizontally(initialOffsetX = { it }),
             exit = shrinkHorizontally() + slideOutHorizontally(targetOffsetX = { it }),
         ) {
-            Text(
-                text = "取消",
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable(interactionSource = null, indication = null, onClick = onCancel),
-                style = MiuixTheme.textStyles.main,
-                color = MiuixTheme.colorScheme.primary,
+            AppSearchCancelAction(
+                onCancel = onCancel,
+                modifier = Modifier.padding(end = 16.dp),
             )
         }
     }
+}
+
+/** 回到顶部的箭头：Back 是左箭头，rotate 正角度为顺时针，转 90° 后箭头朝上。 */
+@Composable
+private fun BackToTopIcon() {
+    Icon(
+        imageVector = MiuixIcons.Back,
+        contentDescription = "回到顶部",
+        modifier = Modifier.rotate(90f),
+        tint = Color.White,
+    )
 }

@@ -31,7 +31,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import top.yukonga.miuix.kmp.basic.BasicComponent
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.basic.ArrowRight
@@ -195,7 +195,7 @@ private fun PermissionCard(
     granted: Boolean?,
     onClick: (() -> Unit)?,
 ) {
-    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
+    AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
         BasicComponent(
             // 无点击的行不挂 clickable，只用 pressable 补点按阴影。
             modifier = if (onClick == null) {

@@ -47,7 +47,7 @@ import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import kotlinx.coroutines.CancellationException
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
@@ -62,7 +62,7 @@ import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.basic.ArrowRight
 import top.yukonga.miuix.kmp.icon.extended.Image as ImageIcon
 import top.yukonga.miuix.kmp.icon.extended.Sort
-import top.yukonga.miuix.kmp.menu.OverlayIconDropdownMenu
+import com.careful.hyperfvm.compose.ui.AppIconDropdownMenu
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -254,7 +254,7 @@ fun AnnouncementArchiveScreen(onBack: () -> Unit) {
         actions = {
             // 排序与年份合成一个菜单：点某项不会收起（年份要多选），点空白处或再点图标
             // 才收起；菜单右缘对齐与点击震动都由组件内部处理。
-            OverlayIconDropdownMenu(
+            AppIconDropdownMenu(
                 entries = menuEntries,
                 collapseOnSelection = false,
             ) {
@@ -372,7 +372,7 @@ private fun ArchiveEntryCard(
     entry: AnnouncementEntry,
     onClick: () -> Unit,
 ) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)

@@ -19,12 +19,13 @@ import com.careful.hyperfvm.compose.component.dialog.openUrl
 import com.careful.hyperfvm.compose.data.notification.StoredNotification
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
@@ -62,7 +63,7 @@ fun NotificationDetailSheet(
     val toaster = LocalToaster.current
     val navigationBarBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = content.title,
         onDismissRequest = onDismissRequest,
@@ -72,11 +73,11 @@ fun NotificationDetailSheet(
                 .fillMaxWidth()
                 .padding(bottom = 16.dp + navigationBarBottom),
         ) {
-            Card(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = SheetCardCornerRadius,
-                // 弹层里换成 secondaryContainer，卡片边界才分辨得出来。
-                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+                // 弹层里换成弹层内容卡底色，卡片边界才分辨得出来。
+                colors = CardDefaults.defaultColors(color = sheetCardColor()),
                 pressFeedbackType = PressFeedbackType.None,
                 showIndication = true,
                 onClick = {},
@@ -98,13 +99,12 @@ fun NotificationDetailSheet(
                     verticalArrangement = Arrangement.spacedBy(LinkButtonGap),
                 ) {
                     content.links.forEach { link ->
-                        Button(
+                        AppDialogButton(
+                            text = link.label,
                             onClick = { openUrl(env, toaster, link.url) },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColorsPrimary(),
-                        ) {
-                            Text(text = link.label, style = MiuixTheme.textStyles.button)
-                        }
+                            role = AppDialogButtonRole.Primary,
+                        )
                     }
                 }
             }

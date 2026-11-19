@@ -23,7 +23,14 @@ kotlin {
     // 它只影响本库生成的 R/BuildConfig 与合并后的 manifest 包名，Kotlin 源码包名不受影响。
     android {
         namespace = "com.careful.hyperfvm.compose.shared"
-        compileSdk = 37
+        // miuix 0.9.5-beta01 的 AAR 元数据要求 compileSdk >= 37.2：API 37 起平台哈希带小版本号
+        // （android-37.0 / android-37.2），而 compileSdk = 37 等价于 37.0。KMP 插件的 DSL 没有
+        // compileSdkMinor 属性，只能用块式写法表达小版本。
+        compileSdk {
+            version = release(37) {
+                minorApiLevel = 2
+            }
+        }
         minSdk = 31
 
         compilations.configureEach {
@@ -60,6 +67,9 @@ kotlin {
             implementation(libs.miuix.blur)
             implementation(libs.miuix.squircle)
             implementation(libs.miuix.nav)
+            implementation(libs.miuix.glass)
+            implementation(libs.miuix.glass.icons)
+            implementation(libs.miuix.material)
 
             implementation(libs.telephoto.subsampling)
             implementation(libs.telephoto.zoomable)
@@ -69,7 +79,7 @@ kotlin {
             implementation(libs.androidx.collection)
             // miuix-nav 内部依赖它，公共代码也会直接用到 NavigationEventInfo；
             // 自 1.1 起官方也发布了 desktop 变体，两端同一坐标。
-            implementation("androidx.navigationevent:navigationevent-compose:1.1.2")
+            implementation("androidx.navigationevent:navigationevent-compose:1.2.0")
         }
 
         androidMain.get().dependsOn(jvmSharedMain)

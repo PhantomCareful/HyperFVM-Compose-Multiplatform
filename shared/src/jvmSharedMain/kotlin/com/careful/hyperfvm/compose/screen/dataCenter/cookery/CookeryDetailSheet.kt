@@ -38,11 +38,12 @@ import com.careful.hyperfvm.compose.data.cookery.CookeryAuxiliaryCard
 import com.careful.hyperfvm.compose.data.cookery.CookeryCard
 import com.careful.hyperfvm.compose.data.cookery.CookeryRecipe
 import com.careful.hyperfvm.compose.data.cookery.CookerySource
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
@@ -74,7 +75,7 @@ internal fun CookeryDetailSheet(
     onDismissRequest: () -> Unit,
 ) {
     if (card == null) return
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = card.name,
         onDismissRequest = onDismissRequest,
@@ -266,14 +267,14 @@ private fun RecipeRow(row: List<CookeryRecipe>) {
  */
 @Composable
 private fun RecipeCell(recipe: CookeryRecipe, modifier: Modifier = Modifier) {
-    Card(
+    AppCard(
         modifier = modifier,
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         onClick = {},
         cornerRadius = 20.dp,
-        // 同 SheetCard：弹层内的卡统一 secondaryContainer 底色。
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        // 同 SheetCard：弹层内的卡统一弹层内容卡底色。
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
     ) {
         Row(
             modifier = Modifier
@@ -329,7 +330,7 @@ private fun AuxiliaryCardRow(card: CookeryAuxiliaryCard) {
         DefenseCardRow(
             card = defenseCard,
             modifier = Modifier.padding(bottom = SheetCardBottomPadding),
-            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+            colors = CardDefaults.defaultColors(color = sheetCardColor()),
         )
     } else {
         SheetCard {
@@ -358,10 +359,10 @@ private fun AuxiliaryCardRow(card: CookeryAuxiliaryCard) {
 /** 回退行的卡图尺寸：Java 版是 wrap_content（随图自身像素），统一到 48dp 更整齐。 */
 private val AuxiliaryCardImageSize: Dp = 48.dp
 
-/** 弹层里通用内容卡的壳：20dp 圆角、secondaryContainer 底色、底部 10dp 间距。 */
+/** 弹层里通用内容卡的壳：20dp 圆角、弹层内容卡底色、底部 10dp 间距。 */
 @Composable
 private fun SheetCard(content: @Composable () -> Unit) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = SheetCardBottomPadding),
@@ -369,9 +370,8 @@ private fun SheetCard(content: @Composable () -> Unit) {
         showIndication = true,
         onClick = {},
         cornerRadius = 20.dp,
-        // 与 miuix demo 的 BottomSheet 一致：弹层内容卡用 secondaryContainer，
-        // 与弹层背景区分开。
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        // 弹层内容卡用弹层内容卡底色，与弹层背景区分开。
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
     ) {
         content()
     }

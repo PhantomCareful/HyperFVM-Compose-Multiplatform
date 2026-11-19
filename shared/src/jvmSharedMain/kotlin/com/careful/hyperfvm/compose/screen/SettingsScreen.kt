@@ -1,6 +1,11 @@
 package com.careful.hyperfvm.compose.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.data.settings.FloatingBarStyle
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.data.settings.LocalUpdateSettings
+import com.careful.hyperfvm.compose.data.settings.ThemeStyle
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.data.settings.isLiquidGlassBar
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
@@ -29,17 +36,19 @@ import com.careful.hyperfvm.compose.platform.isDesktopPlatform
 import com.careful.hyperfvm.compose.platform.rememberBiometricGate
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.theme.KeyColorNames
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.SliderDefaults
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
-import top.yukonga.miuix.kmp.blur.isRuntimeShaderSupported
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import top.yukonga.miuix.kmp.basic.TextFieldDefaults
+import top.yukonga.miuix.kmp.material.isRuntimeShaderSupported
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
 import top.yukonga.miuix.kmp.preference.ArrowPreference
-import top.yukonga.miuix.kmp.preference.OverlayDropdownPreference
+import com.careful.hyperfvm.compose.ui.AppDropdownPreference
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.preference.SliderPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -54,7 +63,7 @@ private val ColorModeOptions = listOf(
 
 private val PaletteStyleOptions = ThemePaletteStyle.entries.map { it.name }
 private val ColorSpecOptions = ThemeColorSpec.entries.map { it.name }
-private val BlurStyleOptions = listOf("高斯模糊", "渐进模糊")
+private val ThemeStyleOptions = listOf("轻透磨砂", "柔光玻璃")
 private val NavigationBarModeOptions = listOf("图标与文字", "仅图标", "选中项显示文字")
 /** 模糊关时两档：Q弹 也会退成滑块，所以不再单列。 */
 private val FloatingBarStyleNamesOpaque = listOf("默认", "滑块")
@@ -64,12 +73,18 @@ private val FloatingBarStyleValuesOpaque = listOf(FloatingBarStyle.Default, Floa
 private val FloatingBarStyleNamesBlurred = listOf("高光描边", "液态玻璃（常规）", "液态玻璃（Q弹）")
 private val FloatingBarStyleValuesBlurred =
     listOf(FloatingBarStyle.Default, FloatingBarStyle.LiquidGlass, FloatingBarStyle.BouncyGlass)
-private val PagerGestureOptions = listOf("默认", "跨轴拦截", "iOS 风格")
+private val PagerGestureOptions = listOf("默认", "跨轴拦截")
 /** 下标与 [com.careful.hyperfvm.compose.data.settings.CloseAction] 对应。 */
 private val CloseActionOptions = listOf("最小化至托盘", "直接退出")
 
 /** 转场样式名称，下标与 [com.careful.hyperfvm.compose.data.settings.AppSettings.navTransitionStyle] 对应。 */
 internal val NavTransitionStyleNames = listOf("默认", "安卓原生")
+
+/** 底栏设置行出现的时长：切回轻透磨砂时展开。 */
+private const val ThemeRowRevealMillis = 240
+
+/** 底栏设置行消失的时长：切到柔光玻璃时收起，略快一点，免得顶栏已经换完样式这行还在往下坠。 */
+private const val ThemeRowHideMillis = 180
 
 @Composable
 fun SettingsScreen(outerPadding: PaddingValues) {
@@ -82,7 +97,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
     // 验证能力两端都有（Android 是指纹 / 锁屏密码，Windows 是 Hello）；
     // 桌面端探测是异步的，拿到能力之前安全分组先不画。
     val biometricGate = rememberBiometricGate()
-    // 悬浮样式的名字跟着实际外观走：设备不支持着色器时模糊开关不显示、底栏也走非玻璃分支，
+    // 悬浮样式的名字跟着实际外观走：设备不支持着色器时「主题风格」「模糊」都不出现、底栏也走非玻璃分支，
     // 名字一并落到「默认 / 滑块」，不会出现「写着液态玻璃、实际是滑块」的错位。
     val blurBottomBar = settings.enableBlur && shaderSupported
     val barStyleNames = if (blurBottomBar) FloatingBarStyleNamesBlurred else FloatingBarStyleNamesOpaque
@@ -105,8 +120,8 @@ fun SettingsScreen(outerPadding: PaddingValues) {
             // 窗口行为是桌面端专属：Android 没有「点关闭按钮」这个动作。
             if (isDesktopPlatform) {
                 item(key = "closeAction") {
-                    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
-                        OverlayDropdownPreference(
+                    AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
+                        AppDropdownPreference(
                             title = "关闭软件时",
                             summary = "点窗口右上角关闭按钮时的行为",
                             items = CloseActionOptions,
@@ -120,7 +135,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
             // 授权检查（通知/安装/受支持链接/剪贴板）是 Android 专属，桌面端没有这些系统入口。
             if (!isDesktopPlatform) {
                 item(key = "permission") {
-                    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
+                    AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp, bottom = 12.dp)) {
                         ArrowPreference(
                             title = "授权检查",
                             summary = "授予必要的权限以使用App的完整功能",
@@ -132,8 +147,8 @@ fun SettingsScreen(outerPadding: PaddingValues) {
 
             item(key = "appearance") {
                 SmallTitle("主题")
-                Card(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
-                    OverlayDropdownPreference(
+                AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
+                    AppDropdownPreference(
                         title = "主题",
                         summary = "选择应用的主题模式",
                         items = ColorModeOptions,
@@ -142,7 +157,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                     )
                     AnimatedVisibility(visible = monet) {
                         Column {
-                            OverlayDropdownPreference(
+                            AppDropdownPreference(
                                 title = "强调色",
                                 summary = "在使用Monet时自定义种子色",
                                 items = KeyColorNames,
@@ -151,14 +166,14 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                             )
                             AnimatedVisibility(visible = settings.keyColorIndex > 0) {
                                 Column {
-                                    OverlayDropdownPreference(
+                                    AppDropdownPreference(
                                         title = "调色板风格",
                                         summary = "用于推导Material3调色板的色调算法",
                                         items = PaletteStyleOptions,
                                         selectedIndex = settings.paletteStyle,
                                         onSelectedIndexChange = { index -> update { it.copy(paletteStyle = index) } },
                                     )
-                                    OverlayDropdownPreference(
+                                    AppDropdownPreference(
                                         title = "色彩规范",
                                         summary = "Material3色彩规范版本",
                                         items = ColorSpecOptions,
@@ -169,49 +184,71 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                             }
                         }
                     }
+                    // 主题风格决定顶栏模糊形式与底栏材质，不再单独提供顶栏模糊样式。
+                    // 柔光玻璃依赖 RuntimeShader（Android 13 起），更早的系统上固定轻透磨砂，整行不出现。
                     if (shaderSupported) {
-                        SwitchPreference(
-                            title = "模糊",
-                            summary = "启用顶栏和底栏的模糊效果",
-                            checked = settings.enableBlur,
-                            onCheckedChange = { enabled -> update { it.copy(enableBlur = enabled) } },
+                        AppDropdownPreference(
+                            title = "主题风格",
+                            summary = "选择应用的主题风格",
+                            items = ThemeStyleOptions,
+                            selectedIndex = settings.themeStyle,
+                            onSelectedIndexChange = { index ->
+                                update {
+                                    it.copy(
+                                        themeStyle = index,
+                                        // 柔光玻璃离不开模糊：切过去时一并打开，免得留下「玻璃但没模糊」的错位。
+                                        enableBlur = if (index == ThemeStyle.Glass) true else it.enableBlur,
+                                    )
+                                }
+                            },
                         )
-                        AnimatedVisibility(visible = settings.enableBlur) {
-                            OverlayDropdownPreference(
-                                title = "顶栏模糊样式",
-                                items = BlurStyleOptions,
-                                selectedIndex = settings.blurStyle,
-                                onSelectedIndexChange = { index -> update { it.copy(blurStyle = index) } },
+                        // 柔光玻璃下模糊是硬性前提，开关失去意义，跟着隐藏。
+                        AnimatedVisibility(visible = !settings.isGlassStyle) {
+                            SwitchPreference(
+                                title = "模糊",
+                                summary = "启用顶栏和底栏的模糊效果",
+                                checked = settings.enableBlur,
+                                onCheckedChange = { enabled -> update { it.copy(enableBlur = enabled) } },
                             )
                         }
                     }
+                    // 柔光玻璃统一使用 OS4 的悬浮底栏，底栏相关设置整体隐藏。
                     // 宽屏用左侧 NavigationRail，没有可调项，整张卡不出现。
-                    if(!isWide) {
-                        AnimatedVisibility(visible = !settings.useFloatingNavigationBar) {
-                            OverlayDropdownPreference(
-                                title = "底栏样式",
-                                items = NavigationBarModeOptions,
-                                selectedIndex = settings.navigationBarMode,
-                                onSelectedIndexChange = { index -> update { it.copy(navigationBarMode = index) } },
+                    // 包一层 AnimatedVisibility：切换主题风格时这几行跟着高度一起收起，而不是瞬间消失。
+                    AnimatedVisibility(
+                        visible = !isWide && !settings.isGlassStyle,
+                        enter = expandVertically(animationSpec = tween(ThemeRowRevealMillis)) +
+                            fadeIn(animationSpec = tween(ThemeRowRevealMillis)),
+                        exit = shrinkVertically(animationSpec = tween(ThemeRowHideMillis)) +
+                            fadeOut(animationSpec = tween(ThemeRowHideMillis)),
+                    ) {
+                        Column {
+                            AnimatedVisibility(visible = !settings.useFloatingNavigationBar) {
+                                AppDropdownPreference(
+                                    title = "底栏样式",
+                                    items = NavigationBarModeOptions,
+                                    selectedIndex = settings.navigationBarMode,
+                                    onSelectedIndexChange = { index -> update { it.copy(navigationBarMode = index) } },
+                                )
+                            }
+                            SwitchPreference(
+                                title = "悬浮底栏",
+                                checked = settings.useFloatingNavigationBar,
+                                onCheckedChange = { enabled -> update { it.copy(useFloatingNavigationBar = enabled) } },
                             )
-                        }
-                        SwitchPreference(
-                            title = "悬浮底栏",
-                            checked = settings.useFloatingNavigationBar,
-                            onCheckedChange = { enabled -> update { it.copy(useFloatingNavigationBar = enabled) } },
-                        )
-                        AnimatedVisibility(visible = settings.useFloatingNavigationBar) {
-                            OverlayDropdownPreference(
-                                title = "悬浮样式",
-                                items = barStyleNames,
-                                selectedIndex = barStyleIndex,
-                                onSelectedIndexChange = { index ->
-                                    update { it.copy(floatingNavigationBarStyle = barStyleValues[index]) }
-                                },
-                            )
+                            AnimatedVisibility(visible = settings.useFloatingNavigationBar) {
+                                AppDropdownPreference(
+                                    title = "悬浮样式",
+                                    items = barStyleNames,
+                                    selectedIndex = barStyleIndex,
+                                    onSelectedIndexChange = { index ->
+                                        update { it.copy(floatingNavigationBarStyle = barStyleValues[index]) }
+                                    },
+                                )
+                            }
                         }
                     }
-                    OverlayDropdownPreference(
+                    AppDropdownPreference(
                         title = "转场样式",
                         summary = "页面切换时的动画",
                         items = NavTransitionStyleNames,
@@ -242,7 +279,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
 
             item(key = "interaction") {
                 SmallTitle("交互")
-                Card(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
+                AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
                     SwitchPreference(
                         title = "滑动到底振动",
                         summary = "列表滑到两端时给一次触感反馈",
@@ -256,7 +293,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
                         onCheckedChange = { enabled -> update { it.copy(pageUserScroll = enabled) } },
                     )
                     AnimatedVisibility(visible = settings.pageUserScroll) {
-                        OverlayDropdownPreference(
+                        AppDropdownPreference(
                             title = "切换手势模式",
                             summary = "左右滑动翻页的接管方式",
                             items = PagerGestureOptions,
@@ -272,7 +309,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
             if (!isDesktopPlatform || biometricGate.available) {
                 item(key = "security") {
                     SmallTitle("安全")
-                    Card(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
+                    AppCard(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp)) {
                         SwitchPreference(
                             title = "保护锁",
                             // 文案参考 Java 版；两端的验证手段叫法不同（Android 是指纹或锁屏密码，
@@ -304,7 +341,7 @@ fun SettingsScreen(outerPadding: PaddingValues) {
             }
 
             item(key = "about") {
-                Card(modifier = Modifier.padding(horizontal = 12.dp)) {
+                AppCard(modifier = Modifier.padding(horizontal = 12.dp)) {
                     ArrowPreference(
                         title = "关于HyperFVM",
                         onClick = { navigator.push(Route.About) },
@@ -339,7 +376,7 @@ private fun ScaleDialog(
     onScaleChange: (Float) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    OverlayDialog(
+    AppDialog(
         show = show,
         title = "界面缩放",
         summary = "80% - 110%",
@@ -357,6 +394,8 @@ private fun ScaleDialog(
             },
             modifier = Modifier.padding(bottom = 16.dp),
             maxLines = 1,
+            // 弹层里的输入框与内容卡同一种底色（柔光玻璃下换成不透明的 surfaceContainer）。
+            colors = TextFieldDefaults.textFieldColors(backgroundColor = sheetCardColor()),
             trailingIcon = {
                 Text(
                     text = "%",
@@ -366,13 +405,13 @@ private fun ScaleDialog(
             },
         )
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
-            TextButton(
+            AppDialogButton(
                 text = "取消",
                 onClick = onDismissRequest,
                 modifier = Modifier.weight(1f),
             )
             Spacer(Modifier.width(20.dp))
-            TextButton(
+            AppDialogButton(
                 text = "确定",
                 onClick = {
                     val percent = text.toIntOrNull()?.coerceIn(80, 110)
@@ -381,7 +420,7 @@ private fun ScaleDialog(
                     onDismissRequest()
                 },
                 modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.textButtonColorsPrimary(),
+                role = AppDialogButtonRole.Primary,
             )
         }
     }

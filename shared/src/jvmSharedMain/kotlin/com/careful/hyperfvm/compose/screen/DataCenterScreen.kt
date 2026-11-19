@@ -24,7 +24,7 @@ import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Blocklist
@@ -171,7 +171,7 @@ fun DataCenterScreen(outerPadding: PaddingValues) {
         title = "数据中心",
         outerPadding = outerPadding,
         actions = {
-            IconButton(onClick = { navigator.push(Route.FraudList) }) {
+            AppTopBarIconButton(onClick = { navigator.push(Route.FraudList) }) {
                 Icon(imageVector = MiuixIcons.Blocklist, contentDescription = "查黑系统")
             }
         },
@@ -209,7 +209,7 @@ fun DataCenterScreen(outerPadding: PaddingValues) {
                 }
                 AboutContentCard {
                     ArrowPreference(
-                        title = "服装合集",
+                        title = "套装合集",
                         summary = "查看全部套装的预览图、体力与续费价格",
                         onClick = { navigator.push(Route.ClothingCollection) },
                     )

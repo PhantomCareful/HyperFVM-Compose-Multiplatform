@@ -69,10 +69,11 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import top.yukonga.miuix.kmp.basic.Badge
 import top.yukonga.miuix.kmp.basic.BadgedBox
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.PullToRefresh
 import top.yukonga.miuix.kmp.basic.RichTooltipBox
@@ -83,7 +84,7 @@ import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Email
 import top.yukonga.miuix.kmp.icon.extended.Info
 import top.yukonga.miuix.kmp.icon.extended.Tune
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -314,7 +315,7 @@ fun DashboardScreen(outerPadding: PaddingValues) {
                     }
                 },
             ) {
-                IconButton(onClick = { navigator.push(Route.NotificationInbox) }) {
+                AppTopBarIconButton(onClick = { navigator.push(Route.NotificationInbox) }) {
                     Icon(imageVector = MiuixIcons.Email, contentDescription = "收件箱")
                 }
             }
@@ -332,11 +333,11 @@ fun DashboardScreen(outerPadding: PaddingValues) {
                 actionText = "知道了",
                 onActionClick = {},
             ) {
-                IconButton(onClick = { scope.launch { tipsState.show() } }) {
+                AppTopBarIconButton(onClick = { scope.launch { tipsState.show() } }) {
                     Icon(imageVector = MiuixIcons.Info, contentDescription = "使用提示")
                 }
             }
-            IconButton(onClick = { showCardSheet = true }) {
+            AppTopBarIconButton(onClick = { showCardSheet = true }) {
                 Icon(imageVector = MiuixIcons.Tune, contentDescription = "卡片管理")
             }
         },
@@ -442,48 +443,51 @@ fun DashboardScreen(outerPadding: PaddingValues) {
                 }
             }
         }
-    }
 
-    OverlayBottomSheet(
-        show = showCardSheet,
-        title = "卡片管理",
-        onDismissRequest = {
-            // 弹层关掉才算敲定：这时才把关掉的卡片正式排到末尾（见 DashboardPreferences）。
-            preferences.settleOrder()
-            // 可见状态得自己复位：miuix 只把点击弹层外、返回手势算作 dismiss，
-            // 不会替调用方改 show，漏掉这行弹层就永远关不上。
-            showCardSheet = false
-        },
-    ) {
-        CardManagementSheet(
-            order = orderState.order,
-            hidden = preferences.hidden,
-            onVisibleChange = preferences::setVisible,
+        // 弹层必须留在脚手架内容区里：玻璃面板要取样页面背板（LocalBlurBackdrop），
+        // 这个 CompositionLocal 是 ScreenScaffold 在内容区内部提供的，
+        // 放到 lambda 外面会取到 null，玻璃面板就退化成不透明实色。
+        AppBottomSheet(
+            show = showCardSheet,
+            title = "卡片管理",
+            onDismissRequest = {
+                // 弹层关掉才算敲定：这时才把关掉的卡片正式排到末尾（见 DashboardPreferences）。
+                preferences.settleOrder()
+                // 可见状态得自己复位：miuix 只把点击弹层外、返回手势算作 dismiss，
+                // 不会替调用方改 show，漏掉这行弹层就永远关不上。
+                showCardSheet = false
+            },
+        ) {
+            CardManagementSheet(
+                order = orderState.order,
+                hidden = preferences.hidden,
+                onVisibleChange = preferences::setVisible,
+            )
+        }
+
+        DashboardDetailSheet(
+            sheet = detailSheet,
+            show = showDetailSheet,
+            // 收起只把 show 置 false：detailSheet 留着给退出动画渲染，
+            // 提前清空会让弹层在半空变成空白再滑走。
+            onDismissRequest = { showDetailSheet = false },
+            // 查看器挂在应用根层、盖在弹层之上，所以点图直接打开即可。
+            // 弹层保持不动，关掉查看器后正好接着看这页的其它内容。
+            onOpenImage = DataImageViewerHost::show,
+            onLink = { link ->
+                // 哔哩哔哩图文动态（巅峰对决的赛季规则 / 赛季奖励）在 App 内直接解析查看；
+                // 其余外链（营地任务顺序表之类）照旧交给浏览器。
+                val opusId = AnnouncementSource.opusId(link.url)
+                if (opusId != null) {
+                    // 弹层不收起：文章页由导航宿主压在当前页之上，返回后弹。
+                    // 仍停在原来的位置。
+                    navigator.push(Route.BilibiliOpus(opusId = opusId, title = link.label))
+                } else {
+                    openUrl(env, toaster, link.url)
+                }
+            },
         )
     }
-
-    DashboardDetailSheet(
-        sheet = detailSheet,
-        show = showDetailSheet,
-        // 收起只把 show 置 false：detailSheet 留着给退出动画渲染，
-        // 提前清空会让弹层在半空变成空白再滑走。
-        onDismissRequest = { showDetailSheet = false },
-        // 查看器挂在应用根层、盖在弹层之上，所以点图直接打开即可。
-        // 弹层保持不动，关掉查看器后正好接着看这页的其它内容。
-        onOpenImage = DataImageViewerHost::show,
-        onLink = { link ->
-            // 哔哩哔哩图文动态（巅峰对决的赛季规则 / 赛季奖励）在 App 内直接解析查看；
-            // 其余外链（营地任务顺序表之类）照旧交给浏览器。
-            val opusId = AnnouncementSource.opusId(link.url)
-            if (opusId != null) {
-                // 弹层不收起：文章页由导航宿主压在当前页之上，返回后弹。
-                // 仍停在原来的位置。
-                navigator.push(Route.BilibiliOpus(opusId = opusId, title = link.label))
-            } else {
-                openUrl(env, toaster, link.url)
-            }
-        },
-    )
 }
 
 /** 一行卡片：成对的那一行排两张半宽卡，其余就是一张普通状态卡。 */
@@ -588,15 +592,15 @@ private fun CardManagementSheet(
         contentPadding = PaddingValues(top = 4.dp, bottom = 16.dp + navigationBarBottom),
     ) {
         items(items = slots, key = { it.token }) { slot ->
-            Card(
+            AppCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     // 拖到底部的重排在弹层关闭时才发生，这里仍留位移动画以防顺序变化。
                     .animateItem()
                     .padding(bottom = SheetCardGap),
                 cornerRadius = SheetCardCornerRadius,
-                // 同其它弹层：换成 secondaryContainer 才能在弹层里分辨出卡片边界。
-                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+                // 同其它弹层：换成弹层内容卡底色才能在弹层里分辨出卡片边界。
+                colors = CardDefaults.defaultColors(color = sheetCardColor()),
             ) {
                 SwitchPreference(
                     title = slot.id.title,

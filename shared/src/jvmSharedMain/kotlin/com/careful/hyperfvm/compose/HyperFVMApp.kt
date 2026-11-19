@@ -1,9 +1,15 @@
 package com.careful.hyperfvm.compose
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
@@ -52,6 +59,7 @@ import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
 import com.careful.hyperfvm.compose.data.settings.LocalUpdateSettings
 import com.careful.hyperfvm.compose.data.settings.SettingsStore
 import com.careful.hyperfvm.compose.data.settings.isBouncyGlassBar
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.data.settings.isLiquidGlassBar
 import com.careful.hyperfvm.compose.navigation.CrossActivityTransition
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
@@ -70,6 +78,7 @@ import com.careful.hyperfvm.compose.screen.DataCenterScreen
 import com.careful.hyperfvm.compose.screen.DefenseCardScreen
 import com.careful.hyperfvm.compose.screen.settings.PermissionScreen
 import com.careful.hyperfvm.compose.screen.SettingsScreen
+import com.careful.hyperfvm.compose.screen.ThemeStyleFadeMillis
 import com.careful.hyperfvm.compose.screen.ToolsScreen
 import com.careful.hyperfvm.compose.screen.tools.CardOddsCalculatorScreen
 import com.careful.hyperfvm.compose.screen.tools.ResourceCalculatorScreen
@@ -110,9 +119,15 @@ import top.yukonga.miuix.kmp.basic.SnackbarHostState
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurDefaults
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
-import top.yukonga.miuix.kmp.blur.highlight.Highlight
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.blur.textureBlur
+import top.yukonga.miuix.kmp.glass.GlassNavigationBar
+import top.yukonga.miuix.kmp.glass.GlassNavigationItem
+import top.yukonga.miuix.kmp.glass.GlassNavigationRail
+import top.yukonga.miuix.kmp.glass.GlassNavigationRailDefaults
+import top.yukonga.miuix.kmp.glass.rememberGlassNavigationRailState
+import top.yukonga.miuix.kmp.material.GlassEdgeStrokes
+import top.yukonga.miuix.kmp.material.edgeStroke
 import top.yukonga.miuix.kmp.nav.core.NavCornerClipMode
 import top.yukonga.miuix.kmp.nav.core.NavDisplay
 import top.yukonga.miuix.kmp.nav.core.NavDisplayEffects
@@ -135,6 +150,9 @@ import top.yukonga.miuix.kmp.utils.springAnimateToPage
 
 /** 悬浮导航栏「玻璃」样式使用的圆角，比默认胶囊更圆润。 */
 private val GlassBarCornerRadius = 32.dp
+
+/** 柔光玻璃底栏的左右边距：胶囊不贴屏幕边，与 demo 一致。 */
+private val GlassBottomBarSidePadding = 24.dp
 
 /**
  * 应用主题与根容器。
@@ -507,15 +525,33 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
 /** 一级界面骨架：宽屏留左侧导航栏，窄屏留底部导航栏。两者都固定显示。 */
 @Composable
 private fun MainShell() {
+    val settings = LocalAppSettings.current
     val isWide = isWideLayout()
     val pagerState = rememberPagerState(pageCount = { MainTab.entries.size })
+    // 顶栏/底栏/侧栏共用的取样层：它挂在内容区上，导航控件必须与内容区是兄弟节点。
+    val contentBackdrop = rememberAppBlurBackdrop()
 
     Row(modifier = Modifier.fillMaxSize()) {
         if (isWide) {
-            MainNavigationRail(pagerState)
+            // 主题风格切换时侧栏跟顶栏、底栏一起淡入淡出。
+            Crossfade(
+                targetState = settings.isGlassStyle,
+                animationSpec = tween(ThemeStyleFadeMillis),
+                label = "mainNavigationRailStyle",
+            ) { glassStyle ->
+                if (glassStyle) {
+                    MainGlassNavigationRail(pagerState = pagerState, backdrop = contentBackdrop)
+                } else {
+                    MainNavigationRail(pagerState)
+                }
+            }
         }
         Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-            MainPager(pagerState = pagerState, showBottomBar = !isWide)
+            MainPager(
+                pagerState = pagerState,
+                showBottomBar = !isWide,
+                backdrop = contentBackdrop,
+            )
         }
     }
 }
@@ -524,16 +560,24 @@ private fun MainShell() {
 private fun MainPager(
     pagerState: PagerState,
     showBottomBar: Boolean,
+    backdrop: LayerBackdrop?,
 ) {
     val settings = LocalAppSettings.current
     // 跨轴拦截模式下，页面竖向滚动时横向滑动照样能翻页；它接管了全部触摸拖动，
     // 所以原生翻页手势（userScrollEnabled）必须一起关掉，否则两边会抢同一串拖动。
-    val crossAxis = settings.pagerInterceptionMode == PagerInterceptionMode.CrossAxisInterceptor.ordinal
+    // 设置里只保留「默认 / 跨轴拦截」两档；旧版本存下的 iOS 风格值（2）一并落到「默认」。
+    val interceptionMode = PagerInterceptionMode.entries[
+        settings.pagerInterceptionMode.coerceIn(0, PagerInterceptionMode.entries.lastIndex),
+    ]
+    val crossAxis = interceptionMode == PagerInterceptionMode.CrossAxis
+    val pagerFlingBehavior = PagerDefaults.flingBehavior(
+        state = pagerState,
+        snapAnimationSpec = PagerNavigationSpringSpec,
+    )
     val nativeConnection = PagerDefaults.pageNestedScrollConnection(pagerState, Orientation.Horizontal)
-    // 底栏的模糊取样层必须挂在 Scaffold 的 content 槽里，与 bottomBar 平行。
-    // 一旦把它套在 Scaffold 外面，底栏就成了被采样内容的一部分：记录中的图层会引用自己，
-    // RenderThread 在 prepareTree 时无限递归，最终栈溢出崩溃。
-    val pagerBackdrop = rememberAppBlurBackdrop()
+    // 取样层由 [MainShell] 统一创建，底栏/侧栏与内容区是兄弟节点：一旦把底栏套在 Scaffold 外面，
+    // 底栏就成了被采样内容的一部分，记录中的图层会引用自己，RenderThread 会无限递归到栈溢出。
+    val pagerBackdrop = backdrop
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -547,7 +591,7 @@ private fun MainPager(
             modifier = Modifier
                 .fillMaxSize()
                 .then(
-                    if (showBottomBar && pagerBackdrop != null) Modifier.layerBackdrop(pagerBackdrop) else Modifier,
+                    if (pagerBackdrop != null) Modifier.layerBackdrop(pagerBackdrop) else Modifier,
                 ),
         ) {
             HorizontalPager(
@@ -556,16 +600,14 @@ private fun MainPager(
                     .fillMaxSize()
                     .pagerGestureOverride(
                         pagerState = pagerState,
-                        mode = PagerInterceptionMode.entries[settings.pagerInterceptionMode],
+                        flingBehavior = pagerFlingBehavior,
+                        mode = interceptionMode,
                         enabled = settings.pageUserScroll,
                     ),
                 userScrollEnabled = settings.pageUserScroll && !crossAxis,
                 pageNestedScrollConnection = if (crossAxis) PagerGestureNestedScrollConnection else nativeConnection,
                 verticalAlignment = Alignment.Top,
-                flingBehavior = PagerDefaults.flingBehavior(
-                    state = pagerState,
-                    snapAnimationSpec = PagerNavigationSpringSpec,
-                ),
+                flingBehavior = pagerFlingBehavior,
             ) { page ->
                 val contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
                 when (MainTab.entries[page]) {
@@ -598,12 +640,81 @@ private fun MainNavigationRail(pagerState: PagerState) {
     }
 }
 
+/** 柔光玻璃路线：宽屏侧栏固定展开，不再提供折叠切换，避免与页面争抢宽度。 */
+@Composable
+private fun MainGlassNavigationRail(pagerState: PagerState, backdrop: LayerBackdrop?) {
+    val scope = rememberCoroutineScope()
+    val railState = rememberGlassNavigationRailState(initialExpanded = true)
+    Box(
+        modifier = Modifier
+            .width(GlassNavigationRailDefaults.ExpandedWidth + GlassNavigationRailDefaults.Margin)
+            .fillMaxHeight(),
+    ) {
+        GlassNavigationRail(
+            items = GlassNavigationItems,
+            selectedIndex = pagerState.targetPage,
+            onSelect = { index -> scope.launch { pagerState.springAnimateToPage(index) } },
+            backdrop = backdrop,
+            modifier = Modifier.fillMaxSize(),
+            state = railState,
+            showToggle = false,
+        )
+    }
+}
+
 /** 一级导航的导航项，顺序与 [MainTab] 一致；枚举不变，所以只求值一次。 */
 private val NavigationItems: List<NavigationItem> =
     MainTab.entries.map { NavigationItem(label = it.label, icon = it.icon) }
 
+/** 柔光玻璃导航栏的导航项，顺序与 [MainTab] 一致。 */
+private val GlassNavigationItems: List<GlassNavigationItem> =
+    MainTab.entries.map { GlassNavigationItem(icon = it.icon, label = it.label) }
+
 @Composable
 private fun MainBottomBar(pagerState: PagerState, backdrop: LayerBackdrop?) {
+    // 主题风格切换时底栏整体淡入淡出。这里不能用 Crossfade：两档的胶囊高度不同（玻璃 54dp，
+    // 磨砂浮动 52dp、液态玻璃 64dp，再叠上各自的底部安全区），而 Crossfade 的过渡容器取两档中较大的
+    // 尺寸、子项默认顶部对齐——矮的那档先被顶在上方，淡出结束瞬间容器收缩，看起来就是「先偏高、
+    // 再猛然掉下去一截」。
+    //
+    // AnimatedContent 把子项统一贴底对齐：底栏在整个过渡里始终贴着屏幕底部不动，只有容器的
+    // 顶部边界随尺寸动画平滑升降（表现为内容区底部留白渐变），配合 clip = false 不让高的那档被裁切。
+    AnimatedContent(
+        targetState = LocalAppSettings.current.isGlassStyle,
+        transitionSpec = {
+            (fadeIn(tween(ThemeStyleFadeMillis)) togetherWith fadeOut(tween(ThemeStyleFadeMillis)))
+                .using(SizeTransform(clip = false) { _, _ -> tween(ThemeStyleFadeMillis) })
+        },
+        contentAlignment = Alignment.BottomCenter,
+        label = "mainBottomBarStyle",
+    ) { glassStyle ->
+        if (glassStyle) {
+            MainGlassBottomBar(pagerState = pagerState, backdrop = backdrop)
+        } else {
+            MainLegacyBottomBar(pagerState = pagerState, backdrop = backdrop)
+        }
+    }
+}
+
+/** 柔光玻璃路线：固定为 OS4 的悬浮胶囊，不受「悬浮底栏 / 悬浮样式」设置影响。 */
+@Composable
+private fun MainGlassBottomBar(pagerState: PagerState, backdrop: LayerBackdrop?) {
+    val scope = rememberCoroutineScope()
+    GlassNavigationBar(
+        items = GlassNavigationItems,
+        selectedIndex = pagerState.targetPage,
+        onSelect = { index -> scope.launch { pagerState.springAnimateToPage(index) } },
+        backdrop = backdrop,
+        // 玻璃胶囊不贴边：与 demo 一致，左右各留 24dp。
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = GlassBottomBarSidePadding),
+    )
+}
+
+/** 轻透磨砂路线的底栏：悬浮底栏（普通 / 液态玻璃）或贴底导航栏。 */
+@Composable
+private fun MainLegacyBottomBar(pagerState: PagerState, backdrop: LayerBackdrop?) {
     val settings = LocalAppSettings.current
     val scope = rememberCoroutineScope()
     val current = pagerState.targetPage
@@ -675,28 +786,26 @@ private fun FloatingBottomBar(
     val cornerRadius = if (blurActive) GlassBarCornerRadius else FloatingToolbarDefaults.CornerRadius
     val shape = RoundedCornerShape(cornerRadius)
     val barColor = if (blurActive) Color.Transparent else MiuixTheme.colorScheme.surfaceContainer
-    val highlight = if (blurActive) {
-        if (isInDarkTheme()) Highlight.GlassStrokeMiddleDark else Highlight.GlassStrokeMiddleLight
-    } else {
-        null
-    }
+    // 模糊开启时固定用玻璃材质的高光描边，等价于旧版 Highlight.GlassStrokeMiddle*。
+    val stroke = if (isInDarkTheme()) GlassEdgeStrokes.MiddleDark else GlassEdgeStrokes.MiddleLight
 
     Box(modifier = Modifier.fillMaxWidth()) {
         FloatingNavigationBar(
             modifier = if (blurActive) {
-                Modifier.textureBlur(
-                    backdrop = backdrop!!,
-                    shape = shape,
-                    blurRadius = 25f,
-                    colors = BlurDefaults.blurColors(
-                        blendColors = listOf(
-                            BlendColorEntry(
-                                color = MiuixTheme.colorScheme.surfaceContainer.copy(0.45f),
+                Modifier
+                    .textureBlur(
+                        backdrop = backdrop!!,
+                        shape = shape,
+                        blurRadius = 25f,
+                        colors = BlurDefaults.blurColors(
+                            blendColors = listOf(
+                                BlendColorEntry(
+                                    color = MiuixTheme.colorScheme.surfaceContainer.copy(0.45f),
+                                ),
                             ),
                         ),
-                    ),
-                    highlight = highlight,
-                )
+                    )
+                    .edgeStroke(shape = shape, stroke = stroke)
             } else {
                 Modifier
             },

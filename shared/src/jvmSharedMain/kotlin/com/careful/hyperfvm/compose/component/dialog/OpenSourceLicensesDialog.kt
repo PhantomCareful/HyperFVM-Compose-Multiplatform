@@ -24,10 +24,11 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.shared.Res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /** 许可证文本所在的资源目录（Compose Resources 的 files 区，双端同一路径）。 */
@@ -71,7 +72,7 @@ fun OpenSourceLicensesDialog(
         noticeText = notice
     }
 
-    OverlayDialog(
+    AppDialog(
         show = show,
         title = "开源许可",
         onDismissRequest = onDismiss,
@@ -96,7 +97,9 @@ fun OpenSourceLicensesDialog(
                         .fillMaxWidth()
                         .height(viewportHeight)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(MiuixTheme.colorScheme.surfaceContainerHigh),
+                        // 与其它弹层内容卡同一种底色：轻透磨砂下是灰调 secondaryContainer，
+                        // 柔光玻璃下换成不透明的 surfaceContainer，才不会跟着玻璃面板一起发透。
+                        .background(sheetCardColor()),
                 ) {
                     val license = licenseText
                     if (license == null) {
@@ -127,13 +130,13 @@ fun OpenSourceLicensesDialog(
                 }
             }
 
-            TextButton(
+            AppDialogButton(
                 text = "关闭",
                 onClick = onDismiss,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
-                colors = ButtonDefaults.textButtonColorsPrimary(),
+                role = AppDialogButtonRole.Primary,
             )
         }
     }

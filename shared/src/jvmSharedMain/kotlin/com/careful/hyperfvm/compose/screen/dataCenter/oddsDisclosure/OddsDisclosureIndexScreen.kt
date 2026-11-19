@@ -1,5 +1,7 @@
 package com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,32 +39,32 @@ import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDataRepository
 import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsErrataTips
 import com.careful.hyperfvm.compose.data.oddsDisclosure.TurntableOddsRepository
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
+import com.careful.hyperfvm.compose.screen.ThemeStyleFadeMillis
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import kotlinx.coroutines.launch
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.DropdownDefaults
-import top.yukonga.miuix.kmp.basic.DropdownImpl
+import top.yukonga.miuix.kmp.basic.DropdownEntry
+import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppIconDropdownMenu
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
-import top.yukonga.miuix.kmp.basic.ListPopupColumn
-import top.yukonga.miuix.kmp.basic.ListPopupDefaults
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
-import top.yukonga.miuix.kmp.basic.PopupPositionProvider
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.TabRowDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.glass.GlassTabRow
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Link
 import top.yukonga.miuix.kmp.icon.extended.ListView
-import top.yukonga.miuix.kmp.overlay.OverlayListPopup
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PagerNavigationSpringSpec
@@ -136,11 +138,29 @@ fun OddsDisclosureIndexScreen(onBack: () -> Unit) {
     val boxListState = listStates[BoxDisclosurePageIndex]
     // 自己持有顶栏滚动状态，目录跳转时才能手动同步折叠。
     val scrollBehavior = MiuixScrollBehavior()
-    val dropdownColors = DropdownDefaults.dropdownColors()
 
-    // 来源弹层与目录菜单的状态提到列表外面，列表项回收时弹层不会被一起销毁。
-    var showIndex by remember { mutableStateOf(false) }
+    // 来源弹层提到列表外面，列表项回收时弹层不会被一起销毁。
     var showSources by remember { mutableStateOf(false) }
+    // 目录菜单：条目与分节标题同源，天然一一对应；没有选中态，只是跳转入口。
+    val indexMenu = remember(boxCategories, categoryIndices) {
+        listOf(
+            DropdownEntry(
+                items = boxCategories.mapIndexed { index, category ->
+                    DropdownItem(
+                        text = category.title,
+                        onClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            // animateScrollToItem 是程序化滚动，不派发 nested scroll，
+                            // 顶栏不会自己收起；先把折叠状态同步到目标位置，再滚。
+                            // 列表位置按内容坐标计算，顶栏高度变化不影响落点。
+                            scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+                            scope.launch { boxListState.animateScrollToItem(categoryIndices[index]) }
+                        },
+                    )
+                },
+            ),
+        )
+    }
 
     ScreenScaffold(
         title = "概率公示合集",
@@ -149,81 +169,62 @@ fun OddsDisclosureIndexScreen(onBack: () -> Unit) {
         scrollBehavior = scrollBehavior,
         actions = {
             // 官方公示来源对两页都适用，放在最前面；目录菜单紧随其后，留在最右。
-            IconButton(onClick = { showSources = true }) {
+            AppTopBarIconButton(onClick = { showSources = true }) {
                 Icon(imageVector = MiuixIcons.Link, contentDescription = "官方公示合集")
             }
             // 目录菜单只服务于宝箱页：抽奖页只有一个「幸运转转」分节，不需要目录。
             if (pagerState.targetPage == BoxDisclosurePageIndex) {
-                // 目录按钮：菜单以按钮为锚点从右上角弹出，条目与分节标题同源，天然一一对应。
-                Box {
-                    IconButton(
-                        onClick = {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                            showIndex = true
-                        },
-                    ) {
-                        Icon(imageVector = MiuixIcons.ListView, contentDescription = "目录")
-                    }
-                    OverlayListPopup(
-                        show = showIndex,
-                        popupPositionProvider = ListPopupDefaults.dropdownPositionProvider(verticalMargin = 4.dp),
-                        // 菜单右缘与按钮右缘对齐，与 Java 版 ListPopupWindow 的定位一致。
-                        alignment = PopupPositionProvider.Align.End,
-                        onDismissRequest = { showIndex = false },
-                        onDismissFinished = {},
-                    ) {
-                        ListPopupColumn {
-                            boxCategories.forEachIndexed { index, category ->
-                                DropdownImpl(
-                                    text = category.title,
-                                    optionSize = boxCategories.size,
-                                    // 目录只是跳转入口，没有任何一条处于选中态。
-                                    isSelected = false,
-                                    index = index,
-                                    dropdownColors = dropdownColors,
-                                    onSelectedIndexChange = {
-                                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                                        showIndex = false
-                                        // animateScrollToItem 是程序化滚动，不派发 nested scroll，
-                                        // 顶栏不会自己收起；先把折叠状态同步到目标位置，再滚。
-                                        // 列表位置按内容坐标计算，顶栏高度变化不影响落点。
-                                        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
-                                        scope.launch { boxListState.animateScrollToItem(categoryIndices[it]) }
-                                    },
-                                )
-                            }
-                        }
-                    }
+                // 目录按钮：菜单以按钮为锚点从右上角弹出。
+                AppIconDropdownMenu(entries = indexMenu) {
+                    Icon(imageVector = MiuixIcons.ListView, contentDescription = "目录")
                 }
             }
         },
         bottomContent = {
-            // 取样层必须在这里读，不能在函数开头读：`LocalBlurBackdrop` 由 ScreenScaffold
-            // 提供在它自己的子组合里，而本 composable 的调用点（NavDisplay 的 entry）
-            // 在提供者之外，那时读到的是 staticCompositionLocalOf 的默认值 null。
-            val blurAvailable = if (settings.enableBlur) LocalBlurBackdrop.current != null else false
             Box(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = TabRowVerticalPadding),
             ) {
-                // 模糊开启时轨道用透明底：高斯模式透出顶栏的磨砂层，渐进模式透出顶栏的
-                // 渐进模糊带（含外延部分）；关掉模糊时退回实色 surface，与顶栏一致。
-                val colors = TabRowDefaults.tabRowColors(
-                    backgroundColor = if (blurAvailable) {
-                        Color.Transparent
+                // 主题风格切换时 TabRow 跟顶栏一起淡入淡出，不要瞬间换形。
+                Crossfade(
+                    targetState = settings.isGlassStyle,
+                    animationSpec = tween(ThemeStyleFadeMillis),
+                    label = "oddsTabRowStyle",
+                ) { glassStyle ->
+                    if (glassStyle) {
+                        // 柔光玻璃：每个 Tab 一枚玻璃胶囊，材质自动继承顶栏（GlassTabRow 读顶栏上下文）。
+                        GlassTabRow(
+                            tabs = DisclosureTabTitles,
+                            selectedIndex = pagerState.targetPage,
+                            onSelect = { index -> scope.launch { pagerState.springAnimateToPage(index) } },
+                            backdrop = LocalBlurBackdrop.current,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     } else {
-                        MiuixTheme.colorScheme.surface
-                    },
-                )
-                // 选中态跟 targetPage 而不是 currentPage：弹簧动画跨页时 currentPage 会
-                // 途经中间页，targetPage 在动画启动时就是终点。
-                TabRow(
-                    tabs = DisclosureTabTitles,
-                    selectedTabIndex = pagerState.targetPage,
-                    onTabSelected = { index ->
-                        scope.launch { pagerState.springAnimateToPage(index) }
-                    },
-                    colors = colors,
-                )
+                        // 取样层必须在这里读，不能在函数开头读：`LocalBlurBackdrop` 由 ScreenScaffold
+                        // 提供在它自己的子组合里，而本 composable 的调用点（NavDisplay 的 entry）
+                        // 在提供者之外，那时读到的是 staticCompositionLocalOf 的默认值 null。
+                        val blurAvailable = if (settings.enableBlur) LocalBlurBackdrop.current != null else false
+                        // 模糊开启时轨道用透明底：透出顶栏的磨砂层；关掉模糊时退回实色 surface，
+                        // 与顶栏一致。
+                        val colors = TabRowDefaults.tabRowColors(
+                            backgroundColor = if (blurAvailable) {
+                                Color.Transparent
+                            } else {
+                                MiuixTheme.colorScheme.surface
+                            },
+                        )
+                        // 选中态跟 targetPage 而不是 currentPage：弹簧动画跨页时 currentPage 会
+                        // 途经中间页，targetPage 在动画启动时就是终点。
+                        TabRow(
+                            tabs = DisclosureTabTitles,
+                            selectedTabIndex = pagerState.targetPage,
+                            onTabSelected = { index ->
+                                scope.launch { pagerState.springAnimateToPage(index) }
+                            },
+                            colors = colors,
+                        )
+                    }
+                }
             }
         },
     ) { padding ->

@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_MONET_DARK
 import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_MONET_SYSTEM
 import com.careful.hyperfvm.compose.ui.theme.LocalColorMode
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
@@ -58,7 +58,7 @@ fun TipsCard(
     colors: CardColors? = null,
 ) {
     val cardColors = colors ?: importantCardColors()
-    Card(
+    AppCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(outerPadding),

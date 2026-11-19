@@ -29,10 +29,10 @@ import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.platform.Toaster
 import org.jetbrains.compose.resources.painterResource
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -74,7 +74,7 @@ fun UrlConfirmDialog(
     if (target != null) lastTarget = target
     val contentTarget = target ?: lastTarget
 
-    OverlayDialog(
+    AppDialog(
         show = target != null,
         title = "即将前往",
         onDismissRequest = onDismiss,
@@ -136,20 +136,20 @@ fun UrlConfirmDialog(
                         .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    TextButton(
+                    AppDialogButton(
                         text = "咱手滑了",
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f),
                     )
                     Spacer(Modifier.width(20.dp))
-                    TextButton(
+                    AppDialogButton(
                         text = "立即前往",
                         onClick = {
                             openUrl(env, toaster, contentTarget.url)
                             onDismiss()
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.textButtonColorsPrimary(),
+                        role = AppDialogButtonRole.Primary,
                     )
                 }
             }

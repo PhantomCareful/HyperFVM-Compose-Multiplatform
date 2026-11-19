@@ -1,8 +1,11 @@
 package com.careful.hyperfvm.compose.screen.dataCenter.cookery
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,13 +27,16 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.data.cookery.CookeryCard
 import com.careful.hyperfvm.compose.data.cookery.CookeryData
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
+import com.careful.hyperfvm.compose.screen.ThemeStyleFadeMillis
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import kotlinx.coroutines.launch
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.TabRowDefaults
+import top.yukonga.miuix.kmp.glass.GlassTabRow
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PagerNavigationSpringSpec
@@ -64,10 +70,6 @@ fun CookeryIndexScreen(onBack: () -> Unit) {
         outerPadding = PaddingValues(0.dp),
         onBack = onBack,
         bottomContent = {
-            // 取样层必须在这里读，不能在函数开头读：`LocalBlurBackdrop` 由 ScreenScaffold
-            // 提供在它自己的子组合里，而本 composable 的调用点（NavDisplay 的 entry）
-            // 在提供者之外，那时读到的是 staticCompositionLocalOf 的默认值 null。
-            val blurAvailable = if (settings.enableBlur) LocalBlurBackdrop.current != null else false
             Box(
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = TabRowVerticalPadding),
@@ -77,23 +79,45 @@ fun CookeryIndexScreen(onBack: () -> Unit) {
                 val onTabSelected: (Int) -> Unit = { index ->
                     scope.launch { pagerState.springAnimateToPage(index) }
                 }
-                // 模糊开启时轨道用透明底：高斯模式透出顶栏的磨砂层，渐进模式透出顶栏的
-                // 渐进模糊带（含外延部分）；关掉模糊时退回实色 surface，与顶栏一致。
-                val colors = TabRowDefaults.tabRowColors(
-                    backgroundColor = if (blurAvailable) {
-                        Color.Transparent
+                // 主题风格切换时 TabRow 跟顶栏一起淡入淡出，不要瞬间换形。
+                Crossfade(
+                    targetState = settings.isGlassStyle,
+                    animationSpec = tween(ThemeStyleFadeMillis),
+                    label = "cookeryTabRowStyle",
+                ) { glassStyle ->
+                    if (glassStyle) {
+                        // 柔光玻璃：每个 Tab 一枚玻璃胶囊，材质自动继承顶栏（GlassTabRow 读顶栏上下文）。
+                        GlassTabRow(
+                            tabs = tabs,
+                            selectedIndex = pagerState.targetPage,
+                            onSelect = onTabSelected,
+                            backdrop = LocalBlurBackdrop.current,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     } else {
-                        MiuixTheme.colorScheme.surface
-                    },
-                )
-                // 选中态跟 targetPage 而不是 currentPage：弹簧动画跨页时 currentPage 会
-                // 途经中间页（从第 1 切第 3 会先亮第 2），targetPage 在动画启动时就是终点。
-                TabRow(
-                    tabs = tabs,
-                    selectedTabIndex = pagerState.targetPage,
-                    onTabSelected = onTabSelected,
-                    colors = colors,
-                )
+                        // 取样层必须在这里读，不能在函数开头读：`LocalBlurBackdrop` 由 ScreenScaffold
+                        // 提供在它自己的子组合里，而本 composable 的调用点（NavDisplay 的 entry）
+                        // 在提供者之外，那时读到的是 staticCompositionLocalOf 的默认值 null。
+                        val blurAvailable = if (settings.enableBlur) LocalBlurBackdrop.current != null else false
+                        // 模糊开启时轨道用透明底：透出顶栏的磨砂层；关掉模糊时退回实色 surface，
+                        // 与顶栏一致。
+                        val colors = TabRowDefaults.tabRowColors(
+                            backgroundColor = if (blurAvailable) {
+                                Color.Transparent
+                            } else {
+                                MiuixTheme.colorScheme.surface
+                            },
+                        )
+                        // 选中态跟 targetPage 而不是 currentPage：弹簧动画跨页时 currentPage 会
+                        // 途经中间页（从第 1 切第 3 会先亮第 2），targetPage 在动画启动时就是终点。
+                        TabRow(
+                            tabs = tabs,
+                            selectedTabIndex = pagerState.targetPage,
+                            onTabSelected = onTabSelected,
+                            colors = colors,
+                        )
+                    }
+                }
             }
         },
     ) { padding ->

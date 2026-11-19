@@ -27,6 +27,9 @@ val appVersionCode = providers.gradleProperty("app.versionCode").get().toInt()
 android {
     namespace = "com.careful.hyperfvm.compose"
     compileSdk = 37
+    // miuix 0.9.5-beta01 的 AAR 元数据要求 compileSdk >= 37.2（compileSdk = 37 等价于 37.0），
+    // 必须与 :shared 的小版本保持一致。targetSdk 不受影响，仍为 37。
+    compileSdkMinor = 2
 
     defaultConfig {
         applicationId = "com.careful.hyperfvm.compose"
@@ -155,6 +158,9 @@ dependencies {
     implementation(libs.miuix.blur)
     implementation(libs.miuix.squircle)
     implementation(libs.miuix.nav)
+    implementation(libs.miuix.glass)
+    implementation(libs.miuix.glass.icons)
+    implementation(libs.miuix.material)
 
     // Compose 原生大图查看：区域解码 + 手势缩放，数据图查看器直接使用。
     implementation(libs.telephoto.subsampling)

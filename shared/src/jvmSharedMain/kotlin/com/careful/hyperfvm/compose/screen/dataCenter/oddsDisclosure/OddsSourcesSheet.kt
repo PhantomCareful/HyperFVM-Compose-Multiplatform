@@ -16,9 +16,10 @@ import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDataRepository
 import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsSource
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
 import com.careful.hyperfvm.compose.platform.LocalToaster
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -45,7 +46,7 @@ internal fun OddsSourcesSheet(show: Boolean, onDismissRequest: () -> Unit) {
     val navigationBarBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val sources = OddsDataRepository.sources
 
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = SourcesSheetTitle,
         onDismissRequest = onDismissRequest,
@@ -81,10 +82,10 @@ internal fun OddsSourcesSheet(show: Boolean, onDismissRequest: () -> Unit) {
  */
 @Composable
 private fun SourceCard(source: OddsSource, onClick: () -> Unit) {
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
-        // 弹层背景与 Card 默认的 surface 同色，换成 secondaryContainer 才分得清卡片边界。
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        // 弹层背景与 Card 默认的 surface 同色，换成弹层内容卡底色才分得清卡片边界。
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         showIndication = true,
         onClick = onClick,
         cornerRadius = 20.dp,

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.data.cardCatalog.DefenseCard
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
@@ -44,7 +44,7 @@ internal fun DefenseCardRow(
     colors: CardColors = CardDefaults.defaultColors(),
 ) {
     val alias = remember(card) { card.aliasText }
-    Card(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         cornerRadius = 20.dp,
         insideMargin = BasicComponentDefaults.InsideMargin,

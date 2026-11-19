@@ -43,11 +43,11 @@ import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.ui.isTabletLayout
 import kotlinx.coroutines.CancellationException
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
@@ -128,7 +128,7 @@ fun IcuFraudScreen(qq: String, onBack: () -> Unit) {
             // 复制按钮挂在顶栏右侧；加载 / 无记录 / 失败时没有可复制的内容，不显示。
             val ready = visibleState as? IcuFraudState.Ready
             if (ready != null) {
-                IconButton(onClick = { copyFraudInfo(env, toaster, ready.account) }) {
+                AppTopBarIconButton(onClick = { copyFraudInfo(env, toaster, ready.account) }) {
                     Icon(
                         imageVector = MiuixIcons.Copy,
                         contentDescription = "复制骗子信息",
@@ -255,7 +255,7 @@ private fun FraudInfoCard(account: FraudAccount) {
     val contentColor = colors.contentColor
     val tablet = isTabletLayout()
 
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
@@ -431,7 +431,7 @@ private fun FraudAccount.toCopyText(): String = listOf(
  */
 @Composable
 private fun VictimCard(victim: FraudVictim) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)

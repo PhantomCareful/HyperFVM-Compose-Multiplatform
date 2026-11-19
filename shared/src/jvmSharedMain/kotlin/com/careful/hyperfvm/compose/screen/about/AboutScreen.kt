@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.effect.BgEffectBackground
 import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.platform.LocalAppEnv
@@ -55,7 +56,7 @@ import com.careful.hyperfvm.compose.component.dialog.UrlTarget
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import com.careful.hyperfvm.compose.ui.rememberAppBlurBackdrop
 import com.careful.hyperfvm.compose.ui.theme.isInDarkTheme
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -68,10 +69,10 @@ import top.yukonga.miuix.kmp.blur.BlendColorEntry
 import top.yukonga.miuix.kmp.blur.BlurBlendMode
 import top.yukonga.miuix.kmp.blur.BlurDefaults
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
-import top.yukonga.miuix.kmp.blur.ProgressiveBlur
 import top.yukonga.miuix.kmp.blur.layerBackdrop
-import top.yukonga.miuix.kmp.blur.progressiveTextureBlur
 import top.yukonga.miuix.kmp.blur.textureBlur
+import top.yukonga.miuix.kmp.glass.GlassIconButton
+import top.yukonga.miuix.kmp.glass.GlassTopAppBar
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.preference.ArrowPreference
@@ -146,6 +147,11 @@ fun AboutScreen(onBack: () -> Unit) {
     val blurActive by remember(backdrop) {
         derivedStateOf { backdrop != null && scrollProgress == 1f }
     }
+    // 回弹位移写给顶栏状态，与 ScreenScaffold 同一套：越界回弹把内容推进顶栏时，
+    // 模糊带与按钮浮起也要跟着出现。回调必须保持同一实例，否则 miuix 会清零回放导致抖动。
+    val onOverscroll = remember(scrollBehavior) {
+        { offset: Float -> scrollBehavior.state.overscrollOffset = offset }
+    }
 
     CompositionLocalProvider(LocalBlurBackdrop provides backdrop) {
         Scaffold(
@@ -166,6 +172,7 @@ fun AboutScreen(onBack: () -> Unit) {
                     topAppBarScrollBehavior = scrollBehavior,
                     lazyListState = lazyListState,
                     scrollProgressProvider = { scrollProgress },
+                    onOverscroll = onOverscroll,
                     versionName = versionName,
                     versionCode = versionCode,
                 )
@@ -176,7 +183,15 @@ fun AboutScreen(onBack: () -> Unit) {
 
 /**
  * 顶栏：初始整条透明，只留返回键；滚到底才有底色与模糊，标题同时淡入。
- * 与 demo 的 BlurredBar + SmallTopAppBar 一致。
+ *
+ * 轻透磨砂沿用 demo 的 BlurredBar + SmallTopAppBar；柔光玻璃换成 OS4 的
+ * [GlassTopAppBar]：返回键是玻璃圆钮，滚动后浮起，渐进模糊带与标题都跟着滚动进度渐显。
+ *
+ * 玻璃分支不传 `isContentScrolled`：按钮浮起与材质和 ScreenScaffold 的页面走同一条路径，
+ * 统一由顶栏自己读 [scrollBehavior] 的真实位移（含越界回弹）。
+ *
+ * 两种风格都必须拿到同一个 [scrollBehavior]：顶栏要借它的 pin 逻辑把 `heightOffset` 钉死在 0。
+ * 漏传时 `MuiixScrollBehavior` 会把滚动手势全部消费在顶栏的折叠偏移上，列表根本滑不动。
  */
 @Composable
 private fun AboutTopBar(
@@ -189,13 +204,36 @@ private fun AboutTopBar(
     val settings = LocalAppSettings.current
     val surface = MiuixTheme.colorScheme.surface
     val backdrop = LocalBlurBackdrop.current
-    val progressive = settings.blurStyle == 1
+
+    if (settings.isGlassStyle) {
+        GlassTopAppBar(
+            title = "关于",
+            expandable = false,
+            progressiveBlur = true,
+            backdrop = backdrop,
+            scrollBehavior = scrollBehavior,
+            // 不覆盖 visualContentOffset：渐进模糊带要跟真实的滚动位移走（约 48dp 就满强度），
+            // 与其它页面一致。曾把它折算成 logo 区的 scrollProgress（分母是五百多 dp 的占位），
+            // 滚动大半屏都到不了满强度，模糊带看起来就偏弱。标题仍用 scrollProgress 渐显。
+            titleAlpha = { ((scrollProgress() - 0.35f) / 0.65f).coerceIn(0f, 1f) },
+            navigationIcon = {
+                GlassIconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = MiuixIcons.Back,
+                        contentDescription = "返回",
+                    )
+                }
+            },
+        )
+        return
+    }
+
     val titleColor = MiuixTheme.colorScheme.onSurface.copy(
         alpha = ((scrollProgress() - 0.35f) / 0.65f).coerceIn(0f, 1f),
     )
 
     Box(
-        modifier = if (blurActive && !progressive && backdrop != null) {
+        modifier = if (blurActive && backdrop != null) {
             Modifier.textureBlur(
                 backdrop = backdrop,
                 shape = RectangleShape,
@@ -208,27 +246,6 @@ private fun AboutTopBar(
             Modifier
         },
     ) {
-        if (blurActive && progressive && backdrop != null) {
-            // 渐进模糊静止时几乎不可见，随顶栏收起逐渐显现。
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .graphicsLayer {
-                        // 小顶栏会把 ScrollBehavior 钉住，contentOffset 永远是 0；
-                        // 这里改用整页滚动进度驱动，渐进模糊才会真的显现。
-                        alpha = ((scrollProgress() - 0.5f) * 2f).coerceIn(0f, 1f)
-                    }
-                    .progressiveTextureBlur(
-                        backdrop = backdrop,
-                        shape = RectangleShape,
-                        gradient = ProgressiveBlur.Top.copy(curve = 2.2f),
-                        blurRadius = 10f,
-                        colors = BlurDefaults.blurColors(
-                            blendColors = listOf(BlendColorEntry(color = surface.copy(0.3f))),
-                        ),
-                    ),
-            )
-        }
         SmallTopAppBar(
             title = "关于",
             scrollBehavior = scrollBehavior,
@@ -252,6 +269,7 @@ private fun AboutContent(
     topAppBarScrollBehavior: ScrollBehavior,
     lazyListState: LazyListState,
     scrollProgressProvider: () -> Float,
+    onOverscroll: (Float) -> Unit,
     versionName: String,
     versionCode: Long,
 ) {
@@ -318,7 +336,7 @@ private fun AboutContent(
                 // 顺序对齐 demo 的 pageScrollModifiers：震动 → 越界回弹 → 顶栏折叠。
                 // 这些连接点挂在列表上而不是页面容器上，背景效果才不会跟着一起位移。
                 .then(if (settings.scrollEndHaptic) Modifier.scrollEndHaptic(HapticFeedbackType.TextHandleMove) else Modifier)
-                .overScrollVertical()
+                .overScrollVertical(onOffsetChanged = onOverscroll)
                 .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
             contentPadding = PaddingValues(top = topInset, bottom = bottomInset),
         ) {
@@ -357,7 +375,7 @@ private fun AboutContent(
                     )
                     Column(modifier = Modifier.padding(bottom = bottomInset)) {
                         // 第一节：开发者、共建团。
-                        Card(modifier = cardModifier, colors = cardColors) {
+                        AppCard(modifier = cardModifier, colors = cardColors) {
                             ArrowPreference(
                                 title = "Phantom_Careful",
                                 summary = "QQ空间1-8服·喵帕斯赛高",
@@ -385,7 +403,7 @@ private fun AboutContent(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         // 第二节：致谢（游戏相关、App相关）。
-                        Card(modifier = cardModifier, colors = cardColors) {
+                        AppCard(modifier = cardModifier, colors = cardColors) {
                             ArrowPreference(
                                 title = "致谢-游戏相关",
                                 summary = "HyperFVM使用了这些老师们的作品",
@@ -399,7 +417,7 @@ private fun AboutContent(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         // 第三节：更多（历史更新日志按需求不放进来）。
-                        Card(modifier = cardModifier, colors = cardColors) {
+                        AppCard(modifier = cardModifier, colors = cardColors) {
                             ArrowPreference(
                                 title = "项目地址",
                                 summary = "本项目基于Apache-2.0协议开源",

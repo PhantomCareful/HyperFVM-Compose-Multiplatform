@@ -54,25 +54,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.BasicComponent
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.DropdownDefaults
-import top.yukonga.miuix.kmp.basic.DropdownImpl
+import com.careful.hyperfvm.compose.ui.AppCard
+import top.yukonga.miuix.kmp.basic.DropdownEntry
+import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppIconDropdownMenu
 import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
-import top.yukonga.miuix.kmp.basic.ListPopupColumn
-import top.yukonga.miuix.kmp.basic.ListPopupDefaults
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
-import top.yukonga.miuix.kmp.basic.PopupPositionProvider
 import top.yukonga.miuix.kmp.basic.PullToRefresh
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.rememberPullToRefreshState
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.ListView
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
-import top.yukonga.miuix.kmp.overlay.OverlayListPopup
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.io.File
@@ -155,10 +151,27 @@ private fun DataImagesPage(
     val gridState = rememberLazyStaggeredGridState()
     // 自己持有顶栏滚动状态：目录跳转是程序化滚动，要手动把折叠状态同步过去。
     val scrollBehavior = MiuixScrollBehavior()
-    val dropdownColors = DropdownDefaults.dropdownColors()
-    var showIndex by remember { mutableStateOf(false) }
     // 目录跳转的目标条目下标；-1 表示没有待处理任务（落点还要减去顶栏高度，只能在 content 里算）。
     var jumpTarget by remember { mutableIntStateOf(-1) }
+    // 目录菜单：条目与分类标题同源，天然一一对应；没有选中态，只是跳转入口。
+    val indexMenu = remember {
+        listOf(
+            DropdownEntry(
+                items = DataImageCategories.mapIndexed { index, category ->
+                    DropdownItem(
+                        text = category.title,
+                        onClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            // animateScrollToItem 是程序化滚动，不派发 nested scroll。
+                            // 顶栏不会自己收起；先把折叠状态同步到目标位置，再交给下方滚动。
+                            scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+                            jumpTarget = DataImageCategoryItemIndices[index]
+                        },
+                    )
+                },
+            ),
+        )
+    }
 
     // ==================== 云端清单 ====================
 
@@ -401,45 +414,9 @@ private fun DataImagesPage(
         onRefresh = requestRefresh,
         refreshing = pullRefreshing,
         actions = {
-            // 目录按钮：菜单以按钮为锚点从右上角弹出，条目与分类标题同源，天然一一对应。
-            Box {
-                IconButton(
-                    onClick = {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                        showIndex = true
-                    },
-                ) {
-                    Icon(imageVector = MiuixIcons.ListView, contentDescription = "目录")
-                }
-                OverlayListPopup(
-                    show = showIndex,
-                    popupPositionProvider = ListPopupDefaults.dropdownPositionProvider(verticalMargin = 4.dp),
-                    // 菜单右缘与按钮右缘对齐。
-                    alignment = PopupPositionProvider.Align.End,
-                    onDismissRequest = { showIndex = false },
-                    onDismissFinished = {},
-                ) {
-                    ListPopupColumn {
-                        DataImageCategories.forEachIndexed { index, category ->
-                            DropdownImpl(
-                                text = category.title,
-                                optionSize = DataImageCategories.size,
-                                // 目录只是跳转入口，没有任何一条处于选中态。
-                                isSelected = false,
-                                index = index,
-                                dropdownColors = dropdownColors,
-                                onSelectedIndexChange = {
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                                    showIndex = false
-                                    // animateScrollToItem 是程序化滚动，不派发 nested scroll。
-                                    // 顶栏不会自己收起；先把折叠状态同步到目标位置，再交给下方滚动。
-                                    scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
-                                    jumpTarget = DataImageCategoryItemIndices[it]
-                                },
-                            )
-                        }
-                    }
-                }
+            // 目录按钮：菜单以按钮为锚点从右上角弹出。
+            AppIconDropdownMenu(entries = indexMenu) {
+                Icon(imageVector = MiuixIcons.ListView, contentDescription = "目录")
             }
         },
     ) { padding ->
@@ -703,7 +680,7 @@ private fun DataImageDownloadCard(
     // 进度条要作为 bottomAction 进闭包，先落成 val 才能通过类型检查。
     val progressValue = progress
 
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         cornerRadius = 20.dp,
         pressFeedbackType = PressFeedbackType.Sink,
@@ -733,7 +710,7 @@ private fun DataImageDeleteCard(
     // miuix 的 Card 只要有任一回调就挂 combinedClickable，按下才有 Sink 反馈与波纹。
     // 可用时长按就是那个回调，点击仍是空操作；下载中长按被禁用，改用一个空的
     // onClick 撑起手势——反馈保留，但点下去不会有任何动作。
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         cornerRadius = 20.dp,
         pressFeedbackType = PressFeedbackType.Sink,
@@ -764,7 +741,7 @@ private fun ConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
-    OverlayDialog(
+    AppDialog(
         show = show,
         title = "二次确认",
         onDismissRequest = onDismiss,
@@ -783,17 +760,17 @@ private fun ConfirmDialog(
                     .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                TextButton(
+                AppDialogButton(
                     text = "咱手滑了",
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
                 )
                 Spacer(Modifier.width(20.dp))
-                TextButton(
+                AppDialogButton(
                     text = confirmText,
                     onClick = onConfirm,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.textButtonColorsPrimary(),
+                    role = AppDialogButtonRole.Primary,
                 )
             }
         }

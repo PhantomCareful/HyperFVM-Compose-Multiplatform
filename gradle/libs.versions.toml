@@ -1,7 +1,7 @@
 [versions]
 agp = "9.2.1"
 kotlin = "2.4.21"
-miuix = "0.9.4"
+miuix = "0.9.5-beta01"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -9,8 +9,8 @@ espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.13.0"
 composeBom = "2026.02.01"
-# Compose Multiplatform（桌面端）：与 miuix 0.9.4 的 desktop 变体同一版本线。
-composeMultiplatform = "1.12.0"
+# Compose Multiplatform（桌面端）：与 miuix 0.9.5-beta01 的 desktop 变体同一版本线。
+composeMultiplatform = "1.12.2"
 # Compose 原生大图查看：区域解码（SubSamplingImage）+ 手势缩放（zoomable）。
 telephoto = "0.19.0"
 # LazyColumn 长按拖动排序（仪表盘卡片排序沿用 Lyrico 插件管理页的做法）。
@@ -49,6 +49,11 @@ miuix-preference = { group = "top.yukonga.miuix.kmp", name = "miuix-preference",
 miuix-blur = { group = "top.yukonga.miuix.kmp", name = "miuix-blur", version.ref = "miuix" }
 miuix-squircle = { group = "top.yukonga.miuix.kmp", name = "miuix-squircle", version.ref = "miuix" }
 miuix-nav = { group = "top.yukonga.miuix.kmp", name = "miuix-nav", version.ref = "miuix" }
+# 0.9.5 新增：OS4 柔光玻璃组件（GlassTopAppBar/NavigationBar/Panel 等）与统一材质模块。
+# miuix-shader 已被 miuix-material 取代，RuntimeShader / EdgeStroke 等全部从后者导入。
+miuix-glass = { group = "top.yukonga.miuix.kmp", name = "miuix-glass", version.ref = "miuix" }
+miuix-glass-icons = { group = "top.yukonga.miuix.kmp", name = "miuix-glass-icons", version.ref = "miuix" }
+miuix-material = { group = "top.yukonga.miuix.kmp", name = "miuix-material", version.ref = "miuix" }
 
 # Telephoto：SubSamplingImage 是 subsampling-scale-image-view 的 Compose 适配（区域解码），
 # zoomable 提供手势缩放。本地文件场景不用 Coil/Glide 集成模块。

@@ -10,6 +10,7 @@ import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_DARK
 import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_LIGHT
 import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_MONET_DARK
 import com.careful.hyperfvm.compose.ui.theme.COLOR_MODE_MONET_LIGHT
+import top.yukonga.miuix.kmp.material.isRuntimeShaderSupported
 
 /**
  * 全量用户设置。
@@ -27,13 +28,14 @@ data class AppSettings(
     val paletteStyle: Int = 0,
     val colorSpec: Int = 0,
     val enableBlur: Boolean = true,
-    val blurStyle: Int = 0,
+    /** 主题风格，取值见 [ThemeStyle]：决定顶栏模糊形式、底栏样式与各组件材质。 */
+    val themeStyle: Int = ThemeStyle.Frosted,
     /** 全局界面缩放：只缩放 dp 的密度，不影响系统的字体缩放。 */
     val uiScale: Float = 1f,
     // 交互
     val scrollEndHaptic: Boolean = true,
     val pageUserScroll: Boolean = true,
-    /** 左右滑动的接管方式：0 = 默认，1 = 跨轴拦截，2 = iOS 风格。 */
+    /** 左右滑动的接管方式：0 = 默认，1 = 跨轴拦截。 */
     val pagerInterceptionMode: Int = 1,
     /** 页面转场样式：0 = Miuix 默认滑动，1 = AOSP 跨应用卡片。角标裁剪与变暗固定开启。 */
     val navTransitionStyle: Int = 0,
@@ -57,6 +59,24 @@ object CloseAction {
     const val MinimizeToTray = 0
     const val Exit = 1
 }
+
+/**
+ * 主题风格。
+ *
+ * - [Frosted]：轻透磨砂（OS3），沿用磨砂材质与高斯模糊顶栏；
+ * - [Glass]：柔光玻璃（OS4 Glass Material），顶栏固定渐进模糊，底栏固定 OS4 悬浮胶囊。
+ *   依赖 RuntimeShader（仅 Android 13+），更早的系统上不会出现这个选项，见 [SettingsStore.read]。
+ *
+ * 两档的顶栏模糊形式不提供混搭；[Glass] 隐含开启「模糊」开关。
+ */
+object ThemeStyle {
+    const val Frosted = 0
+    const val Glass = 1
+}
+
+/** 是否选择了「柔光玻璃」主题风格。 */
+val AppSettings.isGlassStyle: Boolean
+    get() = themeStyle == ThemeStyle.Glass
 
 /**
  * 悬浮底栏样式的持久化编号。
@@ -115,18 +135,27 @@ class SettingsStore(env: AppEnv) {
 
     private fun read(): AppSettings {
         val d = AppSettings()
+        // 柔光玻璃依赖 RuntimeShader（Android 13 起）：更早的系统上即使存着「玻璃」也统一落回轻透磨砂，
+        // 不让「设置里没有主题风格、界面却还是玻璃」这种错位出现。
+        val themeStyle = if (isRuntimeShaderSupported()) {
+            prefs.getInt(KEY_THEME_STYLE, d.themeStyle)
+        } else {
+            ThemeStyle.Frosted
+        }
         return AppSettings(
             closeAction = prefs.getInt(KEY_CLOSE_ACTION, d.closeAction),
             colorMode = prefs.getInt(KEY_COLOR_MODE, d.colorMode),
             keyColorIndex = prefs.getInt(KEY_KEY_COLOR, d.keyColorIndex),
             paletteStyle = prefs.getInt(KEY_PALETTE_STYLE, d.paletteStyle),
             colorSpec = prefs.getInt(KEY_COLOR_SPEC, d.colorSpec),
-            enableBlur = prefs.getBoolean(KEY_BLUR, d.enableBlur),
-            blurStyle = prefs.getInt(KEY_BLUR_STYLE, d.blurStyle),
+            // 柔光玻璃强制开启模糊：旧设置里可能存着「玻璃 + 模糊关」，读盘时就修正。
+            enableBlur = prefs.getBoolean(KEY_BLUR, d.enableBlur) || themeStyle == ThemeStyle.Glass,
+            themeStyle = themeStyle,
             uiScale = prefs.getFloat(KEY_UI_SCALE, d.uiScale),
             scrollEndHaptic = prefs.getBoolean(KEY_SCROLL_HAPTIC, d.scrollEndHaptic),
             pageUserScroll = prefs.getBoolean(KEY_PAGE_SCROLL, d.pageUserScroll),
-            pagerInterceptionMode = prefs.getInt(KEY_PAGER_MODE, d.pagerInterceptionMode),
+            // 0.9.5 移除了 iOS 风格拦截档，旧值 2 统一落到「默认」。
+            pagerInterceptionMode = prefs.getInt(KEY_PAGER_MODE, d.pagerInterceptionMode).let { if (it == 2) 0 else it },
             navTransitionStyle = prefs.getInt(KEY_NAV_TRANSITION, d.navTransitionStyle),
             navigationBarMode = prefs.getInt(KEY_NAV_MODE, d.navigationBarMode),
             useFloatingNavigationBar = prefs.getBoolean(KEY_NAV_FLOATING, d.useFloatingNavigationBar),
@@ -142,7 +171,7 @@ class SettingsStore(env: AppEnv) {
         prefs.putInt(KEY_PALETTE_STYLE, s.paletteStyle)
         prefs.putInt(KEY_COLOR_SPEC, s.colorSpec)
         prefs.putBoolean(KEY_BLUR, s.enableBlur)
-        prefs.putInt(KEY_BLUR_STYLE, s.blurStyle)
+        prefs.putInt(KEY_THEME_STYLE, s.themeStyle)
         prefs.putFloat(KEY_UI_SCALE, s.uiScale)
         prefs.putBoolean(KEY_SCROLL_HAPTIC, s.scrollEndHaptic)
         prefs.putBoolean(KEY_PAGE_SCROLL, s.pageUserScroll)
@@ -164,7 +193,7 @@ class SettingsStore(env: AppEnv) {
         private const val KEY_PALETTE_STYLE = "paletteStyle"
         private const val KEY_COLOR_SPEC = "colorSpec"
         private const val KEY_BLUR = "enableBlur"
-        private const val KEY_BLUR_STYLE = "blurStyle"
+        private const val KEY_THEME_STYLE = "themeStyle"
         private const val KEY_UI_SCALE = "uiScale"
         private const val KEY_SCROLL_HAPTIC = "scrollEndHaptic"
         private const val KEY_PAGE_SCROLL = "pageUserScroll"

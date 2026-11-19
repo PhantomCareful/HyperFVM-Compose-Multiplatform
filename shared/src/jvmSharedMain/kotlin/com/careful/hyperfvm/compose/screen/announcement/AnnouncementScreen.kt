@@ -68,9 +68,9 @@ import kotlinx.coroutines.withContext
 import me.saket.telephoto.zoomable.HardwareShortcutsSpec
 import me.saket.telephoto.zoomable.rememberZoomableState
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
@@ -215,7 +215,7 @@ fun AnnouncementScreen(
             outerPadding = PaddingValues(0.dp),
             onBack = onBack,
             actions = {
-                IconButton(
+                AppTopBarIconButton(
                     onClick = { announcement?.let { openUrl(env, toaster, it.url) } },
                     enabled = announcement != null,
                 ) {
@@ -558,7 +558,7 @@ private fun AnnouncementImageBlock(
             .padding(bottom = ImageBlockGap),
         contentAlignment = Alignment.Center,
     ) {
-        Card(
+        AppCard(
             modifier = Modifier
                 .then(if (keepOriginalSize) Modifier.widthIn(max = naturalWidth) else Modifier)
                 .fillMaxWidth()

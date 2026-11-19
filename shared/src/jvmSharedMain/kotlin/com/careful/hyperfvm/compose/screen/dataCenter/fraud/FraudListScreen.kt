@@ -45,6 +45,7 @@ import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.platform.isDesktopPlatform
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
+import com.careful.hyperfvm.compose.ui.AppSearchCancelAction
 import kotlinx.coroutines.CancellationException
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -297,7 +298,8 @@ private fun FraudListFailed(padding: PaddingValues, message: String, onRetry: ()
 }
 
 /**
- * 顶栏里的搜索框：输入框 + 展开时从右侧滑出的「取消」，与防御卡目录页同款。
+ * 顶栏里的搜索框：输入框 + 展开时从右侧滑出的取消动作，与防御卡目录页同款。
+ * 轻透磨砂下取消是文字，柔光玻璃下是玻璃圆钮上的 ×。
  */
 @Composable
 private fun FraudSearchBar(
@@ -335,13 +337,9 @@ private fun FraudSearchBar(
             enter = expandHorizontally() + slideInHorizontally(initialOffsetX = { it }),
             exit = shrinkHorizontally() + slideOutHorizontally(targetOffsetX = { it }),
         ) {
-            Text(
-                text = "取消",
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable(interactionSource = null, indication = null, onClick = onCancel),
-                style = MiuixTheme.textStyles.main,
-                color = MiuixTheme.colorScheme.primary,
+            AppSearchCancelAction(
+                onCancel = onCancel,
+                modifier = Modifier.padding(end = 16.dp),
             )
         }
     }

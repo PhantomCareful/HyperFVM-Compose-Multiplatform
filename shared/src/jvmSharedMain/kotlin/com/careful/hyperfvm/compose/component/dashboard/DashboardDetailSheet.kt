@@ -54,13 +54,14 @@ import com.careful.hyperfvm.compose.ui.theme.isInDarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
+import com.careful.hyperfvm.compose.ui.sheetCardColor
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.overlay.OverlayBottomSheet
+import com.careful.hyperfvm.compose.ui.AppBottomSheet
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.io.File
@@ -117,7 +118,7 @@ internal fun DashboardDetailSheet(
     onLink: (DashboardLink) -> Unit,
 ) {
     if (sheet == null) return
-    OverlayBottomSheet(
+    AppBottomSheet(
         show = show,
         title = sheet.title,
         onDismissRequest = onDismissRequest,
@@ -259,13 +260,12 @@ private fun DashboardDetailContent(
                     horizontalArrangement = Arrangement.spacedBy(SheetButtonGap),
                 ) {
                     sheet.links.forEach { link ->
-                        Button(
+                        AppDialogButton(
+                            text = link.label,
                             onClick = { onLink(link) },
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColorsPrimary(),
-                        ) {
-                            Text(text = link.label, style = MiuixTheme.textStyles.button)
-                        }
+                            role = AppDialogButtonRole.Primary,
+                        )
                     }
                 }
             }
@@ -319,11 +319,11 @@ private fun DashboardTimeGrid(times: List<DashboardTimeLine>) {
 /** 一张时间概览卡：body2 标签 + title3 加粗数值，与防御卡目录的概览小卡同规格。 */
 @Composable
 private fun DashboardTimeCard(line: DashboardTimeLine, modifier: Modifier = Modifier) {
-    Card(
+    AppCard(
         modifier = modifier,
         cornerRadius = SheetCardCornerRadius,
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         // 概览卡只有按压反馈，没有点击动作。
@@ -374,7 +374,7 @@ private fun DashboardTimeFullCard(line: DashboardTimeLine) {
     val colors = if (line.highlight) {
         CardDefaults.defaultColors(color = activeStatusCardBackgroundColor())
     } else {
-        CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer)
+        CardDefaults.defaultColors(color = sheetCardColor())
     }
     val titleColor = if (line.highlight) colors.contentColor else MiuixTheme.colorScheme.onSurfaceContainer
     val summaryColor = if (line.highlight) {
@@ -382,7 +382,7 @@ private fun DashboardTimeFullCard(line: DashboardTimeLine) {
     } else {
         MiuixTheme.colorScheme.onSurfaceContainerVariant
     }
-    Card(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         cornerRadius = SheetCardCornerRadius,
         // 内容边距与 BasicComponent 对齐：四边 16dp。
@@ -422,7 +422,7 @@ private fun DashboardCardRow(name: String) {
         DefenseCardRow(
             card = card,
             modifier = Modifier.padding(bottom = SheetCardBottomPadding),
-            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+            colors = CardDefaults.defaultColors(color = sheetCardColor()),
         )
     } else {
         SheetCard {
@@ -529,9 +529,9 @@ private fun DashboardImageCards(
             ratio = image.ratio,
             fileRevision = revision,
             cornerRadius = SheetCardCornerRadius,
-            // 弹层里其它内容卡都是 secondaryContainer：预览卡跟着用同一底色，
-            // 否则默认的 surfaceContainer 在弹层背景上会是一块颜色发灰的卡。
-            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+            // 弹层里其它内容卡都用弹层内容卡底色：预览卡跟着用同一底色，
+            // 否则默认的 surfaceContainer 在磨砂弹层背景上会是一块颜色发灰的卡。
+            colors = CardDefaults.defaultColors(color = sheetCardColor()),
             onPreviewBounds = { cardName, bounds ->
                 if (bounds == null) boundsByName.remove(cardName) else boundsByName[cardName] = bounds
             },
@@ -608,12 +608,12 @@ private fun DashboardSessionCard(
     modifier: Modifier = Modifier,
     onLongClick: () -> Unit,
 ) {
-    Card(
+    AppCard(
         modifier = modifier,
         cornerRadius = SheetCardCornerRadius,
         // 日期卡的标题/摘要间距与 BasicComponent 对齐：四边 16dp。
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         // 只有长按有动作：点击不做事，但仍保留按压反馈。
@@ -649,14 +649,14 @@ private fun DashboardSessionFullCard(
 ) {
     val isTablet = isTabletLayout()
     val description = session.description?.let { if (isTablet) it.replace('\n', '，') else it }
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = SheetCardBottomPadding),
         cornerRadius = SheetCardCornerRadius,
         // 日期卡的标题/摘要间距与 BasicComponent 对齐：四边 16dp。
         insideMargin = BasicComponentDefaults.InsideMargin,
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         onClick = {},
@@ -695,10 +695,10 @@ private fun DashboardNote(note: String) {
     )
 }
 
-/** 弹层里通用内容卡的壳：20dp 圆角、secondaryContainer 底色、底部 10dp 间距。 */
+/** 弹层里通用内容卡的壳：20dp 圆角、弹层内容卡底色、底部 10dp 间距。 */
 @Composable
 private fun SheetCard(content: @Composable () -> Unit) {
-    Card(
+    AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = SheetCardBottomPadding),
@@ -706,8 +706,8 @@ private fun SheetCard(content: @Composable () -> Unit) {
         showIndication = true,
         onClick = {},
         cornerRadius = SheetCardCornerRadius,
-        // 与其它弹层一致：内容卡用 secondaryContainer，与弹层背景区分开。
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.secondaryContainer),
+        // 与其它弹层一致：内容卡用弹层内容卡底色，与弹层背景区分开。
+        colors = CardDefaults.defaultColors(color = sheetCardColor()),
     ) {
         content()
     }

@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.ui.theme.isInDarkTheme
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
@@ -59,7 +59,7 @@ fun ErrataCard(
     outerPadding: PaddingValues = ErrataCardOuterPadding,
 ) {
     val colors = errataCardColors()
-    Card(
+    AppCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(outerPadding),

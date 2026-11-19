@@ -1,5 +1,7 @@
 package com.careful.hyperfvm.compose.screen.tools
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -35,7 +37,9 @@ import com.careful.hyperfvm.compose.component.image.RemoteItemImage
 import com.careful.hyperfvm.compose.data.resourceCalculator.ResourceCalculatorData
 import com.careful.hyperfvm.compose.data.resourceCalculator.ResourceSection
 import com.careful.hyperfvm.compose.data.settings.LocalAppSettings
+import com.careful.hyperfvm.compose.data.settings.isGlassStyle
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
+import com.careful.hyperfvm.compose.screen.ThemeStyleFadeMillis
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import com.careful.hyperfvm.compose.ui.isTabletLayout
 import kotlinx.coroutines.launch
@@ -43,6 +47,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.TabRowDefaults
 import top.yukonga.miuix.kmp.basic.TextField
+import top.yukonga.miuix.kmp.glass.GlassTabRow
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Image
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -89,32 +94,54 @@ fun ResourceCalculatorScreen(onBack: () -> Unit) {
         outerPadding = PaddingValues(0.dp),
         onBack = onBack,
         bottomContent = {
-            // 取样层必须在这里读，不能在函数开头读：`LocalBlurBackdrop` 由 ScreenScaffold
-            // 提供在它自己的子组合里，而本 composable 的调用点（NavDisplay 的 entry）
-            // 在提供者之外，那时读到的是 staticCompositionLocalOf 的默认值 null。
-            val blurAvailable = if (settings.enableBlur) LocalBlurBackdrop.current != null else false
             Box(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = TabRowVerticalPadding),
             ) {
-                // 模糊开启时轨道用透明底：高斯模式透出顶栏的磨砂层，渐进模式透出顶栏的
-                // 渐进模糊带（含外延部分）；关掉模糊时退回实色 surface，与顶栏一致。
-                val colors = TabRowDefaults.tabRowColors(
-                    backgroundColor = if (blurAvailable) {
-                        Color.Transparent
+                // 主题风格切换时 TabRow 跟顶栏一起淡入淡出，不要瞬间换形。
+                Crossfade(
+                    targetState = settings.isGlassStyle,
+                    animationSpec = tween(ThemeStyleFadeMillis),
+                    label = "resourceTabRowStyle",
+                ) { glassStyle ->
+                    if (glassStyle) {
+                        // 柔光玻璃：每个 Tab 一枚玻璃胶囊，材质自动继承顶栏（GlassTabRow 读顶栏上下文）。
+                        GlassTabRow(
+                            tabs = sections.map { it.title },
+                            selectedIndex = pagerState.targetPage,
+                            onSelect = { index ->
+                                // 切页先收掉焦点：不然后一页可能一进来就被弹出的输入法盖住。
+                                focusManager.clearFocus()
+                                scope.launch { pagerState.springAnimateToPage(index) }
+                            },
+                            backdrop = LocalBlurBackdrop.current,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     } else {
-                        MiuixTheme.colorScheme.surface
-                    },
-                )
-                TabRow(
-                    tabs = sections.map { it.title },
-                    selectedTabIndex = pagerState.targetPage,
-                    onTabSelected = { index ->
-                        // 切页先收掉焦点：不然后一页可能一进来就被弹出的输入法盖住。
-                        focusManager.clearFocus()
-                        scope.launch { pagerState.springAnimateToPage(index) }
-                    },
-                    colors = colors,
-                )
+                        // 取样层必须在这里读，不能在函数开头读：`LocalBlurBackdrop` 由 ScreenScaffold
+                        // 提供在它自己的子组合里，而本 composable 的调用点（NavDisplay 的 entry）
+                        // 在提供者之外，那时读到的是 staticCompositionLocalOf 的默认值 null。
+                        val blurAvailable = if (settings.enableBlur) LocalBlurBackdrop.current != null else false
+                        // 模糊开启时轨道用透明底：透出顶栏的磨砂层；关掉模糊时退回实色 surface，
+                        // 与顶栏一致。
+                        val colors = TabRowDefaults.tabRowColors(
+                            backgroundColor = if (blurAvailable) {
+                                Color.Transparent
+                            } else {
+                                MiuixTheme.colorScheme.surface
+                            },
+                        )
+                        TabRow(
+                            tabs = sections.map { it.title },
+                            selectedTabIndex = pagerState.targetPage,
+                            onTabSelected = { index ->
+                                // 切页先收掉焦点：不然后一页可能一进来就被弹出的输入法盖住。
+                                focusManager.clearFocus()
+                                scope.launch { pagerState.springAnimateToPage(index) }
+                            },
+                            colors = colors,
+                        )
+                    }
+                }
             }
         },
     ) { padding ->

@@ -54,21 +54,19 @@ import com.careful.hyperfvm.compose.screen.PlaceholderContent
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import kotlinx.coroutines.launch
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.careful.hyperfvm.compose.ui.AppCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.DropdownEntry
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
+import com.careful.hyperfvm.compose.ui.AppTopBarIconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.SnackbarDuration
 import top.yukonga.miuix.kmp.basic.SnackbarHost
 import top.yukonga.miuix.kmp.basic.SnackbarHostState
 import top.yukonga.miuix.kmp.basic.SnackbarResult
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.basic.ArrowRight
 import top.yukonga.miuix.kmp.icon.extended.Close
@@ -76,8 +74,10 @@ import top.yukonga.miuix.kmp.icon.extended.Delete
 import top.yukonga.miuix.kmp.icon.extended.Email
 import top.yukonga.miuix.kmp.icon.extended.Show
 import top.yukonga.miuix.kmp.icon.extended.Sort
-import top.yukonga.miuix.kmp.menu.OverlayIconDropdownMenu
-import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import com.careful.hyperfvm.compose.ui.AppDialog
+import com.careful.hyperfvm.compose.ui.AppDialogButton
+import com.careful.hyperfvm.compose.ui.AppDialogButtonRole
+import com.careful.hyperfvm.compose.ui.AppIconDropdownMenu
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
@@ -184,7 +184,7 @@ fun NotificationInboxScreen(onBack: () -> Unit) {
     // 多选时左上角换成叉号。单独存成变量：lambda 在这种条件赋值里要显式给出类型才稳。
     val selectionIcon: (@Composable () -> Unit)? = if (selecting) {
         {
-            IconButton(onClick = exitSelection) {
+            AppTopBarIconButton(onClick = exitSelection) {
                 Icon(imageVector = MiuixIcons.Close, contentDescription = "退出选择")
             }
         }
@@ -240,7 +240,7 @@ fun NotificationInboxScreen(onBack: () -> Unit) {
         snackbarHost = { SnackbarHost(snackbarHostState) },
         // 弹层必须在 Scaffold 子树里组合，才能挂到它的弹层宿主上（二级页没有外层 Scaffold）。
         overlay = { _ ->
-            OverlayDialog(
+            AppDialog(
                 show = showDeleteConfirm,
                 title = "删除通知",
                 onDismissRequest = { showDeleteConfirm = false },
@@ -259,24 +259,24 @@ fun NotificationInboxScreen(onBack: () -> Unit) {
                             .padding(top = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        TextButton(
+                        AppDialogButton(
                             text = "咱手滑了",
                             onClick = { showDeleteConfirm = false },
                             modifier = Modifier.weight(1f),
                         )
                         Spacer(Modifier.width(20.dp))
-                        TextButton(
+                        AppDialogButton(
                             text = "确认删除",
                             onClick = deleteSelected,
                             modifier = Modifier.weight(1f),
-                            // 参考温馨礼包「删除账号」：破坏性操作直接用勘误红，不用主色。
-                            colors = ButtonDefaults.textButtonColors(textColor = errataContentColor()),
+                            // 破坏性操作走弹层按钮的 Destructive 语气（勘误红），不用主色。
+                            role = AppDialogButtonRole.Destructive,
                         )
                     }
                 }
             }
 
-            OverlayDialog(
+            AppDialog(
                 show = showMarkAllReadConfirm,
                 title = "一键已读",
                 onDismissRequest = { showMarkAllReadConfirm = false },
@@ -295,13 +295,13 @@ fun NotificationInboxScreen(onBack: () -> Unit) {
                             .padding(top = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        TextButton(
+                        AppDialogButton(
                             text = "咱手滑了",
                             onClick = { showMarkAllReadConfirm = false },
                             modifier = Modifier.weight(1f),
                         )
                         Spacer(Modifier.width(20.dp))
-                        TextButton(
+                        AppDialogButton(
                             text = "确认已读",
                             onClick = {
                                 showMarkAllReadConfirm = false
@@ -309,7 +309,7 @@ fun NotificationInboxScreen(onBack: () -> Unit) {
                             },
                             modifier = Modifier.weight(1f),
                             // 只清未读标记，不是破坏性操作，用主色而不是勘误红。
-                            colors = ButtonDefaults.textButtonColorsPrimary(),
+                            role = AppDialogButtonRole.Primary,
                         )
                     }
                 }
@@ -324,17 +324,17 @@ fun NotificationInboxScreen(onBack: () -> Unit) {
         actions = {
             if (selecting) {
                 // 多选期间只留垃圾桶：此时排序与一键已读都用不上。
-                IconButton(
+                AppTopBarIconButton(
                     onClick = { showDeleteConfirm = true },
                     enabled = selected.isNotEmpty(),
                 ) {
                     Icon(imageVector = MiuixIcons.Delete, contentDescription = "删除选中")
                 }
             } else {
-                OverlayIconDropdownMenu(entries = orderMenu) {
+                AppIconDropdownMenu(entries = orderMenu) {
                     Icon(imageVector = MiuixIcons.Sort, contentDescription = "排序")
                 }
-                IconButton(
+                AppTopBarIconButton(
                     onClick = { showMarkAllReadConfirm = true },
                     enabled = NotificationRepository.hasUnread,
                 ) {
@@ -421,7 +421,7 @@ private fun NotificationCard(
     onClick: () -> Unit,
     onLongPress: () -> Unit,
 ) {
-    Card(
+    AppCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = CardSidePadding, end = CardSidePadding, bottom = CardGap),

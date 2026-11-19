@@ -42,6 +42,8 @@ dependencies {
     // 托盘右键菜单用 Miuix 的 Surface/Text/主题色画（:shared 用的是 implementation 依赖，不对外暴露）。
     implementation(libs.miuix.ui)
     implementation(libs.miuix.icons)
+    implementation(libs.miuix.glass)
+    implementation(libs.miuix.material)
     // 托盘菜单的全局鼠标钩子：JDK 没有跨进程的鼠标事件，只能自己调 user32.dll。
     implementation(libs.jna)
 }
