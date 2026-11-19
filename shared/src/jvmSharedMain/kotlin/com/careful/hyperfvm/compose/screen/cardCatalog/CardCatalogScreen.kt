@@ -11,7 +11,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,8 +43,10 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.careful.hyperfvm.compose.component.card.DefenseCardRow
+import com.careful.hyperfvm.compose.component.card.ErrataCard
 import com.careful.hyperfvm.compose.data.cardCatalog.CardCatalog
 import com.careful.hyperfvm.compose.data.cardCatalog.DefenseCard
+import com.careful.hyperfvm.compose.platform.LocalToaster
 import com.careful.hyperfvm.compose.screen.ScreenScaffold
 import com.careful.hyperfvm.compose.ui.AppSearchCancelAction
 import kotlinx.coroutines.Job
@@ -65,11 +66,19 @@ private val ResultSidePadding = 12.dp
 /** 列表内文字的左侧缩进：叠在列表 12dp 上后与卡片内文字（12 + 16dp）对齐。 */
 private val SectionHeaderIndent = 16.dp
 
+/** 勘误提醒卡的文案：说明详情页重写中与后续的数据计算能力。 */
+private const val CatalogErrataText =
+    "防御卡数据详情页正在重写中，因此点击卡片不会有任何反应。\n" +
+        "重写完成后，将实现数据计算功能，包括但不限于：食神谱、结晶、各种拐，敬请期待。"
+
+/** 点击任意卡片时弹出的提示（详情页还未重制）。 */
+private const val CardDetailComingSoonHint = "开发中，敬请期待"
+
 /**
  * 「防御卡」Tab 的目录页，对应 Java 版 `CardDataIndexActivity`。
  *
- * 顶部的版本 / 收录数量概览区由 [CatalogOverview] 提供；详情页还没重制，
- * 所以卡片点击回调留空，只保留按压反馈。
+ * 顶部的版本 / 收录数量概览区由 [CatalogOverview] 提供；概览卡上方是一张勘误提醒卡，
+ * 说明详情页正在重写。详情页重制前，点击任意卡片只弹「开发中」提示，不做跳转。
  *
  * 布局要点：
  * - 搜索框作为顶栏的 `bottomContent` 挂在标题下方，属于顶栏的一部分——顶栏的
@@ -87,6 +96,7 @@ internal fun CardCatalogScreen(outerPadding: PaddingValues) {
     val scrollBehavior = MiuixScrollBehavior()
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    val toaster = LocalToaster.current
 
     var query by rememberSaveable { mutableStateOf("") }
     var searchExpanded by rememberSaveable { mutableStateOf(false) }
@@ -98,9 +108,9 @@ internal fun CardCatalogScreen(outerPadding: PaddingValues) {
     val sections = CardCatalog.sections
     val labels = remember(sections) { sections.map { it.label } }
     // 每个分节的第一张卡在 LazyColumn 里的下标（分节标题已去掉，只剩卡片；
-    // 下标 0 是概览行，所以卡片从 1 开始）。
+    // 下标 0 是勘误卡、1 是概览行，所以卡片从 2 开始）。
     val sectionItemIndices = remember(sections) {
-        var index = 1
+        var index = 2
         sections.map { section -> index.also { index += section.cards.size } }
     }
     var jumpJob by remember { mutableStateOf<Job?>(null) }
@@ -208,6 +218,14 @@ internal fun CardCatalogScreen(outerPadding: PaddingValues) {
                     ),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
+                    item(key = "catalog-errata") {
+                        ErrataCard(
+                            text = CatalogErrataText,
+                            // 列表已自带左右内边距，卡片自身不再留边。
+                            outerPadding = PaddingValues(0.dp),
+                            onClick = { toaster.show(CardDetailComingSoonHint) },
+                        )
+                    }
                     item(key = "catalog-overview") {
                         CatalogOverview()
                     }
@@ -216,7 +234,10 @@ internal fun CardCatalogScreen(outerPadding: PaddingValues) {
                             items = section.cards,
                             key = { "card-${it.primaryName}" },
                         ) { card ->
-                            DefenseCardRow(card)
+                            DefenseCardRow(
+                                card = card,
+                                onClick = { toaster.show(CardDetailComingSoonHint) },
+                            )
                         }
                     }
                 }
@@ -321,6 +342,7 @@ private fun SearchResultList(
     topPadding: Dp,
     bottomPadding: Dp,
 ) {
+    val toaster = LocalToaster.current
     val state: SearchResultState = when {
         keyword.isEmpty() -> SearchResultState.Hint("输入卡名或拼音开始搜索")
         results.isEmpty() -> SearchResultState.Hint("没有找到与「$keyword」匹配的卡")
@@ -368,6 +390,7 @@ private fun SearchResultList(
                     DefenseCardRow(
                         card = card,
                         modifier = Modifier.animateItem(),
+                        onClick = { toaster.show(CardDetailComingSoonHint) },
                     )
                 }
             }

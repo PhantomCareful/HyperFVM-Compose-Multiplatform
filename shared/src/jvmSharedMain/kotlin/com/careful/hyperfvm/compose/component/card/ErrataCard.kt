@@ -48,7 +48,8 @@ val ErrataCardOuterPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 
 /**
  * 勘误预警卡：对应 Java 版用 `colorErrorContainer` 的那张卡。
  *
- * 概率公示（目录、详情）与食神谱详情的勘误提示共用；卡片不跳转，只保留按压反馈。
+ * 概率公示（目录、详情）与食神谱详情的勘误提示共用；卡片默认不跳转，只保留按压反馈，
+ * 需要提示的调用方通过 [onClick] 传入动作。
  * [outerPadding] 的约定与 [TipsCard] 一致：已经自带内容边距的容器传 `PaddingValues(0.dp)`
  * 避免双重缩进。
  */
@@ -57,6 +58,7 @@ fun ErrataCard(
     text: String,
     modifier: Modifier = Modifier,
     outerPadding: PaddingValues = ErrataCardOuterPadding,
+    onClick: () -> Unit = {},
 ) {
     val colors = errataCardColors()
     AppCard(
@@ -66,7 +68,7 @@ fun ErrataCard(
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         // showIndication = true，同时要给一个 onClick 事件，才能让 Card 显示点击时的视觉反馈效果
-        onClick = {},
+        onClick = onClick,
         cornerRadius = 20.dp,
         colors = colors,
     ) {

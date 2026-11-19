@@ -36,12 +36,14 @@ private val CardActionSpacing = 8.dp
  * 两处的卡片布局因此始终一致。
  *
  * @param colors 卡片配色；两处场景底色不同由调用方传入。
+ * @param onClick 点击动作；默认只为按压反馈保留空实现（详情页还没重制）。
  */
 @Composable
 internal fun DefenseCardRow(
     card: DefenseCard,
     modifier: Modifier = Modifier,
     colors: CardColors = CardDefaults.defaultColors(),
+    onClick: () -> Unit = {},
 ) {
     val alias = remember(card) { card.aliasText }
     AppCard(
@@ -51,8 +53,7 @@ internal fun DefenseCardRow(
         pressFeedbackType = PressFeedbackType.Sink,
         showIndication = true,
         colors = colors,
-        // 详情页还没重制：点击只给按压反馈，不做跳转。
-        onClick = {},
+        onClick = onClick,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
