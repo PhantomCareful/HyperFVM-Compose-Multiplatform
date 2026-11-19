@@ -30,6 +30,9 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * 旧数据里还有少量语义命名的图（如 `star_image_*` / `vip_*`），图床只认道具 id，
  * 这类交给 [PackImage] 继续读数据包；下载中 / 下载失败 / 无 id 时统一画
  * Miuix 的图片占位图标（与数据图合集「未下载」占位一致），卡片高度不会抽动。
+ *
+ * @param preferHighRes 武器类道具（主武器 / 副武器 / 超级武器）传 true：0x14 开头
+ *   的道具先取 0x24 高清版，失败再退回 0x14；其它前缀不受影响。
  */
 @Composable
 fun RemoteItemImage(
@@ -37,6 +40,7 @@ fun RemoteItemImage(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Fit,
+    preferHighRes: Boolean = false,
 ) {
     if (id == null || !ItemIdPattern.matches(id)) {
         PackImage(
@@ -58,7 +62,7 @@ fun RemoteItemImage(
     ) {
         if (value != null) return@produceState
         val file = CatalogRepository.imageFile(env, key)
-        CatalogRepository.ensureImage(env, key)
+        CatalogRepository.ensureImage(env, key, preferHighRes)
         value = CatalogImages.load(file)
     }
     val current = bitmap

@@ -2,16 +2,19 @@ package com.careful.hyperfvm.compose.data.datapack
 
 import com.careful.hyperfvm.compose.data.catalog.CatalogKind
 import com.careful.hyperfvm.compose.data.catalog.CatalogRepository
+import com.careful.hyperfvm.compose.data.itemQuery.ItemQueryRepository
 import com.careful.hyperfvm.compose.data.oddsDisclosure.OddsDataRepository
 import com.careful.hyperfvm.compose.platform.AppEnv
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -40,7 +43,7 @@ sealed interface DataPackState {
      */
     data class Downloading(val received: Long, val total: Long) : DataPackState
 
-    /** 压缩包已解压，正在准备套装 / 翅膀数据并下载对应图片。 */
+    /** 压缩包已解压，正在准备道具索引与套装 / 翅膀数据，并下载对应图片。 */
     data object Preparing : DataPackState
 
     /** 数据包就绪，可以进入主界面。 */
@@ -157,6 +160,8 @@ object DataPackRepository {
      * 数据包在、但服装 / 翅膀还没备齐（老版本装的包、上次准备被中断）时，
      * 先在 [DataPackState.Preparing] 里补齐再就绪，进合集页就不用再临时下载。
      *
+     * 就绪前后台预热道具查询表（数据包没换时只是读回上次的磁盘缓存）。
+     *
      * 下载 / 准备中的状态不会被重置（Activity 重建会再调一次），
      * 失败状态也保留到用户主动重试。
      */
@@ -176,6 +181,8 @@ object DataPackRepository {
                 return@withContext
             }
             installIndex(env)
+            // 道具表解析量大，后台提前做好，用户第一次查询就是秒出。
+            ItemQueryRepository.warmUp(env)
             val prepared = CatalogRepository.isPrepared(env, CatalogKind.Clothing) &&
                 CatalogRepository.isPrepared(env, CatalogKind.Wing)
             if (!prepared) {
@@ -197,10 +204,16 @@ object DataPackRepository {
         }
     }
 
-    /** 建立「图片 id → 文件」索引并清空旧缓存；顺带重新解析数据包内的概率公示表。 */
+    /**
+     * 建立「图片 id → 文件」索引并清空内存缓存；顺带重新解析数据包内的概率公示表。
+     *
+     * 磁盘上的道具索引不动：它由文件头的版本 / 大小 / 修改时间校验自动失效，
+     * 启动时没必要每次重写。
+     */
     private fun installIndex(env: AppEnv) {
         installImageIndex(env)
         OddsDataRepository.load(env)
+        ItemQueryRepository.clear()
     }
 
     /** 只重建图片索引：列一遍 images 目录的文件名，不解析概率表，启动首帧前也能跑。 */
@@ -216,7 +229,10 @@ object DataPackRepository {
      * 下载并安装数据包，随后用包内的两个 XML 构建套装 / 翅膀数据并下载预览图。
      *
      * 任何网络 / 校验 / 解压失败都收敛成 [DataPackState.Error]，不向界面抛异常；
-     * 套装数据准备失败不回滚动数据包状态——数据包本身已可用，合集页有自己的错误与重试。
+     * 套装数据准备失败不回滚数据包状态——数据包本身已可用，合集页有自己的错误与重试。
+     *
+     * 装完在「准备数据」阶段就把道具表索引建好落盘，新包第一次检索直接读盘；
+     * 合集素材与索引并行准备，两者都完成才算就绪。
      */
     suspend fun download(env: AppEnv) {
         mutex.withLock {
@@ -262,10 +278,15 @@ object DataPackRepository {
                     // 数据包换了，旧的条目缓存与就绪标记作废（XML 可能已更新）；预览图按 id 复用，不必删。
                     CatalogRepository.invalidate(env)
                     installIndex(env)
+                    ItemQueryRepository.invalidate(env)
 
                     _state.value = DataPackState.Preparing
-                    // 用包内的 XML 构建两个合集的条目并补齐预览图，等它们都备齐才算就绪。
-                    prepare(env)
+                    // 道具表索引和合集素材一起准备：等这里做完，Ready 后第一次检索已经是读盘命中。
+                    coroutineScope {
+                        val index = launch { ItemQueryRepository.prebuild(env) }
+                        prepare(env)
+                        index.join()
+                    }
                     _state.value = DataPackState.Ready
                     initialized = true
                 } catch (e: CancellationException) {

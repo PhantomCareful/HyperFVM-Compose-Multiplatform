@@ -38,6 +38,9 @@ internal fun overlayBackdrop(): Backdrop? {
  * [OverlayBottomSheet]。
  *
  * 参数取两个实现共有的交集，调用方换名字即可。
+ *
+ * @param enableNestedScroll 内容区滚到尽头后是否把剩余的向下滑动转给弹层（继续下滑即关闭）。
+ *   内容很长的弹层传 false，避免滑列表时误把弹层拖下去；拖顶部手柄和返回手势仍可关闭。
  */
 @Composable
 fun AppBottomSheet(
@@ -45,6 +48,7 @@ fun AppBottomSheet(
     onDismissRequest: () -> Unit,
     title: String? = null,
     onDismissFinished: (() -> Unit)? = null,
+    enableNestedScroll: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val settings = LocalAppSettings.current
@@ -55,6 +59,7 @@ fun AppBottomSheet(
             backdrop = overlayBackdrop(),
             title = title,
             onDismissFinished = onDismissFinished,
+            enableNestedScroll = enableNestedScroll,
             content = content,
         )
         return
@@ -64,6 +69,7 @@ fun AppBottomSheet(
         title = title,
         onDismissRequest = onDismissRequest,
         onDismissFinished = onDismissFinished,
+        enableNestedScroll = enableNestedScroll,
         content = content,
     )
 }

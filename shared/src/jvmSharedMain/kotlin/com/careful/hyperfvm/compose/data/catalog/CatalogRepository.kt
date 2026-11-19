@@ -125,19 +125,38 @@ object CatalogRepository {
      * 按需确保一张预览图落盘（概率公示页的服装 / 翅膀奖品用）。
      *
      * 本地已有就直接返回；下载失败不抛异常——界面按没有图标展示，不弹错误。
+     *
+     * 0x14 开头的道具图在 CDN 上有两套资源：个别 0x14 条目缺图，但同 id 的 0x24 版在；
+     * 个别 0x14 图分辨率偏低。候选顺序由 [imageIdCandidates] 给出，逐个试到成功为止。
      */
-    suspend fun ensureImage(env: AppEnv, id: String) {
+    suspend fun ensureImage(env: AppEnv, id: String, preferHighRes: Boolean = false) {
         val target = imageFile(env, id)
         if (target.exists()) return
+        val candidates = imageIdCandidates(id, preferHighRes)
         pendingImageJobs.computeIfAbsent(id) { key ->
             imageScope.async {
                 try {
-                    if (!target.exists()) runCatching { downloadToFile(imageUrl(id), target) }
+                    for (candidate in candidates) {
+                        if (target.exists()) break
+                        runCatching { downloadToFile(imageUrl(candidate), target) }
+                    }
                 } finally {
                     pendingImageJobs.remove(key)
                 }
             }
         }.await()
+    }
+
+    /**
+     * 一张道具图的候选 id：0x14 与 0x24 是同一批图的低清 / 高清两套资源。
+     *
+     * 普通道具先试 0x14，缺图（404）时再退 0x24；武器类要求高清，顺序反过来，
+     * 0x24 也失败时再退 0x14。其它前缀没有 0x24 对应资源，原样返回。
+     */
+    private fun imageIdCandidates(id: String, preferHighRes: Boolean): List<String> {
+        if (!id.startsWith("x14") || id.length <= 3) return listOf(id)
+        val highRes = "x24" + id.substring(3)
+        return if (preferHighRes) listOf(highRes, id) else listOf(id, highRes)
     }
 
     /**

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.careful.hyperfvm.compose.component.dialog.UrlTarget
 import com.careful.hyperfvm.compose.component.image.PackImage
 import com.careful.hyperfvm.compose.component.dialog.VisitUrlDialog
+import com.careful.hyperfvm.compose.component.itemQuery.ItemQuerySheet
 import com.careful.hyperfvm.compose.navigation.LocalNavigator
 import com.careful.hyperfvm.compose.navigation.Route
 import com.careful.hyperfvm.compose.screen.about.AboutContentCard
@@ -154,7 +155,8 @@ private val DataStationEntries = listOf(
  * `fragment_data_center.xml` 的 `title_data_center_special_features` 与
  * `title_data_center_data_station` 分组，顺序也保持一致。
  *
- * 特色功能目前有数据图合集、食神谱合集、概率公示合集、套装合集、翅膀合集五个入口，点击直接压栈；美食数据站都是外链，
+ * 特色功能目前有数据图合集、食神谱合集、概率公示合集、套装合集、翅膀合集与道具查询六个入口，
+ * 前五个点击直接压栈，道具查询是弹层；美食数据站都是外链，
  * 点击先弹 [VisitUrlDialog]，确认后才调起浏览器。
  *
  * 顶栏右侧是查黑系统的入口（Java 版在 Fragment 右上角的悬浮按钮），
@@ -165,6 +167,7 @@ fun DataCenterScreen(outerPadding: PaddingValues) {
     val navigator = LocalNavigator.current
     // 弹窗状态提到列表外面，才能保证列表项被回收时弹窗不被一起销毁。
     var pendingUrl by remember { mutableStateOf<UrlTarget?>(null) }
+    var showItemQuery by remember { mutableStateOf(false) }
 
     ScreenScaffold(
         title = "数据中心",
@@ -220,6 +223,13 @@ fun DataCenterScreen(outerPadding: PaddingValues) {
                         onClick = { navigator.push(Route.WingCollection) },
                     )
                 }
+                AboutContentCard {
+                    ArrowPreference(
+                        title = "道具查询",
+                        summary = "查询游戏内道具的描述和作用",
+                        onClick = { showItemQuery = true },
+                    )
+                }
             }
             item(key = "dataStation") {
                 SmallTitle("美食数据站")
@@ -249,6 +259,11 @@ fun DataCenterScreen(outerPadding: PaddingValues) {
         VisitUrlDialog(
             target = pendingUrl,
             onDismiss = { pendingUrl = null },
+        )
+
+        ItemQuerySheet(
+            show = showItemQuery,
+            onDismissRequest = { showItemQuery = false },
         )
     }
 }
