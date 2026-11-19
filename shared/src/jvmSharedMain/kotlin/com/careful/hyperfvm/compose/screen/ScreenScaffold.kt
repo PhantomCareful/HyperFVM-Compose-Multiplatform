@@ -39,6 +39,7 @@ import com.careful.hyperfvm.compose.ui.GlassMenuHost
 import com.careful.hyperfvm.compose.ui.GlassMenuHostState
 import com.careful.hyperfvm.compose.ui.LocalBlurBackdrop
 import com.careful.hyperfvm.compose.ui.LocalGlassMenuHost
+import com.careful.hyperfvm.compose.ui.LocalRailTitleAlpha
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.rememberAppBlurBackdrop
 import top.yukonga.miuix.kmp.basic.Icon
@@ -318,6 +319,9 @@ private fun BlurredTopAppBar(
                     backdrop = backdrop,
                     scrollBehavior = scrollBehavior,
                     defaultWindowInsetsPadding = !isWide,
+                    // 宽屏玻璃侧栏收起成胶囊后，胶囊就落在顶栏标题的位置上，
+                    // 标题跟着展开进度淡出（默认 1f，窄屏与二级页不受影响）。
+                    titleAlpha = LocalRailTitleAlpha.current,
                     navigationIcon = navigationIcon,
                     actions = spacedActions,
                     bottomContent = bottomContent ?: {},

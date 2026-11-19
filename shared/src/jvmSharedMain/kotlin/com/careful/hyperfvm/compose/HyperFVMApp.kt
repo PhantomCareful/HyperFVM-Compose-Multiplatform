@@ -13,12 +13,14 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.captionBar
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
@@ -38,10 +40,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -94,6 +98,8 @@ import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclos
 import com.careful.hyperfvm.compose.screen.dataCenter.oddsDisclosure.OddsDisclosureInfoScreen
 import com.careful.hyperfvm.compose.screen.meishi.MeishiWechatScreen
 import com.careful.hyperfvm.compose.screen.notification.NotificationInboxScreen
+import com.careful.hyperfvm.compose.ui.LocalRailContentInset
+import com.careful.hyperfvm.compose.ui.LocalRailTitleAlpha
 import com.careful.hyperfvm.compose.ui.isWideLayout
 import com.careful.hyperfvm.compose.ui.rememberAppBlurBackdrop
 import com.careful.hyperfvm.compose.ui.shouldExpandNavigationRail
@@ -112,6 +118,7 @@ import top.yukonga.miuix.kmp.basic.NavigationBarDisplayMode
 import top.yukonga.miuix.kmp.basic.NavigationBarItem
 import top.yukonga.miuix.kmp.basic.NavigationItem
 import top.yukonga.miuix.kmp.basic.NavigationRail
+import top.yukonga.miuix.kmp.basic.NavigationRailDefaults
 import top.yukonga.miuix.kmp.basic.NavigationRailItem
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.SnackbarHost
@@ -125,6 +132,7 @@ import top.yukonga.miuix.kmp.glass.GlassNavigationBar
 import top.yukonga.miuix.kmp.glass.GlassNavigationItem
 import top.yukonga.miuix.kmp.glass.GlassNavigationRail
 import top.yukonga.miuix.kmp.glass.GlassNavigationRailDefaults
+import top.yukonga.miuix.kmp.glass.GlassNavigationRailState
 import top.yukonga.miuix.kmp.glass.rememberGlassNavigationRailState
 import top.yukonga.miuix.kmp.material.GlassEdgeStrokes
 import top.yukonga.miuix.kmp.material.edgeStroke
@@ -522,7 +530,14 @@ private fun MainFrame(pendingRoute: MutableStateFlow<Route?>) {
     }
 }
 
-/** 一级界面骨架：宽屏留左侧导航栏，窄屏留底部导航栏。两者都固定显示。 */
+/**
+ * 一级界面骨架：宽屏留左侧导航栏，窄屏留底部导航栏。
+ *
+ * 宽屏的玻璃侧栏按 miuix 的约定做成浮层：它铺满整个窗口、画在页面之上，折叠时收成
+ * 顶部居中的胶囊。所以宽屏下页面与侧栏不再分列——取样层挂在整窗上，页面也铺满整窗，
+ * 只有页面内容按折叠进度向右让开，翻页时整页才从面板底下滑过（分列的写法下取样层被
+ * 挤到侧栏右侧，面板左半采不到底图，会退化成一整块不透明的板，翻页内容也停在侧栏边缘）。
+ */
 @Composable
 private fun MainShell() {
     val settings = LocalAppSettings.current
@@ -531,27 +546,94 @@ private fun MainShell() {
     // 顶栏/底栏/侧栏共用的取样层：它挂在内容区上，导航控件必须与内容区是兄弟节点。
     val contentBackdrop = rememberAppBlurBackdrop()
 
-    Row(modifier = Modifier.fillMaxSize()) {
-        if (isWide) {
-            // 主题风格切换时侧栏跟顶栏、底栏一起淡入淡出。
-            Crossfade(
-                targetState = settings.isGlassStyle,
-                animationSpec = tween(ThemeStyleFadeMillis),
-                label = "mainNavigationRailStyle",
-            ) { glassStyle ->
-                if (glassStyle) {
-                    MainGlassNavigationRail(pagerState = pagerState, backdrop = contentBackdrop)
-                } else {
-                    MainNavigationRail(pagerState)
-                }
+    if (!isWide) {
+        MainPager(
+            pagerState = pagerState,
+            showBottomBar = true,
+            backdrop = contentBackdrop,
+        )
+        return
+    }
+
+    val glassStyle = settings.isGlassStyle
+    // 折叠状态提在这里：页面让位与标题淡出都要读它的 progress。两者都只在布局 / 绘制
+    // 阶段读，折叠的每一帧只重排、重绘，不重组页面。
+    val railState = rememberGlassNavigationRailState(initialExpanded = true)
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    // 玻璃侧栏自己会按系统栏 / 刘海收边，页面内容让位要把这段起始内缩一起算进去。
+    val railStartInset = with(density) {
+        WindowInsets.systemBars
+            .union(WindowInsets.captionBar)
+            .union(WindowInsets.displayCutout)
+            .getLeft(density, layoutDirection)
+            .toDp()
+    }
+    val glassRailWidth = GlassNavigationRailDefaults.ExpandedWidth + GlassNavigationRailDefaults.Margin
+    // 轻透磨砂路线的侧栏宽度由 miuix 的 NavigationRail 自己决定，这里用同一组默认值让位。
+    val legacyRailWidth = if (shouldExpandNavigationRail()) {
+        NavigationRailDefaults.ExpandedWidth
+    } else {
+        NavigationRailDefaults.MinWidth
+    }
+    // 页面内容给侧栏让出的起始宽度：玻璃态跟折叠进度走，轻透磨砂是固定列宽。
+    val railContentInset: () -> Dp = remember(
+        glassStyle,
+        railStartInset,
+        glassRailWidth,
+        legacyRailWidth,
+        railState,
+    ) {
+        {
+            if (glassStyle) {
+                (railStartInset + glassRailWidth) * railState.progress
+            } else {
+                railStartInset + legacyRailWidth
             }
         }
-        Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-            MainPager(
-                pagerState = pagerState,
-                showBottomBar = !isWide,
-                backdrop = contentBackdrop,
-            )
+    }
+    // 收起后胶囊盖住的正是顶栏标题的位置，标题随展开进度淡出（demo 的做法）。
+    val railTitleAlpha: () -> Float = remember(glassStyle, railState) {
+        { if (glassStyle) railState.progress else 1f }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                // 取样层铺满整窗：侧栏浮在页面之上，它采到的必须是面板底下的画面。
+                // 页面本身也铺满整窗，只有内容在页面内部让位——翻页时整页才滑得进玻璃底下，
+                // 不会被截在侧栏右边缘（侧栏右边缘那条硬线就是这么来的）。
+                .then(if (contentBackdrop != null) Modifier.layerBackdrop(contentBackdrop) else Modifier),
+        ) {
+            CompositionLocalProvider(
+                LocalRailContentInset provides railContentInset,
+                LocalRailTitleAlpha provides railTitleAlpha,
+            ) {
+                MainPager(
+                    pagerState = pagerState,
+                    showBottomBar = false,
+                    // 取样层由上面这层整窗接管，页面自己不必再录一层。
+                    backdrop = null,
+                )
+            }
+        }
+        // 侧栏与取样层是兄弟节点：它画在页面之上，取样不会录到自己。
+        // 主题风格切换时侧栏跟顶栏、底栏一起淡入淡出。
+        Crossfade(
+            targetState = glassStyle,
+            animationSpec = tween(ThemeStyleFadeMillis),
+            label = "mainNavigationRailStyle",
+        ) { glass ->
+            if (glass) {
+                MainGlassNavigationRail(
+                    pagerState = pagerState,
+                    backdrop = contentBackdrop,
+                    state = railState,
+                )
+            } else {
+                MainNavigationRail(pagerState)
+            }
         }
     }
 }
@@ -609,16 +691,35 @@ private fun MainPager(
                 verticalAlignment = Alignment.Top,
                 flingBehavior = pagerFlingBehavior,
             ) { page ->
-                val contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
-                when (MainTab.entries[page]) {
-                    MainTab.Dashboard -> DashboardScreen(contentPadding)
-                    MainTab.DefenseCard -> DefenseCardScreen(contentPadding)
-                    MainTab.DataCenter -> DataCenterScreen(contentPadding)
-                    MainTab.Tools -> ToolsScreen(contentPadding)
-                    MainTab.Settings -> SettingsScreen(contentPadding)
+                val railInset = LocalRailContentInset.current
+                Box(modifier = Modifier.fillMaxSize().railContentInset(railInset)) {
+                    val contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
+                    when (MainTab.entries[page]) {
+                        MainTab.Dashboard -> DashboardScreen(contentPadding)
+                        MainTab.DefenseCard -> DefenseCardScreen(contentPadding)
+                        MainTab.DataCenter -> DataCenterScreen(contentPadding)
+                        MainTab.Tools -> ToolsScreen(contentPadding)
+                        MainTab.Settings -> SettingsScreen(contentPadding)
+                    }
                 }
             }
         }
+    }
+}
+
+/**
+ * 页面内容给侧栏让出的起始宽度。
+ *
+ * 只缩内容、不缩页面本身：页面（pager 的每一页）仍铺满整窗，翻页时整页从玻璃面板底下
+ * 滑过，不会被裁在侧栏右边缘。宽度在布局阶段读，侧栏折叠的每一帧只重排、不重组。
+ */
+private fun Modifier.railContentInset(inset: () -> Dp): Modifier = layout { measurable, constraints ->
+    val width = inset().roundToPx().coerceIn(0, constraints.maxWidth)
+    val placeable = measurable.measure(
+        constraints.copy(minWidth = 0, maxWidth = constraints.maxWidth - width),
+    )
+    layout(constraints.maxWidth, constraints.maxHeight) {
+        placeable.place(width, 0)
     }
 }
 
@@ -640,26 +741,23 @@ private fun MainNavigationRail(pagerState: PagerState) {
     }
 }
 
-/** 柔光玻璃路线：宽屏侧栏固定展开，不再提供折叠切换，避免与页面争抢宽度。 */
+/** 柔光玻璃路线：浮层侧栏，内置折叠按钮，收起后变成顶部居中的胶囊（与 demo 一致）。 */
 @Composable
-private fun MainGlassNavigationRail(pagerState: PagerState, backdrop: LayerBackdrop?) {
+private fun MainGlassNavigationRail(
+    pagerState: PagerState,
+    backdrop: LayerBackdrop?,
+    state: GlassNavigationRailState,
+) {
     val scope = rememberCoroutineScope()
-    val railState = rememberGlassNavigationRailState(initialExpanded = true)
-    Box(
-        modifier = Modifier
-            .width(GlassNavigationRailDefaults.ExpandedWidth + GlassNavigationRailDefaults.Margin)
-            .fillMaxHeight(),
-    ) {
-        GlassNavigationRail(
-            items = GlassNavigationItems,
-            selectedIndex = pagerState.targetPage,
-            onSelect = { index -> scope.launch { pagerState.springAnimateToPage(index) } },
-            backdrop = backdrop,
-            modifier = Modifier.fillMaxSize(),
-            state = railState,
-            showToggle = false,
-        )
-    }
+    GlassNavigationRail(
+        items = GlassNavigationItems,
+        selectedIndex = pagerState.targetPage,
+        onSelect = { index -> scope.launch { pagerState.springAnimateToPage(index) } },
+        backdrop = backdrop,
+        state = state,
+        expandContentDescription = "展开侧栏",
+        collapseContentDescription = "收起侧栏",
+    )
 }
 
 /** 一级导航的导航项，顺序与 [MainTab] 一致；枚举不变，所以只求值一次。 */
