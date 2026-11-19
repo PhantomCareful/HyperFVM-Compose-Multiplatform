@@ -12,14 +12,20 @@ import top.yukonga.miuix.kmp.basic.CardDefaults
 /**
  * 二级页的内容卡：一行行成员 / 项目列表都装在里面，对应 Java 版的 General 卡。
  * 卡间距由本组件的 bottom 12dp 提供。
+ *
+ * [modifier] 加在卡片自身（内边距之内），数据中心用它挂长按拖动的指针手柄。
  */
 @Composable
-fun AboutContentCard(content: @Composable ColumnScope.() -> Unit) {
+fun AboutContentCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     AppCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
-            .padding(bottom = 12.dp),
+            .padding(bottom = 12.dp)
+            .then(modifier),
         cornerRadius = 20.dp,
         colors = CardDefaults.defaultColors(),
     ) {
