@@ -152,7 +152,7 @@ private object LaunchRefresh {
  * （时间行、返场卡片名单、场次与底部按钮），抢红包在今日开启时改为弹提示。
  *
  * 列表顶部另有三张不参与排序的卡：数据包有新版本时的更新提示（点进去是首次更新那套界面），
- * 数据图有新版本时的更新提示（回到本页时才检查，不跟下拉刷新走），
+ * 数据图有新版本时的更新提示（进页面、回前台、从二级页返回与下拉刷新时都会检查），
  * 以及每月最后一天的月末提醒。
  */
 @Composable
@@ -233,13 +233,12 @@ fun DashboardScreen(outerPadding: PaddingValues) {
         }
     }
 
-    // 数据图有没有新版本：只在「重新回到仪表盘」时查一次，不跟下拉刷新走。
-    // 三个时机覆盖了同一种语义：进页面、App 回到前台（resumeTick）、
-    // 从二级页返回（栈顶回到 Main，数据图下载完回来正好靠它把卡收掉）。
+    // 数据图有没有新版本：进页面、App 回到前台（resumeTick）、从二级页返回（栈顶回到 Main，
+    // 数据图下载完回来正好靠它把卡收掉），以及用户主动刷新（reloadToken，含桌面端刷新按钮）。
     var dataImageUpdate by remember { mutableStateOf(false) }
     val resumeTick = rememberAppResumeTick()
     val atDashboard = navigator.current() == Route.Main
-    LaunchedEffect(atDashboard, resumeTick) {
+    LaunchedEffect(atDashboard, resumeTick, reloadToken) {
         // 压栈去二级页时不动：那会儿人已经不在仪表盘，等返回再查。
         if (!atDashboard) return@LaunchedEffect
         // 失败保留上一次的结果：不为一次网络抖动把已经亮着的卡收掉。
@@ -253,10 +252,10 @@ fun DashboardScreen(outerPadding: PaddingValues) {
         if (hasNew != null) dataImageUpdate = hasNew
     }
 
-    // 数据包有没有新版本：与数据图同一种时机，两条检查各自独立，互不拖慢。
+    // 数据包有没有新版本：与数据图同一种时机（含下拉刷新），两条检查各自独立，互不拖慢。
     // 更新完成后从更新页返回仪表盘，本效果重跑，卡会自行收起。
     var dataPackUpdate by remember { mutableStateOf(false) }
-    LaunchedEffect(atDashboard, resumeTick) {
+    LaunchedEffect(atDashboard, resumeTick, reloadToken) {
         if (!atDashboard) return@LaunchedEffect
         val hasNew = try {
             DataPackRepository.hasNewVersion(env)
